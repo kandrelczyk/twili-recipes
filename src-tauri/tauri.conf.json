@@ -1,0 +1,42 @@
+{
+    "productName": "TwiliRecipes",
+    "identifier": "net.curiana",
+    "version": "0.0.0",
+    "build": {
+        "beforeBuildCommand": "trunk build",
+        "beforeDevCommand": "trunk serve",
+        "devUrl": "http://localhost:1420",
+        "frontendDist": "../dist"
+    },
+    "plugins": {
+        "shell": {
+            "open": true
+        }
+    },
+    "bundle": {
+        "active": true,
+        "icon": [
+            "icons/32x32.png",
+            "icons/128x128.png",
+            "icons/128x128@2x.png",
+            "icons/icon.icns",
+            "icons/icon.ico"
+        ],
+        "targets": "all"
+    },
+    "app": {
+        "withGlobalTauri": true,
+        "security": {
+            "csp": null
+        },
+        "windows": [
+            {
+                "fullscreen": false,
+                "height": 460,
+                "resizable": true,
+                "title": "TwiliRecipes",
+                "width": 300
+            }
+        ]
+    }
+}

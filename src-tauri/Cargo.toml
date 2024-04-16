@@ -1,0 +1,30 @@
+[package]
+name = "twili-recipes"
+version = "0.0.0"
+description = "Twili Recipes"
+authors = ["kandrelczyk"]
+license = ""
+repository = ""
+edition = "2021"
+
+[lib]
+name = "app_lib"
+crate-type = ["staticlib", "cdylib", "rlib"]
+
+
+[build-dependencies]
+tauri-build = {features = [] , version = "2.0.0-beta.10" }
+
+[dependencies]
+template_common = { path = "../common" }
+tauri = { features = ["tray-icon", "image-png", "unstable"] , version = "2.0.0-beta.13" }
+serde = { version = "1.0", features = ["derive"] }
+serde_json = "1.0"
+log = "0.4"
+tauri-plugin-log = "2.0.0-beta.1"
+openssl = {version = "0.10.45", features = ["vendored"] }
+
+[features]
+# this feature is used for production builds or when `devPath` points to the filesystem
+# DO NOT REMOVE!!
+custom-protocol = ["tauri/custom-protocol"]
