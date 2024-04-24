@@ -1,7 +1,12 @@
 mod commands;
-use commands::{command, start_events};
+mod ai;
+mod recipes;
 
-use tauri::App;
+
+use commands::{command, initialize};
+use ai::AIClient;
+use recipes::RecipesProvider;
+use tauri::{async_runtime::Mutex, App};
 use tauri_plugin_log::{Target, TargetKind};
 
 #[cfg(mobile)]
@@ -33,7 +38,13 @@ impl AppBuilder {
     pub fn build_app(self) -> App {
         let setup = self.setup;
 
-        let app = tauri::Builder::default()
+
+        let provider : Mutex<Option<Box<dyn RecipesProvider>>> = Mutex::new(None);
+        let ai_parser: Mutex<Option<Box<dyn AIClient>>> = Mutex::new(None);
+
+        tauri::Builder::default()
+            .manage(ai_parser)
+            .manage(provider)
             .plugin(
                 tauri_plugin_log::Builder::default()
                     .clear_targets()
@@ -50,10 +61,8 @@ impl AppBuilder {
                 }
                 Ok(())
             })
-            .invoke_handler(tauri::generate_handler![command, start_events])
+            .invoke_handler(tauri::generate_handler![command, initialize])
             .build(tauri::generate_context!())
-            .expect("To build tauri app");
-
-        app
+            .expect("To build tauri app")
     }
 }

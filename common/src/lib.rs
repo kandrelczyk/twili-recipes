@@ -1,3 +1,5 @@
-pub mod error;
+pub mod model;
+pub mod config;
 
-pub use error::*;
+pub use model::*;
+pub use config::*;

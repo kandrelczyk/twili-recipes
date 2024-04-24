@@ -32,10 +32,10 @@
         "windows": [
             {
                 "fullscreen": false,
-                "height": 460,
+                "height": 600,
                 "resizable": true,
                 "title": "TwiliRecipes",
-                "width": 300
+                "width": 460
             }
         ]
     }

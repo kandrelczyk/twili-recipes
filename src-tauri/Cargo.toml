@@ -16,13 +16,17 @@ crate-type = ["staticlib", "cdylib", "rlib"]
 tauri-build = {features = [] , version = "2.0.0-beta.10" }
 
 [dependencies]
-template_common = { path = "../common" }
-tauri = { features = ["tray-icon", "image-png", "unstable"] , version = "2.0.0-beta.13" }
+recipes_common = { path = "../common" }
+tauri = { features = ["image-png", "unstable"] , version = "2.0.0-beta.13" }
 serde = { version = "1.0", features = ["derive"] }
 serde_json = "1.0"
 log = "0.4"
 tauri-plugin-log = "2.0.0-beta.1"
 openssl = {version = "0.10.45", features = ["vendored"] }
+reqwest = "0.12.4"
+confy = "0.6.1"
+reqwest_dav = "0.1.9"
+async-trait = "0.1.80"
 
 [features]
 # this feature is used for production builds or when `devPath` points to the filesystem

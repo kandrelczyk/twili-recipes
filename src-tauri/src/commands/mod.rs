@@ -1,3 +1,4 @@
-pub mod example_commands;
+pub mod init_commands;
+pub mod error;
 
-pub use example_commands::*;
+pub use init_commands::*;

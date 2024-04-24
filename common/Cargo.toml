@@ -1,5 +1,5 @@
 [package]
-name = "template_common"
+name = "recipes_common"
 version = "0.1.0"
 edition = "2021"
 
