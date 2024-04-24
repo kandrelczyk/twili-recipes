@@ -6,7 +6,6 @@ pub use chatgpt::*;
 use recipes_common::Recipe;
 
 #[async_trait]
-pub trait AIClient : Send + Sync {
-    fn parse_recipe(self, recipe : &str) -> Recipe;
+pub trait AIClient: Send + Sync {
+    fn parse_recipe(self, recipe: &str) -> Recipe;
 }
-

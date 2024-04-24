@@ -1,5 +1,5 @@
-pub mod model;
 pub mod config;
+pub mod model;
 
-pub use model::*;
 pub use config::*;
+pub use model::*;

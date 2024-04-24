@@ -3,7 +3,7 @@ use leptos::*;
 use leptos_router::{Route, Router, Routes};
 use thaw::{MessagePlacement, MessageProvider};
 
-use crate::components::{Welcome, recipes::List};
+use crate::components::{recipes::List, Welcome};
 
 #[component]
 pub fn App() -> impl IntoView {
@@ -20,4 +20,3 @@ pub fn App() -> impl IntoView {
         </main>
     }
 }
-

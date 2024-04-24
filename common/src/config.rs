@@ -1,15 +1,14 @@
 use serde::{Deserialize, Serialize};
 
-
 #[derive(Serialize, Deserialize, Clone, Debug)]
 pub enum LLM {
     Copilot,
-    GPT
+    GPT,
 }
 
 #[derive(Serialize, Deserialize, Clone, Debug)]
 pub enum RecipesSource {
-    Cloud
+    Cloud,
 }
 
 #[derive(Serialize, Deserialize, Clone, Debug)]
@@ -19,7 +18,7 @@ pub struct Config {
     pub recipes_source: RecipesSource,
     pub cloud_uri: String,
     pub cloud_username: String,
-    pub cloud_pass: String
+    pub cloud_pass: String,
 }
 
 impl Config {
@@ -29,14 +28,14 @@ impl Config {
 }
 
 impl std::default::Default for Config {
-    fn default() -> Self { 
-        Self { 
+    fn default() -> Self {
+        Self {
             llm: LLM::Copilot,
             ai_token: "".to_owned(),
             recipes_source: RecipesSource::Cloud,
             cloud_uri: "".to_owned(),
             cloud_username: "".to_owned(),
-            cloud_pass: "".to_owned()
+            cloud_pass: "".to_owned(),
         }
     }
 }

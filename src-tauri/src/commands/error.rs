@@ -16,7 +16,9 @@ impl fmt::Display for CommandError {
 
 impl From<ConfyError> for CommandError {
     fn from(value: ConfyError) -> Self {
-        CommandError { reason: format!("Failed to read config: {:?}", value)}
+        CommandError {
+            reason: format!("Failed to read config: {:?}", value),
+        }
     }
 }
 impl Error for CommandError {}

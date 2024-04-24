@@ -1,8 +1,8 @@
 use leptos::*;
 use serde::{Deserialize, Serialize};
 use serde_wasm_bindgen::{from_value, to_value};
-use wasm_bindgen::prelude::*;
 use thaw::Button;
+use wasm_bindgen::prelude::*;
 
 use crate::error::CommandError;
 

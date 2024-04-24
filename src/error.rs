@@ -13,4 +13,4 @@ impl fmt::Display for CommandError {
     }
 }
 
-impl Error for CommandError{}
+impl Error for CommandError {}

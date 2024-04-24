@@ -1,10 +1,9 @@
-mod commands;
 mod ai;
+mod commands;
 mod recipes;
 
-
-use commands::{command, initialize};
 use ai::AIClient;
+use commands::{command, initialize};
 use recipes::RecipesProvider;
 use tauri::{async_runtime::Mutex, App};
 use tauri_plugin_log::{Target, TargetKind};
@@ -38,8 +37,7 @@ impl AppBuilder {
     pub fn build_app(self) -> App {
         let setup = self.setup;
 
-
-        let provider : Mutex<Option<Box<dyn RecipesProvider>>> = Mutex::new(None);
+        let provider: Mutex<Option<Box<dyn RecipesProvider>>> = Mutex::new(None);
         let ai_parser: Mutex<Option<Box<dyn AIClient>>> = Mutex::new(None);
 
         tauri::Builder::default()

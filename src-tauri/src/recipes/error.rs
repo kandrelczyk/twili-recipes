@@ -12,4 +12,4 @@ impl fmt::Display for RecipesError {
     }
 }
 
-impl Error for RecipesError{}
+impl Error for RecipesError {}
