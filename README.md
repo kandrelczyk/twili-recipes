@@ -18,7 +18,7 @@ It has examples of:
 
 Follow the typical Tauri setup process for your platform. Install all dependencies listed in prerequisites.
 
-Install trunk and tailwindcss (`npm install -g tailwindcss`).
+Install trunk (`cargo install trunk`) and tailwindcss (`npm install -g tailwindcss`).
 
 
 ### Desktop app
