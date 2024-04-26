@@ -28,6 +28,13 @@ Make sure you have tauri-cli updated to the latestes version.
 
 Run `cargo tauri dev`
 
+#### note
+
+In case having problems with running `cargo tauri dev`
+make sure you have following things installed:
+- cargo install tauri-cli@2.0.0-beta.14 --locked
+- cargo install trunk
+
 ### Android app
 
 To build the app for Android on Linux insert following into .bashrc:
