@@ -18,7 +18,7 @@ It has examples of:
 
 Follow the typical Tauri setup process for your platform. Install all dependencies listed in prerequisites.
 
-Install trunk and tailwindcss (`npm install -g tailwindcss`).
+Install trunk (`cargo install trunk`) and tailwindcss (`npm install -g tailwindcss`).
 
 
 ### Desktop app
@@ -27,6 +27,13 @@ Install trunk and tailwindcss (`npm install -g tailwindcss`).
 Make sure you have tauri-cli updated to the latestes version.
 
 Run `cargo tauri dev`
+
+#### note
+
+In case having problems with running `cargo tauri dev`
+make sure you have following things installed:
+- cargo install tauri-cli@2.0.0-beta.14 --locked
+- cargo install trunk
 
 ### Android app
 
