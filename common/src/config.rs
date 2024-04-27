@@ -42,7 +42,7 @@ impl std::default::Default for Config {
             3. when writing steps replace the ingredients with <name> where name is one of the ingredient listed at the beginning. If ingredient is not listed in the initial list keep it in it`s original form. Make sure the only names listed in the "ingredients" are used in the body. For example if the recipe says "Ingredients: 12 Chicken Eggs. Step 1. Add milk and eggs" change it to "Add milk and <Chicken Eggs>". "Milk" is not changed to "<Milk>" because it`s not listed as ingredient. 
                 4. return only the JSON as response without any whitespace characters. 
                 5. For quantities provided as fractions change then to decimal values. 
-                6. If a step contains wait time (for example "bake for 15 minutes") include the "time" property in step with correct time in minutes, for example '"time": 15'."#.to_owned(),
+                6. If a step contains some execution or wait time (for example "bake for 15 minutes") "time" properoty of a given step should be equal to this time. Otherise it should be 0."#.to_owned(),
             recipes_source: RecipesSource::Cloud,
             cloud_uri: "".to_owned(),
             cloud_username: "".to_owned(),
