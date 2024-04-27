@@ -1,5 +1,7 @@
+use ::serde_json::Value;
 use async_trait::async_trait;
 use recipes_common::Recipe;
+use reqwest_dav::re_exports::serde_json;
 use serde_json::json;
 
 use crate::ai::AIClient;
@@ -42,10 +44,20 @@ impl AIClient for ChatGTPClient {
             .send()
             .await?;
 
-        println!("{:?}", res.text().await?);
+        let json_str = res.text().await?;
+        let result: Value = serde_json::from_str(&json_str)?;
+        let recipe_json = result["choices"]
+            .as_array()
+            .expect("Invalid response from openai API")
+            .first()
+            .expect("Invalid response from openai API")["message"]
+            .as_object()
+            .expect("Invalid response from openai API")["content"]
+            .as_str()
+            .expect("Invalid response from openai API");
 
-        Ok(Recipe {
-            name: "text".to_owned(),
-        })
+        let recipe: Recipe = serde_json::from_str(recipe_json)?;
+
+        Ok(recipe)
     }
 }
