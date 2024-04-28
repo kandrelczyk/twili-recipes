@@ -36,13 +36,6 @@ async fn test_results() -> WebDriverResult<()> {
         .first()
         .await?;
     elem.wait_until().displayed().await?;
-    let button = driver.find(By::Tag("button")).await?;
-    button.click().await?;
-    let elem = driver
-        .query(By::XPath("//p[text()[contains(., 'Error Response')]]"))
-        .first()
-        .await?;
-    elem.wait_until().displayed().await?;
 
     // tauri_driver.kill() sends SIGKILL which is not handled by tauri driver (it will not
     // terminate WebKitWebDriver)

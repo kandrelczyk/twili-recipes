@@ -1,10 +1,12 @@
 use async_trait::async_trait;
+use recipes_common::Recipe;
 use reqwest_dav::{list_cmd::ListEntity, Auth, Client, ClientBuilder, Depth};
 
 use super::{error::RecipesError, RecipesProvider};
 
 pub struct NCClient {
     dav_client: Client,
+    path: String,
 }
 
 impl NCClient {
@@ -18,6 +20,7 @@ impl NCClient {
                 .set_auth(Auth::Basic(username.to_owned(), password.to_owned()))
                 .build()
                 .unwrap(),
+            path: ".TwiliRecipes".to_owned(),
         }
     }
 }
@@ -35,7 +38,7 @@ impl RecipesProvider for NCClient {
     async fn list_recipes(&self) -> Result<Vec<String>, RecipesError> {
         let result: Vec<String> = self
             .dav_client
-            .list(".TwiliRecipes", Depth::Number(1))
+            .list(&self.path, Depth::Number(1))
             .await?
             .into_iter()
             .filter(|le| match le {
@@ -52,5 +55,17 @@ impl RecipesProvider for NCClient {
             .collect();
 
         Ok(result)
+    }
+
+    async fn save_recipe(&self, recipe: Recipe) -> Result<(), RecipesError> {
+        let recipe_json: String = serde_json::to_string(&recipe)?;
+        self.dav_client
+            .put(
+                &format!("{}/{}", self.path, recipe.name.unwrap()),
+                recipe_json,
+            )
+            .await?;
+
+        Ok(())
     }
 }

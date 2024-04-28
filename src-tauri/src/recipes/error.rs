@@ -12,4 +12,12 @@ impl fmt::Display for RecipesError {
     }
 }
 
+impl From<serde_json::Error> for RecipesError {
+    fn from(value: serde_json::Error) -> Self {
+        RecipesError {
+            reason: format!("Failed to serialize recipe: {:?}", value),
+        }
+    }
+}
+
 impl Error for RecipesError {}
