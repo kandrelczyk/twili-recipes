@@ -1,6 +1,8 @@
+use std::error::Error;
+
 use async_trait::async_trait;
-use recipes_common::Recipe;
-use reqwest_dav::{list_cmd::ListEntity, Auth, Client, ClientBuilder, Depth};
+use recipes_common::{ListEntry, Recipe};
+use reqwest_dav::{re_exports::reqwest::StatusCode, Auth, Client, ClientBuilder, ServerError};
 
 use super::{error::RecipesError, RecipesProvider};
 
@@ -33,38 +35,82 @@ impl From<reqwest_dav::Error> for RecipesError {
     }
 }
 
-#[async_trait]
-impl RecipesProvider for NCClient {
-    async fn list_recipes(&self) -> Result<Vec<String>, RecipesError> {
-        let result: Vec<String> = self
-            .dav_client
-            .list(&self.path, Depth::Number(1))
-            .await?
-            .into_iter()
-            .filter(|le| match le {
-                ListEntity::File(_) => true,
-                ListEntity::Folder(_) => false,
-            })
-            .map(|le| {
-                if let ListEntity::File(file) = le {
-                    file.href
-                } else {
-                    "".to_owned()
-                }
-            })
-            .collect();
+impl From<reqwest_dav::re_exports::reqwest::Error> for RecipesError {
+    fn from(value: reqwest_dav::re_exports::reqwest::Error) -> Self {
+        Self {
+            reason: format!("{:?}", value),
+        }
+    }
+}
 
-        Ok(result)
+static LIST_FILE_NAME: &str = ".list.json";
+
+impl NCClient {
+    async fn save_list(&self, list: &Vec<ListEntry>) -> Result<(), RecipesError> {
+        let recipe_json: String = serde_json::to_string(list)?;
+        self.dav_client
+            .put(&format!("{}/{}", self.path, LIST_FILE_NAME), recipe_json)
+            .await?;
+
+        Ok(())
     }
 
-    async fn save_recipe(&self, recipe: Recipe) -> Result<(), RecipesError> {
+    async fn add_to_list(&self, recipe: &Recipe) -> Result<(), RecipesError> {
+        let mut recipes: Vec<ListEntry> = self.list_recipes().await?;
+
+        let id = recipe.id.as_ref().unwrap().clone();
+        let recipe_entry = recipes.iter_mut().find(|r| r.filename.eq(&id));
+
+        match recipe_entry {
+            Some(entry) => entry.name.clone_from(recipe.name.as_ref().unwrap()),
+            None => recipes.push(ListEntry {
+                name: recipe.name.as_ref().unwrap().clone(),
+                filename: id,
+            }),
+        }
+
+        self.save_list(&recipes).await?;
+
+        Ok(())
+    }
+}
+
+#[async_trait]
+impl RecipesProvider for NCClient {
+    async fn list_recipes(&self) -> Result<Vec<ListEntry>, RecipesError> {
+        let response = self
+            .dav_client
+            .get(&format!("{}/{}", self.path, LIST_FILE_NAME))
+            .await;
+
+        if response.is_err() {
+            self.save_list(&Vec::<ListEntry>::new()).await?;
+            return Ok(Vec::new());
+        }
+
+        let recipes: Vec<ListEntry> = serde_json::from_str(&response?.text().await?)?;
+
+        Ok(recipes)
+    }
+
+    async fn save_recipe(&self, mut recipe: Recipe) -> Result<(), RecipesError> {
+        if recipe.id.is_none() {
+            recipe.id = Some(uuid::Uuid::new_v4().to_string());
+        }
+
         let recipe_json: String = serde_json::to_string(&recipe)?;
         self.dav_client
             .put(
-                &format!("{}/{}", self.path, recipe.name.unwrap()),
+                &format!(
+                    "{}/{}",
+                    self.path,
+                    recipe.id.as_ref().expect("Missing filename")
+                ),
                 recipe_json,
             )
             .await?;
+
+        self.add_to_list(&recipe).await?;
 
         Ok(())
     }

@@ -2,6 +2,7 @@ use serde::{Deserialize, Serialize};
 
 #[derive(Debug, Clone, PartialEq, Serialize, Deserialize)]
 pub struct Recipe {
+    pub id: Option<String>,
     pub name: Option<String>,
     pub ingredients: Vec<Ingredient>,
     pub steps: Vec<Step>,
@@ -18,4 +19,10 @@ pub struct Ingredient {
 pub struct Step {
     pub desc: String,
     pub time: i32,
+}
+
+#[derive(Debug, Clone, PartialEq, Serialize, Deserialize)]
+pub struct ListEntry {
+    pub name: String,
+    pub filename: String,
 }

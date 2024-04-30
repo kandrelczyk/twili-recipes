@@ -3,7 +3,7 @@ mod commands;
 mod recipes;
 
 use ai::AIClient;
-use commands::{initialize, save_recipe};
+use commands::{initialize, list_recipes, save_recipe};
 use recipes::RecipesProvider;
 use tauri::{async_runtime::Mutex, App};
 use tauri_plugin_log::{Target, TargetKind};
@@ -59,7 +59,11 @@ impl AppBuilder {
                 }
                 Ok(())
             })
-            .invoke_handler(tauri::generate_handler![save_recipe, initialize])
+            .invoke_handler(tauri::generate_handler![
+                initialize,
+                save_recipe,
+                list_recipes
+            ])
             .build(tauri::generate_context!())
             .expect("To build tauri app")
     }

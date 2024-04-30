@@ -1,7 +1,7 @@
 use leptos::*;
 use recipes_common::Recipe;
 use serde::{Deserialize, Serialize};
-use serde_wasm_bindgen::{from_value, to_value};
+use serde_wasm_bindgen::to_value;
 use wasm_bindgen::prelude::*;
 
 use crate::error::CommandError;
@@ -19,21 +19,24 @@ struct Args {
 
 #[component]
 pub fn List() -> impl IntoView {
-    let resource = create_resource(
+    let resource: Resource<(), Result<String, CommandError>> = create_resource(
         || (),
         move |_| async move {
-            let args = to_value(&Args {
+            let _args = to_value(&Args {
                 recipe: Recipe {
+                    id: None,
                     name: Some("test".to_owned()),
                     ingredients: Vec::new(),
                     steps: Vec::new(),
                 },
             })
             .unwrap();
-            match invoke("save_recipe", args).await {
-                Ok(_) => Ok("Ok Response".to_owned()),
-                Err(error) => Err(from_value::<CommandError>(error).expect("To parse CustomError")),
-            }
+
+            Ok("Ok Response".to_owned())
+            //            match invoke("save_recipe", args).await {
+            //               Ok(_) => Ok("Ok Response".to_owned()),
+            //              Err(error) => Err(from_value::<CommandError>(error).expect("To parse CustomError")),
+            //         }
         },
     );
 
