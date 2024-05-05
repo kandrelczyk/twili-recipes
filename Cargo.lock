@@ -2039,6 +2039,15 @@ dependencies = [
 ]
 
 [[package]]
+name = "icondata_bi"
+version = "0.0.10"
+source = "registry+https://github.com/rust-lang/crates.io-index"
+checksum = "c6ce125f0d203e66444b02982af9b15631f2385573ad7992af79d4d4babc638d"
+dependencies = [
+ "icondata_core",
+]
+
+[[package]]
 name = "icondata_core"
 version = "0.1.0"
 source = "registry+https://github.com/rust-lang/crates.io-index"
@@ -5332,6 +5341,7 @@ version = "0.0.0"
 dependencies = [
  "console_error_panic_hook",
  "console_log",
+ "icondata_bi",
  "js-sys",
  "leptos",
  "leptos_meta",

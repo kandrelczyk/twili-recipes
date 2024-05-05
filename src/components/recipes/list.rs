@@ -1,9 +1,15 @@
 use leptos::*;
-use recipes_common::Recipe;
+use recipes_common::{ListEntry, Recipe};
 use serde::{Deserialize, Serialize};
-use serde_wasm_bindgen::to_value;
+use serde_wasm_bindgen::from_value;
+use thaw::{
+    Alert, AlertVariant, Button, ButtonVariant, Drawer, DrawerMount, DrawerPlacement, Icon, Input,
+    Spinner,
+};
+use thaw::{GlobalStyle, Theme, ThemeProvider};
 use wasm_bindgen::prelude::*;
 
+use crate::components::recipes::{ListItem, Menu};
 use crate::error::CommandError;
 
 #[wasm_bindgen]
@@ -19,58 +25,111 @@ struct Args {
 
 #[component]
 pub fn List() -> impl IntoView {
-    let resource: Resource<(), Result<String, CommandError>> = create_resource(
-        || (),
-        move |_| async move {
-            let _args = to_value(&Args {
-                recipe: Recipe {
-                    id: None,
-                    name: Some("test".to_owned()),
-                    ingredients: Vec::new(),
-                    steps: Vec::new(),
-                },
-            })
-            .unwrap();
+    let search = create_rw_signal(String::from(""));
+    let show_menu = create_rw_signal(false);
+    let dark_mode = create_rw_signal(true);
+    let theme = create_rw_signal(Theme::dark());
+    let reload_count = create_rw_signal(0);
 
-            Ok("Ok Response".to_owned())
-            //            match invoke("save_recipe", args).await {
-            //               Ok(_) => Ok("Ok Response".to_owned()),
-            //              Err(error) => Err(from_value::<CommandError>(error).expect("To parse CustomError")),
-            //         }
-        },
-    );
+    let theme_clb = create_memo(move |_| {
+        theme.set(match dark_mode.get() {
+            true => Theme::dark(),
+            false => Theme::light(),
+        });
+    });
+
+    let recipes = create_resource(reload_count, move |_| async move {
+        match invoke("list_recipes", JsValue::NULL).await {
+            Ok(list) => {
+                Ok(from_value::<Vec<ListEntry>>(list).expect("Failed to parse Vec<ListEntry>"))
+            }
+            Err(error) => {
+                Err(from_value::<CommandError>(error).expect("Failed to parse CustomError"))
+            }
+        }
+    });
 
     view! {
-        <main class="p-4">
-            Return error:
-                        <Suspense fallback=move || {
-                            view! {
-                                <p>
-                                    Loading...
-                                </p>
-                            }
-                        }>
-                            <ErrorBoundary fallback=|errors| {
-                                view! {<p>
+        <ThemeProvider theme>
+            <GlobalStyle/>
+            {move || theme_clb.get()}
+            <main class="flex flex-col h-full w-full items-center justify-start">
+                <div class="p-1 flex flex-row w-full items-center border-b border-slate-500">
+                    <Button
+                        class="ml-1 absolute"
+                        variant=ButtonVariant::Text
+                        round=true
+                        on_click=move |_| show_menu.set(true)
+                    >
+                        <Icon width="1.5em" height="1.5em" icon=icondata_bi::BiMenuRegular/>
+                    </Button>
+                    <div class="w-full flex flex-col items-center">
+                        <Input value=search class="w-1/2" placeholder="Search..."/>
+                    </div>
+                </div>
+                <Drawer
+                    class="sm:w-2/5 w-4/5 max-w-sm"
+                    show=show_menu
+                    mount=DrawerMount::None
+                    placement=DrawerPlacement::Left
+                >
+                    <Menu dark_mode reload_signal=reload_count show_menu/>
+                </Drawer>
+                <Suspense fallback=move || {
+                    view! {
+                        <div class="h-full flex flex-row items-center">
+                            <Spinner/>
+                        </div>
+                    }
+                }>
+                    <ErrorBoundary fallback=move |errors| {
+                        view! {
+                            <div class="flex max-w-4xl p-4 flex-col text-wrap break-all h-full justify-center">
+                                <Alert variant=AlertVariant::Error title="Failed to load recipes">
+                                    <p>
                                         {move || {
                                             errors
                                                 .get()
                                                 .into_iter()
-                                                .map(|(_, e)| {e.to_string()})
+                                                .map(|(_, e)| { e.to_string() })
                                                 .collect_view()
                                         }}
+
                                     </p>
-                                }
-                            }>
+                                </Alert>
+                                <Button
+                                    class="w-32 mt-2 mx-auto"
+                                    on_click=move |_| reload_count.set(reload_count.get() + 1)
+                                    icon=icondata_bi::BiRevisionRegular
+                                    variant=ButtonVariant::Outlined
+                                >
+                                    Try again
+                                </Button>
+                            </div>
+                        }
+                    }>
+                        <div class="flex flex-row flex-wrap gap-4 pt-4">
+                            {move || {
+                                recipes
+                                    .and_then(|response| {
+                                        response
+                                            .iter()
+                                            .filter(|recipe| {
+                                                recipe
+                                                    .name
+                                                    .to_lowercase()
+                                                    .contains(&search.get().to_lowercase())
+                                            })
+                                            .map(|recipe| view! { <ListItem item=recipe.clone()/> })
+                                            .collect_view()
+                                    })
+                            }}
 
-                                {move || {
-                                   resource
-                                        .and_then(|response| { view!{ <p>{response}</p>}})
-                                    }
-                                }
-                            </ErrorBoundary>
-                        </Suspense>
+                        </div>
+                    </ErrorBoundary>
+                </Suspense>
 
-        </main>
+            </main>
+        </ThemeProvider>
     }
 }

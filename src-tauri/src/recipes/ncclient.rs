@@ -1,8 +1,6 @@
-use std::error::Error;
-
 use async_trait::async_trait;
 use recipes_common::{ListEntry, Recipe};
-use reqwest_dav::{re_exports::reqwest::StatusCode, Auth, Client, ClientBuilder, ServerError};
+use reqwest_dav::{Auth, Client, ClientBuilder};
 
 use super::{error::RecipesError, RecipesProvider};
 
@@ -83,13 +81,12 @@ impl RecipesProvider for NCClient {
             .get(&format!("{}/{}", self.path, LIST_FILE_NAME))
             .await;
 
-        if response.is_err() {
+        if response.is_err() && format!("{:?}", response).contains("response_code: 404") {
             self.save_list(&Vec::<ListEntry>::new()).await?;
             return Ok(Vec::new());
         }
 
         let recipes: Vec<ListEntry> = serde_json::from_str(&response?.text().await?)?;
-
         Ok(recipes)
     }
 
