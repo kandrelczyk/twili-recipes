@@ -1,10 +1,11 @@
 use ::serde_json::Value;
 use async_trait::async_trait;
-use recipes_common::Recipe;
 use reqwest_dav::re_exports::serde_json;
 use serde_json::json;
 
 use crate::ai::AIClient;
+
+use super::AIError;
 
 pub struct ChatGTPClient {
     pub token: String,
@@ -19,10 +20,7 @@ impl ChatGTPClient {
 
 #[async_trait]
 impl AIClient for ChatGTPClient {
-    async fn parse_recipe(
-        &self,
-        recipe: String,
-    ) -> Result<recipes_common::Recipe, Box<dyn std::error::Error>> {
+    async fn parse_recipe(&self, recipe: String) -> Result<String, AIError> {
         let client = reqwest::Client::new();
         let res = client
             .post("https://api.openai.com/v1/chat/completions")
@@ -44,20 +42,33 @@ impl AIClient for ChatGTPClient {
             .send()
             .await?;
 
-        let json_str = res.text().await?;
-        let result: Value = serde_json::from_str(&json_str)?;
-        let recipe_json = result["choices"]
-            .as_array()
-            .expect("Invalid response from openai API")
-            .first()
-            .expect("Invalid response from openai API")["message"]
-            .as_object()
-            .expect("Invalid response from openai API")["content"]
-            .as_str()
-            .expect("Invalid response from openai API");
+        if res.status().is_success() {
+            let json_str = res.text().await?;
+            let result: Value = serde_json::from_str(&json_str)?;
+            let recipe = result["choices"]
+                .as_array()
+                .ok_or(AIError {
+                    reason: "Invalid response from openai API".to_owned(),
+                })?
+                .first()
+                .ok_or(AIError {
+                    reason: "Invalid response from openai API".to_owned(),
+                })?["message"]
+                .as_object()
+                .ok_or(AIError {
+                    reason: "Invalid response from openai API".to_owned(),
+                })?["content"]
+                .as_str()
+                .ok_or(AIError {
+                    reason: "Invalid response from openai API".to_owned(),
+                })?
+                .to_owned();
 
-        let recipe: Recipe = serde_json::from_str(recipe_json)?;
-
-        Ok(recipe)
+            Ok(recipe)
+        } else {
+            Err(AIError {
+                reason: format!("Received error response from ChatGPT API: {:?}", res),
+            })
+        }
     }
 }

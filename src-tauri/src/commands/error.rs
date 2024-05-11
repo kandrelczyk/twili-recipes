@@ -3,6 +3,7 @@ use serde::{Deserialize, Serialize};
 use std::error::Error;
 use std::fmt;
 
+use crate::ai::AIError;
 use crate::recipes::error::RecipesError;
 
 #[derive(Debug, Clone, PartialEq, Serialize, Deserialize)]
@@ -31,4 +32,13 @@ impl From<RecipesError> for CommandError {
         }
     }
 }
+
+impl From<AIError> for CommandError {
+    fn from(value: AIError) -> Self {
+        CommandError {
+            reason: format!("Failed perform AI operation: {:?}", value),
+        }
+    }
+}
+
 impl Error for CommandError {}

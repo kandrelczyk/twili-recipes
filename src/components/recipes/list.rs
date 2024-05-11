@@ -1,4 +1,5 @@
 use leptos::*;
+use leptos_router::use_navigate;
 use recipes_common::{ListEntry, Recipe};
 use serde::{Deserialize, Serialize};
 use serde_wasm_bindgen::from_value;
@@ -6,7 +7,6 @@ use thaw::{
     Alert, AlertVariant, Button, ButtonVariant, Drawer, DrawerMount, DrawerPlacement, Icon, Input,
     Spinner,
 };
-use thaw::{GlobalStyle, Theme, ThemeProvider};
 use wasm_bindgen::prelude::*;
 
 use crate::components::recipes::{ListItem, Menu};
@@ -24,19 +24,13 @@ struct Args {
 }
 
 #[component]
-pub fn List() -> impl IntoView {
+pub fn List(dark_mode: RwSignal<bool>) -> impl IntoView {
     let search = create_rw_signal(String::from(""));
     let show_menu = create_rw_signal(false);
-    let dark_mode = create_rw_signal(true);
-    let theme = create_rw_signal(Theme::dark());
     let reload_count = create_rw_signal(0);
+    let navigate = use_navigate();
 
-    let theme_clb = create_memo(move |_| {
-        theme.set(match dark_mode.get() {
-            true => Theme::dark(),
-            false => Theme::light(),
-        });
-    });
+    let add_recipe = move |_| navigate("/add", Default::default());
 
     let recipes = create_resource(reload_count, move |_| async move {
         match invoke("list_recipes", JsValue::NULL).await {
@@ -50,65 +44,63 @@ pub fn List() -> impl IntoView {
     });
 
     view! {
-        <ThemeProvider theme>
-            <GlobalStyle/>
-            {move || theme_clb.get()}
-            <main class="flex flex-col h-full w-full items-center justify-start">
-                <div class="p-1 flex flex-row w-full items-center border-b border-slate-500">
-                    <Button
-                        class="ml-1 absolute"
-                        variant=ButtonVariant::Text
-                        round=true
-                        on_click=move |_| show_menu.set(true)
-                    >
-                        <Icon width="1.5em" height="1.5em" icon=icondata_bi::BiMenuRegular/>
-                    </Button>
-                    <div class="w-full flex flex-col items-center">
-                        <Input value=search class="w-1/2" placeholder="Search..."/>
-                    </div>
-                </div>
-                <Drawer
-                    class="sm:w-2/5 w-4/5 max-w-sm"
-                    show=show_menu
-                    mount=DrawerMount::None
-                    placement=DrawerPlacement::Left
+        <main class="flex flex-col h-full w-full items-center justify-start">
+            <div class="p-1 flex flex-row w-full items-center border-b border-slate-500">
+                <Button
+                    class="ml-1 absolute"
+                    variant=ButtonVariant::Text
+                    round=true
+                    on_click=move |_| show_menu.set(true)
                 >
-                    <Menu dark_mode reload_signal=reload_count show_menu/>
-                </Drawer>
-                <Suspense fallback=move || {
+                    <Icon width="1.5em" height="1.5em" icon=icondata_bi::BiMenuRegular/>
+                </Button>
+                <div class="w-full flex flex-col items-center">
+                    <Input value=search class="w-1/2" placeholder="Search..."/>
+                </div>
+            </div>
+            <Drawer
+                class="sm:w-2/5 w-4/5 max-w-sm"
+                show=show_menu
+                mount=DrawerMount::None
+                placement=DrawerPlacement::Left
+            >
+                <Menu dark_mode reload_signal=reload_count show_menu/>
+            </Drawer>
+            <Suspense fallback=move || {
+                view! {
+                    <div class="h-full flex flex-row items-center">
+                        <Spinner/>
+                    </div>
+                }
+            }>
+                <ErrorBoundary fallback=move |errors| {
                     view! {
-                        <div class="h-full flex flex-row items-center">
-                            <Spinner/>
+                        <div class="flex max-w-4xl p-4 flex-col text-wrap break-all h-full justify-center">
+                            <Alert variant=AlertVariant::Error title="Failed to load recipes">
+                                <p>
+                                    {move || {
+                                        errors
+                                            .get()
+                                            .into_iter()
+                                            .map(|(_, e)| { e.to_string() })
+                                            .collect_view()
+                                    }}
+
+                                </p>
+                            </Alert>
+                            <Button
+                                class="w-32 mt-2 mx-auto"
+                                on_click=move |_| reload_count.set(reload_count.get() + 1)
+                                icon=icondata_bi::BiRevisionRegular
+                                variant=ButtonVariant::Outlined
+                            >
+                                Try again
+                            </Button>
                         </div>
                     }
                 }>
-                    <ErrorBoundary fallback=move |errors| {
-                        view! {
-                            <div class="flex max-w-4xl p-4 flex-col text-wrap break-all h-full justify-center">
-                                <Alert variant=AlertVariant::Error title="Failed to load recipes">
-                                    <p>
-                                        {move || {
-                                            errors
-                                                .get()
-                                                .into_iter()
-                                                .map(|(_, e)| { e.to_string() })
-                                                .collect_view()
-                                        }}
-
-                                    </p>
-                                </Alert>
-                                <Button
-                                    class="w-32 mt-2 mx-auto"
-                                    on_click=move |_| reload_count.set(reload_count.get() + 1)
-                                    icon=icondata_bi::BiRevisionRegular
-                                    variant=ButtonVariant::Outlined
-                                >
-                                    Try again
-                                </Button>
-                            </div>
-                        }
-                    }>
-                        <div class="flex flex-row flex-wrap gap-4 pt-4">
+                    <div class="w-full flex flex-row justify-center p-4">
+                        <div class="flex flex-row flex-wrap gap-4 pt-4 justify-around">
                             {move || {
                                 recipes
                                     .and_then(|response| {
@@ -126,10 +118,15 @@ pub fn List() -> impl IntoView {
                             }}
 
                         </div>
-                    </ErrorBoundary>
-                </Suspense>
-
-            </main>
-        </ThemeProvider>
+                    </div>
+                </ErrorBoundary>
+            </Suspense>
+            <Button
+                on:click=add_recipe
+                circle=true
+                icon=icondata_bi::BiPlusRegular
+                class="fixed bottom-0 right-0 m-6 text-4xl p-4"
+            />
+        </main>
     }
 }
