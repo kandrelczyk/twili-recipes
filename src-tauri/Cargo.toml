@@ -13,11 +13,11 @@ crate-type = ["staticlib", "cdylib", "rlib"]
 
 
 [build-dependencies]
-tauri-build = {features = [] , version = "2.0.0-beta.10" }
+tauri-build = {features = [] , version = "2.0.0-beta.15" }
 
 [dependencies]
 recipes_common = { path = "../common" }
-tauri = { features = ["image-png", "unstable"] , version = "2.0.0-beta.13" }
+tauri = { features = ["image-png", "unstable"] , version = "2.0.0-beta.19" }
 serde = { version = "1.0", features = ["derive"] }
 serde_json = "1.0"
 log = "0.4"

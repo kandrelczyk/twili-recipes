@@ -9,7 +9,7 @@ use thaw::{
 };
 use wasm_bindgen::prelude::*;
 
-use crate::components::recipes::{ListItem, Menu};
+use crate::components::recipes::{Header, ListItem, Menu};
 use crate::error::CommandError;
 
 #[wasm_bindgen]
@@ -45,30 +45,38 @@ pub fn List(dark_mode: RwSignal<bool>) -> impl IntoView {
 
     view! {
         <main class="flex flex-col h-full w-full items-center justify-start">
-            <div class="p-1 flex flex-row w-full items-center border-b border-slate-500">
-                <Button
-                    class="ml-1 absolute"
-                    variant=ButtonVariant::Text
-                    round=true
-                    on_click=move |_| show_menu.set(true)
-                >
-                    <Icon width="1.5em" height="1.5em" icon=icondata_bi::BiMenuRegular/>
-                </Button>
-                <div class="w-full flex flex-col items-center">
-                    <Input value=search class="w-1/2" placeholder="Search..."/>
-                </div>
-            </div>
-            <Drawer
-                class="sm:w-2/5 w-4/5 max-w-sm"
-                show=show_menu
-                mount=DrawerMount::None
-                placement=DrawerPlacement::Left
-            >
-                <Menu dark_mode reload_signal=reload_count show_menu/>
-            </Drawer>
+            <Header
+                button=move || {
+                    view! {
+                        <Button
+                            class="ml-1 absolute"
+                            variant=ButtonVariant::Text
+                            round=true
+                            on_click=move |_| show_menu.set(true)
+                        >
+                            <Icon width="1.5em" height="1.5em" icon=icondata_bi::BiMenuRegular/>
+                        </Button>
+                    }
+                }
+
+                title=move || {
+                    view! {
+                        <Input value=search class="w-1/2" placeholder="Search..."/>
+                        <Drawer
+                            class="sm:w-2/5 w-4/5 max-w-sm"
+                            show=show_menu
+                            mount=DrawerMount::None
+                            placement=DrawerPlacement::Left
+                        >
+                            <Menu dark_mode reload_signal=reload_count show_menu/>
+                        </Drawer>
+                    }
+                }
+            />
+
             <Suspense fallback=move || {
                 view! {
-                    <div class="h-full flex flex-row items-center">
+                    <div class="w-full h-full flex flex-rowl justify-center items-center bg-[url('/public/background.png')]">
                         <Spinner/>
                     </div>
                 }
@@ -99,24 +107,30 @@ pub fn List(dark_mode: RwSignal<bool>) -> impl IntoView {
                         </div>
                     }
                 }>
-                    <div class="w-full flex flex-row justify-center p-4">
-                        <div class="flex flex-row flex-wrap gap-4 pt-4 justify-around">
-                            {move || {
-                                recipes
-                                    .and_then(|response| {
-                                        response
-                                            .iter()
-                                            .filter(|recipe| {
-                                                recipe
-                                                    .name
-                                                    .to_lowercase()
-                                                    .contains(&search.get().to_lowercase())
-                                            })
-                                            .map(|recipe| view! { <ListItem item=recipe.clone()/> })
-                                            .collect_view()
-                                    })
-                            }}
+                    <div class="h-full w-full bg-[url('/public/background.png')]">
+                        <div class="w-full flex flex-row justify-center p-4">
+                            <div class="flex flex-row flex-wrap gap-4 pt-4 justify-around">
+                                {move || {
+                                    recipes
+                                        .and_then(|response| {
+                                            if response.is_empty() {
+                                                view!(<p>"You don't have any recipes yet." </p>).into_view()
+                                            } else {
+                                            response
+                                                .iter()
+                                                .filter(|recipe| {
+                                                    recipe
+                                                        .name
+                                                        .to_lowercase()
+                                                        .contains(&search.get().to_lowercase())
+                                                })
+                                                .map(|recipe| view! { <ListItem item=recipe.clone()/> })
+                                                .collect_view()
+                                            }
+                                        })
+                                }}
 
+                            </div>
                         </div>
                     </div>
                 </ErrorBoundary>

@@ -62,7 +62,7 @@ impl NCClient {
         match recipe_entry {
             Some(entry) => entry.name.clone_from(recipe.name.as_ref().unwrap()),
             None => recipes.push(ListEntry {
-                name: recipe.name.as_ref().unwrap().clone(),
+                name: recipe.name.as_ref().expect("Recipe name not set").clone(),
                 filename: id,
             }),
         }

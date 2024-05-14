@@ -22,12 +22,14 @@ impl ChatGTPClient {
 impl AIClient for ChatGTPClient {
     async fn parse_recipe(&self, recipe: String) -> Result<String, AIError> {
         let client = reqwest::Client::new();
+
         let res = client
             .post("https://api.openai.com/v1/chat/completions")
             .header("Authorization", format!("Bearer {}", self.token))
             .json(&json!(
             {
                 "model": "gpt-3.5-turbo",
+                "temperature": 0.2,
                 "messages": [
                 {
                     "role": "system",
