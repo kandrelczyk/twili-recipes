@@ -1,27 +1,17 @@
-use confy;
-
-use std::sync::Mutex;
-
 use recipes_common::Config;
 
+use super::error::CommandError;
 
 #[tauri::command]
-pub fn get_config(app: tauri::AppHandle, state: tauri::State<Mutex<Config>>) -> Result<Config, AlarmError> {
-    let mut stored_config = state.lock().unwrap();
-    let config : Config = confy::load("twili-recipes", None)?;
+pub fn get_config() -> Result<Config, CommandError> {
+    let config: Config = confy::load("twili-recipes", None)?;
 
-    *stored_config = config.clone();
     Ok(config)
 }
 
 #[tauri::command]
-pub fn save_config(app: tauri::AppHandle, config: Config, state: tauri::State<Mutex<Config>>) {
+pub fn save_config(config: Config) -> Result<(), CommandError> {
+    confy::store("twili-recipes", None, config)?;
 
-    let mut stored_config = state.lock().unwrap();
-
-    *stored_config = config.clone();
-
-    confy::store("weather-alarms", None, config).expect("Failed to store configuration");
+    Ok(())
 }
-
-

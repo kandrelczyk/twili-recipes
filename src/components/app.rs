@@ -5,7 +5,7 @@ use thaw::{GlobalStyle, MessagePlacement, MessageProvider, Theme, ThemeProvider}
 
 use crate::components::{
     recipes::{AddRecipe, List},
-    Welcome,
+    Settings, Welcome,
 };
 
 #[component]
@@ -31,6 +31,8 @@ pub fn App() -> impl IntoView {
                             <Route path="/" view=Welcome/>
                             <Route path="/list" view=move || view! { <List dark_mode/>} />
                             <Route path="/add" view=AddRecipe/>
+                            <Route path="/settings" view=move || view!{<Settings init=false/>}/>
+                            <Route path="/initialize" view=move || view!{<Settings init=true/>}/>
                         </Routes>
                     </Router>
                 </MessageProvider>

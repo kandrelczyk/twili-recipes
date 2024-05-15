@@ -9,7 +9,8 @@ use thaw::{
 };
 use wasm_bindgen::prelude::*;
 
-use crate::components::recipes::{Header, ListItem, Menu};
+use crate::components::recipes::{ListItem, Menu};
+use crate::components::Header;
 use crate::error::CommandError;
 
 #[wasm_bindgen]

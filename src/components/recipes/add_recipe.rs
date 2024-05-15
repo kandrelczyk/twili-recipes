@@ -8,7 +8,7 @@ use thaw::{Button, ButtonVariant, Collapse, CollapseItem, Icon, Modal, TextArea}
 use wasm_bindgen::prelude::*;
 
 use crate::{
-    components::recipes::{EditRecipe, Header},
+    components::{recipes::EditRecipe, Header},
     error::CommandError,
 };
 
@@ -108,11 +108,17 @@ pub fn AddRecipe() -> impl IntoView {
                         view! { Add Recipe }
                     }
                 />
+
                 <div class="flex flex-col items-center h-full w-full bg-[url('/public/background.png')]">
                     <div class="p-2 w-full max-w-xl h-full">
                         <div class="p-1 text-sm w-full h-[95%]">
                             Recipe
-                            <TextArea class="h-full" value=recipe_str disabled=loading invalid=recipe_invalid/>
+                            <TextArea
+                                class="h-full"
+                                value=recipe_str
+                                disabled=loading
+                                invalid=recipe_invalid
+                            />
                         </div>
                     </div>
                     <div class="grow"></div>

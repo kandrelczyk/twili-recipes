@@ -3,7 +3,7 @@ mod commands;
 mod recipes;
 
 use ai::AIClient;
-use commands::{initialize, list_recipes, parse_recipe, save_recipe};
+use commands::{get_config, initialize, list_recipes, parse_recipe, save_config, save_recipe};
 use recipes::RecipesProvider;
 use tauri::{async_runtime::Mutex, App};
 use tauri_plugin_log::{Target, TargetKind};
@@ -63,7 +63,9 @@ impl AppBuilder {
                 initialize,
                 save_recipe,
                 list_recipes,
-                parse_recipe
+                parse_recipe,
+                get_config,
+                save_config
             ])
             .build(tauri::generate_context!())
             .expect("To build tauri app")

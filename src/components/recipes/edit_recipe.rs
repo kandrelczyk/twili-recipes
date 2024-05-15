@@ -12,7 +12,7 @@ use thaw::{
 use wasm_bindgen::prelude::*;
 
 use crate::{
-    components::recipes::{Header, PreviewRecipe},
+    components::{recipes::PreviewRecipe, Header},
     error::CommandError,
 };
 

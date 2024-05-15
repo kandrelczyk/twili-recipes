@@ -34,7 +34,7 @@ impl Config {
 impl std::default::Default for Config {
     fn default() -> Self {
         Self {
-            llm: LLM::Copilot,
+            llm: LLM::GPT,
             ai_token: "".to_owned(),
             ai_prompt: r#"You are a cooking assisatnt. Users send you recipes and you transofrm them into valid JSON. For each recipe received from users you do the following: 
                 1. keep in the original language 

@@ -1,7 +1,6 @@
 use leptos::*;
+use leptos_router::use_navigate;
 use thaw::{Divider, Icon, Switch};
-
-use crate::components::recipes::MenuButton;
 
 #[component]
 pub fn Menu(
@@ -9,6 +8,7 @@ pub fn Menu(
     reload_signal: RwSignal<i32>,
     show_menu: RwSignal<bool>,
 ) -> impl IntoView {
+    let navigate = create_rw_signal(use_navigate());
     let reload = move |_| {
         show_menu.set(false);
         reload_signal.set(reload_signal.get() + 1);
@@ -16,7 +16,7 @@ pub fn Menu(
 
     let go_to_settings = move |_| {
         show_menu.set(false);
-        window().location().set_href("/settings").expect("");
+        navigate.get()("/settings", Default::default());
     };
 
     view! {
@@ -25,20 +25,20 @@ pub fn Menu(
                     <div class="flex flex-row justify-center w-full">Twili Recipes</div>
                     <Divider class="m-2"/>
                 </div>
-                <MenuButton on_click=go_to_settings>
+                <div class="flex flex-row gap-2 items-center hover:text-blue-400 cursor-pointer" on:click=go_to_settings>
                     <Icon icon=icondata_bi::BiCogRegular/>
                     Settings
-                </MenuButton>
+                </div>
                 <div class="flex flex-row gap-2 items-center">
                     <Icon icon=icondata_bi::BiMoonRegular/>
                     Dark mode
                     <div class="grow"></div>
                     <Switch value=dark_mode/>
                 </div>
-                <MenuButton on_click=reload>
+                <div class="flex flex-row gap-2 items-center hover:text-blue-400 cursor-pointer" on:click=reload>
                     <Icon icon=icondata_bi::BiRevisionRegular/>
                     Refresh
-                </MenuButton>
+                </div>
     //            <MenuButton on_click=|_| log::info!("test")>
     //                <Icon icon=icondata_bi::BiPowerOffRegular/>
     //                Quit

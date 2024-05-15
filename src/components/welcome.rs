@@ -1,4 +1,5 @@
 use leptos::*;
+use leptos_router::use_navigate;
 use serde::{Deserialize, Serialize};
 use serde_wasm_bindgen::from_value;
 use thaw::Spinner;
@@ -19,15 +20,17 @@ struct Args {
 
 #[component]
 pub fn Welcome() -> impl IntoView {
+    let navigate = create_rw_signal(use_navigate());
+
     let initialized = create_resource(
         || (),
-        |_| async move {
+        move |_| async move {
             match invoke("initialize", JsValue::NULL).await {
                 Ok(success) => {
                     if from_value(success).expect("Wrong response from command") {
-                        window().location().set_href("/list").expect("");
+                        navigate.get_untracked()("/list", Default::default());
                     } else {
-                        window().location().set_href("/settings").expect("");
+                        navigate.get_untracked()("/initialize", Default::default());
                     }
                     Ok(())
                 }
@@ -38,7 +41,7 @@ pub fn Welcome() -> impl IntoView {
 
     view! {
         <main class="p-4 flex justify-center items-center w-full h-full">
-            <Suspense fallback=move || {
+            <Suspense fallback=|| {
                 view! { <Spinner/> }
             }>
                 <ErrorBoundary fallback=|errors| {
