@@ -1,20 +1,21 @@
-# Tauri + Leptos
+### Twili Recipes
 
-This template should help get you started developing with Tauri and Leptos. 
+Simple app to help you with cooking.
 
-It uses Tauri 2.0beta and Leptos 0.6.
+Twili is not just another recipe manager. It's main focus is on ease of use. It's main features include:
 
-It has examples of:
+- Use LLM to automatically parse recipes - simply copy and paste recipes from any website
+- NextCloud integrationto easily share recipes between devices
+- Multiplatform support using Tauri
 
-* command returning `Result` that can be used with `create_resource`, `Suspense` and `ErrorBoundary`.
-* command accepting no arguments
-* sending events to the front-end
-* logging on both front-end and back-end
-* Tailwind CSS integration
-* Tray Icon
-* Itegration test using tauri-driver
 
-### Setup
+
+
+This project is still under development. 
+
+It currently supports NextCloud and ChatGPT but other cloud and LLM services can be easily added in the future. 
+
+### Build
 
 Follow the typical Tauri setup process for your platform. Install all dependencies listed in prerequisites.
 
@@ -77,6 +78,3 @@ Don't forget to change namespace and applicationId parameters in the grandle bui
 
 Install tauri-driver and WebKitWebDriver (https://tauri.app/v1/guides/testing/webdriver/introduction). Build the app using `cargo tauri build`. Run the test using `cargo test`. 
 
-### Android Auto support
-
-Work in progress
