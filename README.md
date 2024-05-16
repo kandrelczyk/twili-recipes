@@ -2,13 +2,13 @@
 
 Simple app to help you with cooking.
 
-Twili is not just another recipe manager. It's main focus is on ease of use. It's main features include:
+Twili is not just another recipe manager. It's a cooking assistant app focusing 
+maily on ease of use. It's main features include:
 
 - Use LLM to automatically parse recipes - simply copy and paste recipes from any website
-- NextCloud integrationto easily share recipes between devices
-- Multiplatform support using Tauri
-
-
+- NextCloud integrationto to easily share recipes between devices
+- Multiplatform support (desktop and mobile)
+- Unique recipe presentation to save you a lot of scrolling 
 
 
 This project is still under development. 
