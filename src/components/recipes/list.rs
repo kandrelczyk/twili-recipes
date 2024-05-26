@@ -61,19 +61,18 @@ pub fn List(dark_mode: RwSignal<bool>) -> impl IntoView {
                 }
 
                 title=move || {
-                    view! {
-                        <Input value=search class="w-1/2" placeholder="Search..."/>
-                        <Drawer
-                            class="sm:w-2/5 w-4/5 max-w-sm"
-                            show=show_menu
-                            mount=DrawerMount::None
-                            placement=DrawerPlacement::Left
-                        >
-                            <Menu dark_mode reload_signal=reload_count show_menu/>
-                        </Drawer>
-                    }
+                    view! { <Input value=search class="w-1/2" placeholder="Search..."/> }
                 }
             />
+
+            <Drawer
+                class="sm:w-2/5 w-4/5 max-w-sm"
+                show=show_menu
+                mount=DrawerMount::None
+                placement=DrawerPlacement::Left
+            >
+                <Menu dark_mode reload_signal=reload_count show_menu/>
+            </Drawer>
 
             <Suspense fallback=move || {
                 view! {
@@ -115,18 +114,19 @@ pub fn List(dark_mode: RwSignal<bool>) -> impl IntoView {
                                     recipes
                                         .and_then(|response| {
                                             if response.is_empty() {
-                                                view!(<p>"You don't have any recipes yet." </p>).into_view()
+                                                view! { <p>"You don't have any recipes yet."</p> }
+                                                    .into_view()
                                             } else {
-                                            response
-                                                .iter()
-                                                .filter(|recipe| {
-                                                    recipe
-                                                        .name
-                                                        .to_lowercase()
-                                                        .contains(&search.get().to_lowercase())
-                                                })
-                                                .map(|recipe| view! { <ListItem item=recipe.clone()/> })
-                                                .collect_view()
+                                                response
+                                                    .iter()
+                                                    .filter(|recipe| {
+                                                        recipe
+                                                            .name
+                                                            .to_lowercase()
+                                                            .contains(&search.get().to_lowercase())
+                                                    })
+                                                    .map(|recipe| view! { <ListItem item=recipe.clone()/> })
+                                                    .collect_view()
                                             }
                                         })
                                 }}

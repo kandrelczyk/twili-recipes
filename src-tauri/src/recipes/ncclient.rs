@@ -111,4 +111,20 @@ impl RecipesProvider for NCClient {
 
         Ok(())
     }
+
+    async fn get_recipe(&self, filename: String) -> Result<Recipe, RecipesError> {
+        let response = self
+            .dav_client
+            .get(&format!("{}/{}", self.path, filename))
+            .await;
+
+        if response.is_err() && format!("{:?}", response).contains("response_code: 404") {
+            return Err(RecipesError {
+                reason: format!("File {} not found", filename),
+            });
+        }
+
+        let recipe: Recipe = serde_json::from_str(&response?.text().await?)?;
+        Ok(recipe)
+    }
 }

@@ -4,7 +4,7 @@ use leptos_router::use_navigate;
 use recipes_common::Config;
 use serde::{Deserialize, Serialize};
 use serde_wasm_bindgen::{from_value, to_value};
-use thaw::{Button, ButtonVariant, Divider, Icon, Input, Spinner};
+use thaw::{use_message, Button, ButtonVariant, Divider, Icon, Input, MessageOptions, Spinner};
 use wasm_bindgen::prelude::*;
 
 use crate::{components::Header, error::CommandError};
@@ -23,7 +23,7 @@ struct Args {
 #[component]
 pub fn Settings(init: bool) -> impl IntoView {
     let navigate = create_rw_signal(use_navigate());
-
+    let message = use_message();
     let loading = create_rw_signal(false);
     let command_error: RwSignal<Option<CommandError>> = create_rw_signal(None);
 
@@ -86,7 +86,11 @@ pub fn Settings(init: bool) -> impl IntoView {
                     }
                     Err(err) => command_error.set(Some(from_value::<CommandError>(err).unwrap())),
                 };
-                loading.set(false);
+                message.create(
+                    "Saved".to_owned(),
+                    thaw::MessageVariant::Success,
+                    Default::default(),
+                );
             });
         }
     };

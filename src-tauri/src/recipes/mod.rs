@@ -10,4 +10,5 @@ use self::error::RecipesError;
 pub trait RecipesProvider: Send + Sync {
     async fn list_recipes(&self) -> Result<Vec<ListEntry>, RecipesError>;
     async fn save_recipe(&self, recipe: Recipe) -> Result<(), RecipesError>;
+    async fn get_recipe(&self, filename: String) -> Result<Recipe, RecipesError>;
 }

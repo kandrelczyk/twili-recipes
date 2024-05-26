@@ -77,7 +77,7 @@ pub fn EditRecipe(
                             MessageVariant::Success,
                             Default::default(),
                         );
-                        navigate.get()("/list", Default::default());
+                        navigate.get_untracked()("/list", Default::default());
                     }
                     Err(err) => error.set(Some(from_value::<CommandError>(err).unwrap())),
                 };
