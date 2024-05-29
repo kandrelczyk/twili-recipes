@@ -1,5 +1,4 @@
 use leptos::*;
-use recipes_common::Step;
 
 #[component]
 pub fn RecipeStep(step: String) -> impl IntoView {

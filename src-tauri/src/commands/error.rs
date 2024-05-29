@@ -1,4 +1,3 @@
-use confy::ConfyError;
 use serde::{Deserialize, Serialize};
 use std::error::Error;
 use std::fmt;
@@ -17,14 +16,6 @@ impl fmt::Display for CommandError {
     }
 }
 
-impl From<ConfyError> for CommandError {
-    fn from(value: ConfyError) -> Self {
-        CommandError {
-            reason: format!("Failed to read config: {:?}", value),
-        }
-    }
-}
-
 impl From<RecipesError> for CommandError {
     fn from(value: RecipesError) -> Self {
         CommandError {
@@ -40,5 +31,11 @@ impl From<AIError> for CommandError {
         }
     }
 }
-
+impl From<tauri_plugin_store::Error> for CommandError {
+    fn from(value: tauri_plugin_store::Error) -> Self {
+        CommandError {
+            reason: format!("Failed to store config: {:?}", value),
+        }
+    }
+}
 impl Error for CommandError {}

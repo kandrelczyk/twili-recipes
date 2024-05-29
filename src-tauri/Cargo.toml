@@ -24,10 +24,10 @@ log = "0.4"
 tauri-plugin-log = "2.0.0-beta.1"
 openssl = {version = "0.10.45", features = ["vendored"] }
 reqwest = "0.12.4"
-confy = "0.6.1"
 reqwest_dav = "0.1.9"
 async-trait = "0.1.80"
 uuid = {version = "1.8.0", features = ["v4"] }
+tauri-plugin-store = "2.0.0-beta.6"
 
 [features]
 # this feature is used for production builds or when `devPath` points to the filesystem

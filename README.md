@@ -69,9 +69,11 @@ Run `cargo tauri android init` and `cargo tauri android dev`
 Follow instructions at https://next--tauri.netlify.app/next/guides/distribution/sign-android/
 You can use the included local.properties and build.gradle.kts template files.
 
-Copy `local.properties_template` to `/src-tauri/gen/android/local.properties`. 
+Copy `AndroidManifest_template.xml` to `src-tauri/gen/android/app/src/main/AndroidManifest.xml`.
 
-Copy `app_build.gradle.kts_template` to `/src-tauri/gen/android/app/build.gradle.kts`.
+Copy `local.properties_template` to `src-tauri/gen/android/local.properties`. 
+
+Copy `app_build.gradle.kts_template` to `src-tauri/gen/android/app/build.gradle.kts`.
 Don't forget to change namespace and applicationId parameters in the grandle build template. 
 
 ### Integration tests

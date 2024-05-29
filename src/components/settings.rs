@@ -4,7 +4,7 @@ use leptos_router::use_navigate;
 use recipes_common::Config;
 use serde::{Deserialize, Serialize};
 use serde_wasm_bindgen::{from_value, to_value};
-use thaw::{use_message, Button, ButtonVariant, Divider, Icon, Input, MessageOptions, Spinner};
+use thaw::{use_message, Button, ButtonVariant, Divider, Icon, Input, Spinner};
 use wasm_bindgen::prelude::*;
 
 use crate::{components::Header, error::CommandError};

@@ -43,6 +43,7 @@ impl AppBuilder {
         let ai_parser: Mutex<Option<Box<dyn AIClient>>> = Mutex::new(None);
 
         tauri::Builder::default()
+            .plugin(tauri_plugin_store::Builder::new().build())
             .manage(ai_parser)
             .manage(provider)
             .plugin(
@@ -55,10 +56,12 @@ impl AppBuilder {
                     .level(log::LevelFilter::Info)
                     .build(),
             )
+            .plugin(tauri_plugin_store::Builder::default().build())
             .setup(move |app| {
                 if let Some(setup) = setup {
                     (setup)(app)?;
                 }
+
                 Ok(())
             })
             .invoke_handler(tauri::generate_handler![

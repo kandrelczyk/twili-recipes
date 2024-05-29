@@ -1,5 +1,6 @@
 use recipes_common::Config;
-use tauri::async_runtime::Mutex;
+use tauri::{async_runtime::Mutex, Wry};
+use tauri_plugin_store::StoreCollection;
 
 use crate::{
     ai::{AIClient, ChatGTPClient},
@@ -7,12 +8,16 @@ use crate::{
     recipes::{ncclient::NCClient, RecipesProvider},
 };
 
+use super::get_stored_or_default_config;
+
 #[tauri::command]
 pub async fn initialize(
+    app_handle: tauri::AppHandle,
+    store: tauri::State<'_, StoreCollection<Wry>>,
     manager: tauri::State<'_, Mutex<Option<Box<dyn RecipesProvider>>>>,
     ai_client: tauri::State<'_, Mutex<Option<Box<dyn AIClient>>>>,
 ) -> Result<bool, CommandError> {
-    let config: Config = confy::load("twili-recipes", None)?;
+    let config: Config = get_stored_or_default_config(app_handle, store);
 
     if config.all_present() {
         let mut m = manager.lock().await;

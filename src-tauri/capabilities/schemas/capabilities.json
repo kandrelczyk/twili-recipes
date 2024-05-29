@@ -1,0 +1,1 @@
+{"run-app":{"identifier":"run-app","description":"permissions to run the app","context":"local","windows":["main","main-*"],"permissions":["path:default","event:default","app:default","resources:default","menu:default","tray:default","log:default","window:default","webview:default"],"platforms":["linux","macOS","windows","android","iOS"]}}
