@@ -1,0 +1,8 @@
+debug.log
+
+/.tauri
+/target
+Cargo.lock
+
+dist-js
+dist

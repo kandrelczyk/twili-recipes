@@ -53,37 +53,45 @@ pub fn RecipePanels(recipe: Recipe) -> impl IntoView {
 
             </div>
             <div class="grow"></div>
-            <div class="flex flex-row sm:gap-4 gap-2 m-4 justify-center items-center">
-                <Button on_click=move |_| page.update(|p| *p -= 1) disabled=first_page>
+            <div class="flex flex-row m-4 justify-center items-center">
+                <div class="grow"></div>
+                <Button class="m-2" on_click=move |_| page.update(|p| *p -= 1) disabled=first_page>
                     <Icon width="1.5em" height="1.5em" icon=icondata_bi::BiChevronLeftSolid/>
                 </Button>
-                {move || {
-                    (0..page_count)
-                        .map(|p| {
-                            view! {
-                                <p>
+                <div
+                    class="flex flex-row flex-wrap justify-center items-center sm:gap-4 gap-1"
+                >
+                    {move || {
+                        (0..page_count)
+                            .map(|p| {
+                                view! {
+                                    <p>
 
-                                    <Icon
-                                        width="1em"
-                                        height="1em"
-                                        icon=if p == page.get() as usize {
-                                            icondata_bi::BiCircleSolid
-                                        } else {
-                                            icondata_bi::BiCircleRegular
-                                        }
-                                    />
+                                        <Icon
+                                            on:click=move |_| page.set(p)
+                                            width="1em"
+                                            height="1em"
+                                            icon=if p == page.get() as usize {
+                                                icondata_bi::BiCircleSolid
+                                            } else {
+                                                icondata_bi::BiCircleRegular
+                                            }
+                                        />
 
-                                </p>
-                            }
-                                .into_view()
-                        })
-                        .collect::<Vec<View>>()
-                }}
+                                    </p>
+                                }
+                                    .into_view()
+                            })
+                            .collect::<Vec<View>>()
+                    }}
 
-                <Button on_click=move |_| page.update(|p| *p += 1) disabled=last_page>
+                </div>
+                <Button class="m-2" on_click=move |_| page.update(|p| *p += 1) disabled=last_page>
                     <Icon width="1.5em" height="1.5em" icon=icondata_bi::BiChevronRightSolid/>
                 </Button>
+                <div class="grow"></div>
             </div>
         </div>
     }
 }
+

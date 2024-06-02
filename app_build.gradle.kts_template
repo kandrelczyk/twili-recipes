@@ -12,10 +12,10 @@ localProperties.load(FileInputStream(localPropertiesFile))
 
 android {
     compileSdk = 33
-    namespace = "net.tauri_leptos"
+    namespace = "net.curiana"
     defaultConfig {
         manifestPlaceholders["usesCleartextTraffic"] = "false"
-        applicationId = "net.tauri_leptos"
+        applicationId = "net.curiana"
         minSdk = 24
         targetSdk = 33
         versionCode = 1
@@ -67,7 +67,6 @@ dependencies {
     testImplementation("junit:junit:4.13.2")
     androidTestImplementation("androidx.test.ext:junit:1.1.4")
     androidTestImplementation("androidx.test.espresso:espresso-core:3.5.0")
-    implementation("androidx.car.app:app:1.2.0")
 }
 
 repositories {

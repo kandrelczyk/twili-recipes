@@ -41,9 +41,9 @@ impl AppBuilder {
 
         let provider: Mutex<Option<Box<dyn RecipesProvider>>> = Mutex::new(None);
         let ai_parser: Mutex<Option<Box<dyn AIClient>>> = Mutex::new(None);
-
         tauri::Builder::default()
             .plugin(tauri_plugin_store::Builder::new().build())
+            .plugin(tauri_plugin_keep_screen_on::init())
             .manage(ai_parser)
             .manage(provider)
             .plugin(
