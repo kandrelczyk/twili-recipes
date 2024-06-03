@@ -94,4 +94,3 @@ pub fn RecipePanels(recipe: Recipe) -> impl IntoView {
         </div>
     }
 }
-
