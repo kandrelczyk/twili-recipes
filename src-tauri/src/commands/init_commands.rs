@@ -1,3 +1,5 @@
+use std::sync::{Arc, OnceLock};
+
 use recipes_common::Config;
 use tauri::{async_runtime::Mutex, Wry};
 use tauri_plugin_store::StoreCollection;
@@ -16,8 +18,9 @@ pub async fn initialize(
     store: tauri::State<'_, StoreCollection<Wry>>,
     manager: tauri::State<'_, Mutex<Option<Box<dyn RecipesProvider>>>>,
     ai_client: tauri::State<'_, Mutex<Option<Box<dyn AIClient>>>>,
+    config_file: tauri::State<'_, Arc<OnceLock<String>>>,
 ) -> Result<bool, CommandError> {
-    let config: Config = get_stored_or_default_config(app_handle, store);
+    let config: Config = get_stored_or_default_config(app_handle, store, config_file).await;
 
     if config.all_present() {
         let mut m = manager.lock().await;

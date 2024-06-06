@@ -25,17 +25,17 @@ pub fn Menu(
                     <div class="flex flex-row justify-center w-full">Twili Recipes</div>
                     <Divider class="m-2"/>
                 </div>
-                <div class="flex flex-row gap-2 items-center hover:text-blue-400 cursor-pointer" on:click=go_to_settings>
+                <div id="settings" class="flex flex-row gap-2 items-center hover:text-blue-400 cursor-pointer" on:click=go_to_settings>
                     <Icon icon=icondata_bi::BiCogRegular/>
                     Settings
                 </div>
-                <div class="flex flex-row gap-2 items-center">
+                <div id="dark_mode" class="flex flex-row gap-2 items-center">
                     <Icon icon=icondata_bi::BiMoonRegular/>
                     Dark mode
                     <div class="grow"></div>
                     <Switch value=dark_mode/>
                 </div>
-                <div class="flex flex-row gap-2 items-center hover:text-blue-400 cursor-pointer" on:click=reload>
+                <div id="refresh" class="flex flex-row gap-2 items-center hover:text-blue-400 cursor-pointer" on:click=reload>
                     <Icon icon=icondata_bi::BiRevisionRegular/>
                     Refresh
                 </div>

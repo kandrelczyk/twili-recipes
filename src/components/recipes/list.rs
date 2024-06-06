@@ -45,7 +45,7 @@ pub fn List(dark_mode: RwSignal<bool>) -> impl IntoView {
     });
 
     view! {
-        <main class="flex flex-col h-full w-full items-center justify-start">
+        <main on:keyup=move |e| log::info!("{:?}", e) class="flex flex-col h-full w-full items-center justify-start">
             <Header
                 button=move || {
                     view! {

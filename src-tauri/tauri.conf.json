@@ -11,6 +11,16 @@
     "plugins": {
         "shell": {
             "open": true
+        },
+        "cli": {
+            "args": [
+                {
+                    "short": "c",
+                    "name": "config",
+                    "description": "Config file name",
+                    "takesValue": true
+                }
+            ]
         }
     },
     "bundle": {

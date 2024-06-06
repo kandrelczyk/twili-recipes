@@ -107,7 +107,9 @@ pub fn Settings(init: bool) -> impl IntoView {
                                 class="ml-1 absolute"
                                 variant=ButtonVariant::Text
                                 round=true
-                                on:click=move |_| navigate.get_untracked()("/list", Default::default())
+                                on:click=move |_| {
+                                    navigate .get_untracked()("/list", Default::default())
+                                }
                             >
                                 <Icon
                                     width="1.5em"
@@ -122,50 +124,60 @@ pub fn Settings(init: bool) -> impl IntoView {
 
                 title=move || { if init { "Initial setup" } else { "Settings" } }
             />
-            {move || if init || has_config.get() {
-                view! {
-                    <div class="flex flex-col items-center h-full w-full bg-[url('/public/background.png')]">
-                        <div class="p-2 w-full max-w-xl h-full">
-                            <div class="p-1 text-sm w-full">
-                                ChatGPT API Token
-                                <Input value=llm_token disabled=loading invalid=llm_token_invalid/>
+            {move || {
+                if init || has_config.get() {
+                    view! {
+                        <div class="flex flex-col items-center h-full w-full bg-[url('/public/background.png')]">
+                            <div class="p-2 w-full max-w-xl h-full">
+                                <div id="api_token" class="p-1 text-sm w-full">
+                                    ChatGPT API Token
+                                    <Input
+                                        value=llm_token
+                                        disabled=loading
+                                        invalid=llm_token_invalid
+                                    />
+                                </div>
+                                <Divider/>
+                                <div id="cloud_uri" class="p-1 mt-4 text-sm w-full">
+                                    Nextcloud URI
+                                    <Input
+                                        value=cloud_uri
+                                        disabled=loading
+                                        invalid=cloud_uri_invalid
+                                    />
+                                </div>
+                                <div id="cloud_username" class="p-1 mt-4 text-sm w-full">
+                                    Nextcloud username
+                                    <Input
+                                        value=cloud_username
+                                        disabled=loading
+                                        invalid=cloud_username_invalid
+                                    />
+                                </div>
+                                <div id="cloud_pass" class="p-1 mt-4 text-sm w-full">
+                                    Nextcloud password
+                                    <Input
+                                        value=cloud_pass
+                                        disabled=loading
+                                        invalid=cloud_pass_invalid
+                                    />
+                                </div>
                             </div>
-                            <Divider/>
-                            <div class="p-1 mt-4 text-sm w-full">
-                                Nextcloud URI
-                                <Input value=cloud_uri disabled=loading invalid=cloud_uri_invalid/>
-                            </div>
-                            <div class="p-1 mt-4 text-sm w-full">
-                                Nextcloud username
-                                <Input
-                                    value=cloud_username
-                                    disabled=loading
-                                    invalid=cloud_username_invalid
-                                />
-                            </div>
-                            <div class="p-1 mt-4 text-sm w-full">
-                                Nextcloud password
-                                <Input
-                                    value=cloud_pass
-                                    disabled=loading
-                                    invalid=cloud_pass_invalid
-                                />
-                            </div>
+                            <div class="grow"></div>
+                            <Button on:click=submit loading class="m-4">
+                                Save
+                            </Button>
                         </div>
-                        <div class="grow"></div>
-                        <Button on:click=submit loading class="m-4">
-                            Save
-                        </Button>
-                    </div>
+                    }
+                        .into_view()
+                } else {
+                    view! {
+                        <div class="flex flex-col h-full justify-center">
+                            <Spinner/>
+                        </div>
+                    }
+                        .into_view()
                 }
-                    .into_view()
-            } else {
-                view! {
-                    <div class="flex flex-col h-full justify-center">
-                        <Spinner/>
-                    </div>
-                }
-                    .into_view()
             }}
 
         </main>

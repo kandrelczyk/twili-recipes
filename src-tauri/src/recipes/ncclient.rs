@@ -11,12 +11,14 @@ pub struct NCClient {
 
 impl NCClient {
     pub fn new(host: String, username: String, password: String) -> Self {
+        let hostname = match !host.starts_with("https://") && !host.starts_with("http://") {
+            true => format!("https://{}", host),
+            false => host,
+        };
+
         NCClient {
             dav_client: ClientBuilder::new()
-                .set_host(format!(
-                    "https://{}/remote.php/dav/files/{}/",
-                    host, username
-                ))
+                .set_host(format!("{}/remote.php/dav/files/{}/", hostname, username))
                 .set_auth(Auth::Basic(username.to_owned(), password.to_owned()))
                 .build()
                 .unwrap(),

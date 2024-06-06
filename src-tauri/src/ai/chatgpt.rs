@@ -29,7 +29,7 @@ impl AIClient for ChatGTPClient {
             .json(&json!(
             {
                 "model": "gpt-3.5-turbo",
-                "temperature": 0.2,
+                "temperature": 0.0,
                 "messages": [
                 {
                     "role": "system",

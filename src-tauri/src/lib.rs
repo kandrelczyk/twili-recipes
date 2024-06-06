@@ -2,12 +2,15 @@ mod ai;
 mod commands;
 mod recipes;
 
+use std::sync::{Arc, OnceLock};
+
 use ai::AIClient;
 use commands::{
     get_config, get_recipe, initialize, list_recipes, parse_recipe, save_config, save_recipe,
 };
 use recipes::RecipesProvider;
 use tauri::{async_runtime::Mutex, App};
+use tauri_plugin_cli::CliExt;
 use tauri_plugin_log::{Target, TargetKind};
 
 #[cfg(mobile)]
@@ -41,11 +44,15 @@ impl AppBuilder {
 
         let provider: Mutex<Option<Box<dyn RecipesProvider>>> = Mutex::new(None);
         let ai_parser: Mutex<Option<Box<dyn AIClient>>> = Mutex::new(None);
+        let config_file: Arc<OnceLock<String>> = Arc::new(OnceLock::new());
+
         tauri::Builder::default()
             .plugin(tauri_plugin_store::Builder::new().build())
             .plugin(tauri_plugin_keep_screen_on::init())
             .manage(ai_parser)
             .manage(provider)
+            .manage(config_file.clone())
+            .plugin(tauri_plugin_cli::init())
             .plugin(
                 tauri_plugin_log::Builder::default()
                     .clear_targets()
@@ -61,7 +68,25 @@ impl AppBuilder {
                 if let Some(setup) = setup {
                     (setup)(app)?;
                 }
-
+                match app.cli().matches() {
+                    Ok(matches) => {
+                        if let Some(cfg_flag) = matches.args.get("config") {
+                            if let Some(value) = cfg_flag.value.as_str() {
+                                config_file
+                                    .set(value.to_owned())
+                                    .expect("Failed to set settings file");
+                            }
+                        }
+                    }
+                    Err(err) => {
+                        log::error!("failed to parse cli arguments: {}", err.to_string());
+                    }
+                };
+                if config_file.get().is_none() {
+                    config_file
+                        .set(".settings.dat".to_owned())
+                        .expect("Failed to set settings file");
+                }
                 Ok(())
             })
             .invoke_handler(tauri::generate_handler![
