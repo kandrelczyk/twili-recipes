@@ -73,6 +73,16 @@ impl NCClient {
 
         Ok(())
     }
+
+    async fn delete_from_list(&self, filename: &String) -> Result<(), RecipesError> {
+        let mut recipes: Vec<ListEntry> = self.list_recipes().await?;
+
+        recipes.retain(|f| f.filename != *filename);
+
+        self.save_list(&recipes).await?;
+
+        Ok(())
+    }
 }
 
 #[async_trait]
@@ -110,6 +120,21 @@ impl RecipesProvider for NCClient {
             .await?;
 
         self.add_to_list(&recipe).await?;
+
+        Ok(())
+    }
+    async fn delete_recipe(&self, filename: String) -> Result<(), RecipesError> {
+        let response = self
+            .dav_client
+            .delete(&format!("{}/{}", self.path, filename))
+            .await;
+
+        if response.is_err() && format!("{:?}", response).contains("response_code: 404") {
+            return Err(RecipesError {
+                reason: format!("Failed to delete recipe: {:?}", response),
+            });
+        }
+        self.delete_from_list(&filename).await?;
 
         Ok(())
     }

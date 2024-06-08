@@ -14,6 +14,16 @@ pub async fn save_recipe(
 }
 
 #[tauri::command]
+pub async fn delete_recipe(
+    filename: String,
+    manager: tauri::State<'_, Mutex<Option<Box<dyn RecipesProvider>>>>,
+) -> Result<(), CommandError> {
+    let m = manager.lock().await;
+
+    Ok(m.as_ref().unwrap().delete_recipe(filename).await?)
+}
+
+#[tauri::command]
 pub async fn get_recipe(
     filename: String,
     manager: tauri::State<'_, Mutex<Option<Box<dyn RecipesProvider>>>>,

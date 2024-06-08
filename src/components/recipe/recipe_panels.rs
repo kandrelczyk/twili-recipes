@@ -1,22 +1,22 @@
 use leptos::*;
 use recipes_common::Recipe;
-use thaw::{Button, Icon};
+use thaw::{Button, Icon, Slider};
 
 use crate::components::{RecipeIngredients, RecipeStep};
 
 #[component]
 pub fn RecipePanels(recipe: Recipe) -> impl IntoView {
-    let page = create_rw_signal(0);
-    let page_count = recipe.steps.len();
+    let page = create_rw_signal(0.0);
+    let page_count = recipe.steps.len() as f64;
 
     let multiplier = create_rw_signal(1.0);
 
     let recipe = store_value(recipe);
-    let first_page = Signal::derive(move || page.get() == 0);
-    let last_page = Signal::derive(move || page.get() == recipe().steps.len() - 1);
+    let first_page = Signal::derive(move || page.get() == 0.0);
+    let last_page = Signal::derive(move || page.get() as usize == recipe().steps.len() - 1);
 
     let step = create_memo(move |_| {
-        let mut step = recipe().steps[page.get()].desc.clone();
+        let mut step = recipe().steps[page.get() as usize].desc.clone();
         recipe().ingredients.iter().for_each(|i| {
             step = step.replace(
                 format!("[{}]", i.name).as_str(),
@@ -38,12 +38,12 @@ pub fn RecipePanels(recipe: Recipe) -> impl IntoView {
         <div class="flex flex-col h-[90%] w-full bg-[url('/public/background.png')]">
             <div class="w-full flex flex-col overflow-scroll items-center">
                 {move || {
-                    if page.get() == 0 {
+                    if page.get() == 0.0 {
                         view! { <RecipeIngredients recipe multiplier=multiplier/> }.into_view()
                     } else {
                         view! {
                             <div class="w-full text-xl text-center p-4">
-                                Step {page} / {page_count - 1}
+                                Step {page} / {page_count - 1.0}
                             </div>
                             <RecipeStep step=step.get()/>
                         }
@@ -55,38 +55,11 @@ pub fn RecipePanels(recipe: Recipe) -> impl IntoView {
             <div class="grow"></div>
             <div class="flex flex-row m-4 justify-center items-center">
                 <div class="grow"></div>
-                <Button class="m-2" on_click=move |_| page.update(|p| *p -= 1) disabled=first_page>
+                <Button class="m-2" on_click=move |_| page.update(|p| *p -= 1.0) disabled=first_page>
                     <Icon width="1.5em" height="1.5em" icon=icondata_bi::BiChevronLeftSolid/>
                 </Button>
-                <div
-                    class="flex flex-row flex-wrap justify-center items-center sm:gap-4 gap-1"
-                >
-                    {move || {
-                        (0..page_count)
-                            .map(|p| {
-                                view! {
-                                    <p>
-
-                                        <Icon
-                                            on:click=move |_| page.set(p)
-                                            width="1em"
-                                            height="1em"
-                                            icon=if p == page.get() as usize {
-                                                icondata_bi::BiCircleSolid
-                                            } else {
-                                                icondata_bi::BiCircleRegular
-                                            }
-                                        />
-
-                                    </p>
-                                }
-                                    .into_view()
-                            })
-                            .collect::<Vec<View>>()
-                    }}
-
-                </div>
-                <Button class="m-2" on_click=move |_| page.update(|p| *p += 1) disabled=last_page>
+                <Slider step=1.0 max={page_count - 1.0} value=page class="w-full m-4"/>
+                <Button class="m-2" on_click=move |_| page.update(|p| *p += 1.0) disabled=last_page>
                     <Icon width="1.5em" height="1.5em" icon=icondata_bi::BiChevronRightSolid/>
                 </Button>
                 <div class="grow"></div>

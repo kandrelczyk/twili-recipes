@@ -17,7 +17,7 @@ js-sys = "0.3"
 console_log = "1.0.0"
 recipes_common = { path = "./common" }
 console_error_panic_hook = "0.1.7"
-thaw = { version= "0.3.2", features = ["csr"] }
+thaw = { path = "../thaw/thaw", features = ["csr"] }
 icondata_bi = "0.0.10"
 icondata_ri = "0.0.10"
 

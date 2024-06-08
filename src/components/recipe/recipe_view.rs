@@ -3,11 +3,14 @@ use leptos_router::{use_navigate, use_params, Params};
 use recipes_common::Recipe;
 use serde::Serialize;
 use serde_wasm_bindgen::{from_value, to_value};
-use thaw::{Alert, AlertVariant, Button, ButtonVariant, Icon, Spinner};
+use thaw::{
+    use_message, Alert, AlertVariant, Button, ButtonColor, ButtonVariant, Icon, Modal, Popover,
+    PopoverTrigger, PopoverTriggerType, Spinner,
+};
 use wasm_bindgen::prelude::*;
 
 use crate::{
-    components::{Header, RecipePanels},
+    components::{ActionsSlot, Header, RecipePanels},
     error::CommandError,
 };
 
@@ -17,7 +20,7 @@ struct RecipeParams {
 }
 
 #[derive(Serialize)]
-struct GetArgs {
+struct RecipeArgs {
     filename: String,
 }
 
@@ -30,11 +33,20 @@ extern "C" {
 #[component]
 pub fn RecipeView() -> impl IntoView {
     let navigate = create_rw_signal(use_navigate());
+    let message = use_message();
     let params = use_params::<RecipeParams>();
 
-    let filename = params;
-    let recipe = create_resource(filename, move |f| async move {
-        let args = to_value(&GetArgs {
+    let show_modal = create_rw_signal(false);
+    let show_error_modal = create_rw_signal(false);
+    let delete_error = create_rw_signal(None::<String>);
+
+    let filename = params
+        .get_untracked()
+        .expect("Missing param")
+        .filename
+        .clone();
+    let recipe = create_resource(params, move |f| async move {
+        let args = to_value(&RecipeArgs {
             filename: f.expect("Missing filename param").filename,
         })
         .expect("Failed to create params");
@@ -42,8 +54,34 @@ pub fn RecipeView() -> impl IntoView {
         match invoke("get_recipe", args).await {
             Ok(recipe) => Ok(from_value::<Recipe>(recipe).expect("Failed to parse Recipe")),
             Err(error) => {
-                Err(from_value::<CommandError>(error).expect("Failed to parse CustomError"))
+                Err(from_value::<CommandError>(error).expect("Failed to parse CommandError"))
             }
+        }
+    });
+
+    let delete_recipe = create_action(move |file: &String| {
+        let filename = file.clone();
+        async move {
+            let args = to_value(&RecipeArgs { filename }).expect("Failed to create args");
+
+            match invoke("delete_recipe", args).await {
+                Ok(_) => {
+                    message.create(
+                        "Recipe deleted".to_owned(),
+                        thaw::MessageVariant::Success,
+                        Default::default(),
+                    );
+                    navigate.get_untracked()("/list", Default::default());
+                }
+                Err(error) => {
+                    show_error_modal.set(true);
+                    delete_error.set(Some(format!(
+                        "{:?}",
+                        from_value::<CommandError>(error).expect("Failed to parse CommandError")
+                    )));
+                }
+            };
+            show_modal.set(false);
         }
     });
 
@@ -69,7 +107,80 @@ pub fn RecipeView() -> impl IntoView {
                 }
 
                 title=move || view! { {recipe.and_then(|r| r.name.clone())} }
-            />
+            >
+                <ActionsSlot slot>
+                    <Popover
+                        class="m-2"
+                        trigger_type=PopoverTriggerType::Click
+                        placement=thaw::PopoverPlacement::BottomEnd
+                    >
+                        <PopoverTrigger slot>
+                            <Button class="mr-1" variant=ButtonVariant::Text round=true>
+                                <Icon
+                                    width="1.5em"
+                                    height="1.5em"
+                                    icon=icondata_bi::BiDotsVerticalRegular
+                                />
+                            </Button>
+                        </PopoverTrigger>
+                        <div class="flex flex-col gap-4 text-lg">
+                            <div
+                                id="settings"
+                                class="flex flex-row gap-2 items-center hover:text-blue-400 cursor-pointer"
+                            >
+                                <Icon icon=icondata_bi::BiEditAltSolid/>
+                                Edit
+                            </div>
+                            <div
+                                on:click=move |_| show_modal.set(true)
+                                id="settings"
+                                class="flex flex-row gap-2 items-center hover:text-blue-400 cursor-pointer"
+                            >
+                                <Icon icon=icondata_bi::BiTrashRegular/>
+                                Delete
+                                <Modal
+                                    class="max-w-lg w-[80%]"
+                                    title="Are you sure?"
+                                    mask_closeable=false
+                                    close_on_esc=false
+                                    closable=false
+                                    show=show_modal
+                                >
+                                    <div class="flex px-2 sm:px-8 gap-2">
+                                        <Button
+                                            on_click=move |_| show_modal.set(false)
+                                            variant=ButtonVariant::Outlined
+                                        >
+                                            Cancel
+                                        </Button>
+                                        <div class="flex-grow"></div>
+                                        <Button
+                                            loading=delete_recipe.pending()
+                                            on:click=move |_| delete_recipe.dispatch(filename.clone())
+                                            color=ButtonColor::Error
+                                        >
+                                            Delete
+                                        </Button>
+                                    </div>
+                                </Modal>
+                                <Modal
+                                    class="max-w-lg w-[80%]"
+                                    show=show_error_modal
+                                    title="Failed to delete recipe"
+                                >
+                                    <div class="flex px-2 sm:px-8 gap-2">
+                                        <Alert
+                                            variant=AlertVariant::Error
+                                        >
+                                            <p>{move || delete_error.get()}</p>
+                                        </Alert>
+                                    </div>
+                                </Modal>
+                            </div>
+                        </div>
+                    </Popover>
+                </ActionsSlot>
+            </Header>
 
             <Suspense fallback=move || {
                 view! {

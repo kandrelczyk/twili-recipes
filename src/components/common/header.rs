@@ -1,8 +1,17 @@
 use leptos::*;
 use thaw::{use_theme, Theme};
 
+#[slot]
+pub struct ActionsSlot {
+    children: Children,
+}
+
 #[component]
-pub fn Header(#[prop(into)] button: ViewFn, #[prop(into)] title: ViewFn) -> impl IntoView {
+pub fn Header(
+    #[prop(into)] button: ViewFn,
+    #[prop(into)] title: ViewFn,
+    #[prop(optional)] actions_slot: Option<ActionsSlot>,
+) -> impl IntoView {
     let theme = use_theme(Theme::dark);
     let css_vars = create_memo(move |_| {
         theme.with(|theme| {
@@ -19,6 +28,11 @@ pub fn Header(#[prop(into)] button: ViewFn, #[prop(into)] title: ViewFn) -> impl
         >
             {move || button.run()}
             <div class="w-full flex flex-col items-center text-xl">{move || title.run()}</div>
+            {if let Some(ActionsSlot {children}) = actions_slot {
+                (children)().into_view()
+            } else {
+                ().into_view()
+            }}
         </div>
     }
 }

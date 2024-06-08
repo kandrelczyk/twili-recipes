@@ -6,7 +6,8 @@ use std::sync::{Arc, OnceLock};
 
 use ai::AIClient;
 use commands::{
-    get_config, get_recipe, initialize, list_recipes, parse_recipe, save_config, save_recipe,
+    delete_recipe, get_config, get_recipe, initialize, list_recipes, parse_recipe, save_config,
+    save_recipe,
 };
 use recipes::RecipesProvider;
 use tauri::{async_runtime::Mutex, App};
@@ -94,6 +95,7 @@ impl AppBuilder {
                 save_recipe,
                 list_recipes,
                 get_recipe,
+                delete_recipe,
                 parse_recipe,
                 get_config,
                 save_config
