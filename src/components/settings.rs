@@ -42,6 +42,10 @@ pub fn Settings(init: bool) -> impl IntoView {
     let cloud_pass_invalid = create_rw_signal(false);
 
     if !init {
+        let listener = leptos::window_event_listener_untyped("popstate", move |_| {
+            navigate.get_untracked()("/list", Default::default())
+        });
+        on_cleanup(|| listener.remove());
         spawn_local(async move {
             match invoke("get_config", JsValue::NULL).await {
                 Ok(config) => {
@@ -108,9 +112,10 @@ pub fn Settings(init: bool) -> impl IntoView {
                                 variant=ButtonVariant::Text
                                 round=true
                                 on:click=move |_| {
-                                    navigate .get_untracked()("/list", Default::default())
+                                    navigate.get_untracked()("/list", Default::default())
                                 }
                             >
+
                                 <Icon
                                     width="1.5em"
                                     height="1.5em"

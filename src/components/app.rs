@@ -1,6 +1,6 @@
 use leptos::*;
 
-use leptos_router::{use_navigate, Route, Router, Routes};
+use leptos_router::{Route, Router, Routes};
 use thaw::{GlobalStyle, MessagePlacement, MessageProvider, Theme, ThemeProvider};
 
 use crate::components::{
@@ -27,10 +27,6 @@ pub fn App() -> impl IntoView {
                 {move || theme_clb.get()}
                 <MessageProvider placement=MessagePlacement::Top>
                     <Router>
-                    {
-                        let navigate = create_rw_signal(use_navigate());
-                        leptos::window_event_listener_untyped("popstate", move |_| navigate.get_untracked()("/", Default::default()));
-                    }
                         <Routes>
                             <Route path="/" view=Welcome/>
                             <Route path="/list" view=move || view! { <List dark_mode/>} />

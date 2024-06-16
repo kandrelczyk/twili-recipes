@@ -59,6 +59,16 @@ pub fn AddRecipe() -> impl IntoView {
         }
     };
 
+    let listener = leptos::window_event_listener_untyped("popstate", move |_| {
+        if recipe.get().is_none() {
+            navigate.get_untracked()("/list", Default::default())
+        } else {
+            recipe.set(None);
+        }
+    });
+
+    on_cleanup(|| listener.remove());
+
     view! {
         <Show
             when=move || recipe.get().is_none()
@@ -84,7 +94,6 @@ pub fn AddRecipe() -> impl IntoView {
                     </CollapseItem>
                 </Collapse>
             </Modal>
-            // TODO: extract header component
             <main class="flex flex-col items-center h-full">
                 <Header
                     button=move || {
