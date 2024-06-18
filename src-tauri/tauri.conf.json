@@ -1,6 +1,6 @@
 {
     "productName": "TwiliRecipes",
-    "identifier": "net.curiana",
+    "identifier": "net.curiana.recipes",
     "version": "0.0.1",
     "build": {
         "beforeBuildCommand": "trunk build",

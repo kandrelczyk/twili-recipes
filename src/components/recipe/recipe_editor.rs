@@ -57,7 +57,7 @@ pub fn RecipeEditor(
 
             match invoke("save_recipe", args).await {
                 Ok(_) => {
-                    on_save.call(());
+                    Callable::call(&on_save, ());
                 }
                 Err(error) => {
                     save_error.set(Some(
@@ -79,7 +79,7 @@ pub fn RecipeEditor(
                                 width="1.5em"
                                 height="1.5em"
                                 icon=icondata_bi::BiChevronLeftSolid
-                                on:click=move |_| on_back.call(())
+                                on:click=move |_| Callable::call(&on_back, ())
                             />
                         </Button>
                     }
