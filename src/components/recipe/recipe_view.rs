@@ -4,8 +4,8 @@ use recipes_common::Recipe;
 use serde::Serialize;
 use serde_wasm_bindgen::{from_value, to_value};
 use thaw::{
-    use_message, Alert, AlertVariant, Button, ButtonColor, ButtonVariant, Icon, Modal, Popover,
-    PopoverTrigger, PopoverTriggerType, Spinner,
+    use_message, Alert, AlertVariant, Button, ButtonColor, ButtonVariant, Dropdown, DropdownItem,
+    DropdownTrigger, Icon, Modal, Spinner,
 };
 use wasm_bindgen::prelude::*;
 
@@ -137,12 +137,10 @@ pub fn RecipeView() -> impl IntoView {
                 >
                     <ActionsSlot slot>
                         <Show fallback=|| view!{} when=move || recipe.get().is_some()>
-                            <Popover
-                                class="m-2"
-                                trigger_type=PopoverTriggerType::Click
-                                placement=thaw::PopoverPlacement::BottomEnd
+                            <Dropdown
+                                placement=thaw::DropdownPlacement::BottomEnd
                             >
-                                <PopoverTrigger slot>
+                                <DropdownTrigger slot>
                                     <Button class="mr-1" variant=ButtonVariant::Text round=true>
                                         <Icon
                                             width="1.5em"
@@ -150,23 +148,15 @@ pub fn RecipeView() -> impl IntoView {
                                             icon=icondata_bi::BiDotsVerticalRegular
                                         />
                                     </Button>
-                                </PopoverTrigger>
-                                <div class="flex flex-col gap-4 text-lg">
-                                    <div
-                                        on:click=move |_| show_editor.set(true)
-                                        id="settings"
-                                        class="flex flex-row gap-2 items-center hover:text-blue-400 cursor-pointer"
-                                    >
-                                        <Icon icon=icondata_bi::BiEditAltSolid/>
-                                        Edit JSON
-                                    </div>
-                                    <div
-                                        on:click=move |_| show_modal.set(true)
-                                        id="settings"
-                                        class="flex flex-row gap-2 items-center hover:text-blue-400 cursor-pointer"
-                                    >
-                                        <Icon icon=icondata_bi::BiTrashRegular/>
-                                        Delete
+                                </DropdownTrigger>
+                                    <DropdownItem
+                                        on_click=move |_| show_editor.set(true)
+                                        label="Edit JSON"
+                                        icon=icondata_bi::BiEditAltSolid/>
+                                    <DropdownItem
+                                        on_click=move |_| show_modal.set(true)
+                                        label="Delete"
+                                        icon=icondata_bi::BiTrashRegular/>
                                         <Modal
                                             class="max-w-lg w-[80%]"
                                             title="Are you sure?"
@@ -205,9 +195,7 @@ pub fn RecipeView() -> impl IntoView {
                                                 </Alert>
                                             </div>
                                         </Modal>
-                                    </div>
-                                </div>
-                            </Popover>
+                            </Dropdown>
                         </Show>
                     </ActionsSlot>
                 </Header>

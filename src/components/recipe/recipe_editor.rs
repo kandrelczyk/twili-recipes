@@ -74,7 +74,7 @@ pub fn RecipeEditor(
             <Header
                 button=move || {
                     view! {
-                        <Button class="ml-1 absolute" variant=ButtonVariant::Text round=true>
+                        <Button class="ml-1 absolute" variant=ButtonVariant::Text round=true disabled=saving>
                             <Icon
                                 width="1.5em"
                                 height="1.5em"
