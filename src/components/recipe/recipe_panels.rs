@@ -7,16 +7,16 @@ use crate::components::{RecipeIngredients, RecipeStep};
 #[component]
 pub fn RecipePanels(recipe: Recipe) -> impl IntoView {
     let page = create_rw_signal(0.0);
-    let page_count = recipe.steps.len() as f64;
+    let page_count = recipe.steps.len() as f64 + 1.0;
 
     let multiplier = create_rw_signal(1.0);
 
     let recipe = store_value(recipe);
     let first_page = Signal::derive(move || page.get() == 0.0);
-    let last_page = Signal::derive(move || page.get() as usize == recipe().steps.len() - 1);
+    let last_page = Signal::derive(move || page.get() as usize == recipe().steps.len());
 
     let step = create_memo(move |_| {
-        let mut step = recipe().steps[page.get() as usize].desc.clone();
+        let mut step = recipe().steps[page.get() as usize - 1].desc.clone();
         recipe().ingredients.iter().for_each(|i| {
             step = step.replace(
                 format!("[{}]", i.name).as_str(),
