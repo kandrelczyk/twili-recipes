@@ -23,7 +23,7 @@ extern "C" {
 #[component]
 pub fn RecipeEditor(
     recipe: Recipe,
-    #[prop(into)] on_back: Callback<()>,
+    #[prop(into)] on_back: Callback<web_sys::MouseEvent>,
     #[prop(into)] on_save: Callback<()>,
 ) -> impl IntoView {
     let saving = create_rw_signal(false);
@@ -66,7 +66,6 @@ pub fn RecipeEditor(
                     show_error.set(true);
                 }
             }
-            saving.set(false);
         });
     };
     view! {
@@ -74,12 +73,11 @@ pub fn RecipeEditor(
             <Header
                 button=move || {
                     view! {
-                        <Button class="ml-1 absolute" variant=ButtonVariant::Text round=true disabled=saving>
+                        <Button on_click=on_back class="ml-1 absolute" variant=ButtonVariant::Text round=true disabled=saving>
                             <Icon
                                 width="1.5em"
                                 height="1.5em"
                                 icon=icondata_bi::BiChevronLeftSolid
-                                on:click=move |_| Callable::call(&on_back, ())
                             />
                         </Button>
                     }

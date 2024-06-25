@@ -15,28 +15,30 @@ This project is still under development.
 
 It currently supports NextCloud and ChatGPT but other cloud and LLM services can be easily added in the future. 
 
-### Build
+![Main Screen](screenshots/main-screen.png)
+
+
+### Building
 
 Follow the typical Tauri setup process for your platform. Install all dependencies listed in prerequisites.
 
 Install trunk (`cargo install trunk`) and tailwindcss (`npm install -g tailwindcss`).
 
-
-### Desktop app
+## Desktop app
 
 
 Make sure you have tauri-cli updated to the latestes version.
 
 Run `cargo tauri dev`
 
-#### note
+## note
 
 In case having problems with running `cargo tauri dev`
 make sure you have following things installed:
 - cargo install tauri-cli@2.0.0-beta.14 --locked
 - cargo install trunk
 
-### Android app
+## Android app
 
 To build the app for Android on Linux insert following into .bashrc:
 
@@ -64,7 +66,7 @@ export PATH=$PATH:$TOOLCHAIN/bin
 
 Run `cargo tauri android init` and `cargo tauri android dev`
 
-### Building apk file
+## Building apk file
 
 Follow instructions at https://next--tauri.netlify.app/next/guides/distribution/sign-android/
 You can use the included local.properties and build.gradle.kts template files.

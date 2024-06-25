@@ -10,7 +10,7 @@ fn cleanup() {
             format!(
                 "{}/{}",
                 std::env::var("HOME").unwrap(),
-                ".local/share/net.curiana/test.cfg"
+                ".local/share/net.curiana.recipes/test.cfg"
             )
             .as_str(),
         )

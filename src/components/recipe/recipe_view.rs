@@ -97,6 +97,12 @@ pub fn RecipeView() -> impl IntoView {
         }
     });
 
+    let on_select = move |key: String| match key.as_str() {
+        "edit" => show_editor.set(true),
+        "delete" => show_modal.set(true),
+        _ => (),
+    };
+
     view! {
         <main class="flex flex-col h-full w-full items-center justify-start">
             <Show
@@ -137,7 +143,7 @@ pub fn RecipeView() -> impl IntoView {
                 >
                     <ActionsSlot slot>
                         <Show fallback=|| view!{} when=move || recipe.get().is_some()>
-                            <Dropdown
+                            <Dropdown on_select
                                 placement=thaw::DropdownPlacement::BottomEnd
                             >
                                 <DropdownTrigger slot>
@@ -150,11 +156,13 @@ pub fn RecipeView() -> impl IntoView {
                                     </Button>
                                 </DropdownTrigger>
                                     <DropdownItem
-                                        on_click=move |_| show_editor.set(true)
+                                        key="edit"
+                                        //on_click=move |_| show_editor.set(true)
                                         label="Edit JSON"
                                         icon=icondata_bi::BiEditAltSolid/>
                                     <DropdownItem
-                                        on_click=move |_| show_modal.set(true)
+                                        key="delete"
+                                        //on_click=move |_| show_modal.set(true)
                                         label="Delete"
                                         icon=icondata_bi::BiTrashRegular/>
                                         <Modal
