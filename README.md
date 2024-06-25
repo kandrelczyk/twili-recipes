@@ -15,9 +15,9 @@ This project is still under development.
 
 It currently supports NextCloud and ChatGPT but other cloud and LLM services can be easily added in the future. 
 
-![Main Screen](screenshots/main-screen.png)
 ![Add Recipe](screenshots/add-recipe.png)
 ![Recipe step](screenshots/step.png)
+![Main Screen](screenshots/main-screen.png)
 
 
 ### Building
