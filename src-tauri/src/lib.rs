@@ -6,8 +6,8 @@ use std::sync::{Arc, OnceLock};
 
 use ai::AIClient;
 use commands::{
-    delete_recipe, get_config, get_recipe, initialize, list_recipes, parse_recipe, save_config,
-    save_recipe,
+    delete_recipe, get_config, get_recipe, get_version, initialize, list_recipes, parse_recipe,
+    save_config, save_recipe,
 };
 use recipes::RecipesProvider;
 use tauri::{async_runtime::Mutex, App};
@@ -48,6 +48,7 @@ impl AppBuilder {
         let config_file: Arc<OnceLock<String>> = Arc::new(OnceLock::new());
 
         tauri::Builder::default()
+            .plugin(tauri_plugin_shell::init())
             .plugin(tauri_plugin_store::Builder::new().build())
             .plugin(tauri_plugin_keep_screen_on::init())
             .manage(ai_parser)
@@ -98,7 +99,8 @@ impl AppBuilder {
                 delete_recipe,
                 parse_recipe,
                 get_config,
-                save_config
+                save_config,
+                get_version
             ])
             .build(tauri::generate_context!())
             .expect("To build tauri app")

@@ -30,6 +30,7 @@ uuid = {version = "1.8.0", features = ["v4"] }
 tauri-plugin-store = "2.0.0-beta.6"
 tauri-plugin-cli = "2.0.0-beta"
 tauri-plugin-keep-screen-on = { path = "../tauri-plugin-keep-screen-on" }
+tauri-plugin-shell = "2.0.0-beta.7"
 
 [features]
 # this feature is used for production builds or when `devPath` points to the filesystem
