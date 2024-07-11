@@ -17,9 +17,9 @@ js-sys = "0.3"
 console_log = "1.0.0"
 recipes_common = { path = "./common" }
 console_error_panic_hook = "0.1.7"
-thaw = { path = "../thaw/thaw", features = ["csr"] }
 icondata_bi = "0.0.10"
 icondata_ri = "0.0.10"
+thaw = {path = "../thaw/thaw", features = ["csr"]}
 
 [dev-dependencies]
 tokio = {version = "1.35.0", features = ["rt", "macros"]}

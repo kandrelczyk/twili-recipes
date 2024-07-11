@@ -27,9 +27,10 @@ reqwest = "0.12.4"
 reqwest_dav = "0.1.9"
 async-trait = "0.1.80"
 uuid = {version = "1.8.0", features = ["v4"] }
-tauri-plugin-store = "2.0.0-beta.6"
 tauri-plugin-cli = "2.0.0-beta"
+tauri-plugin-devtools = "2.0.0-beta"
 tauri-plugin-keep-screen-on = { path = "../tauri-plugin-keep-screen-on" }
+tauri-plugin-store = "2.0.0-beta.6"
 tauri-plugin-shell = "2.0.0-beta.7"
 
 [features]

@@ -12,6 +12,7 @@ use commands::{
 use recipes::RecipesProvider;
 use tauri::{async_runtime::Mutex, App};
 use tauri_plugin_cli::CliExt;
+#[cfg(not(debug_assertions))]
 use tauri_plugin_log::{Target, TargetKind};
 
 #[cfg(mobile)]
@@ -47,7 +48,10 @@ impl AppBuilder {
         let ai_parser: Mutex<Option<Box<dyn AIClient>>> = Mutex::new(None);
         let config_file: Arc<OnceLock<String>> = Arc::new(OnceLock::new());
 
-        tauri::Builder::default()
+        #[cfg(debug_assertions)]
+        let devtools = tauri_plugin_devtools::init();
+
+        let mut builder = tauri::Builder::default()
             .plugin(tauri_plugin_shell::init())
             .plugin(tauri_plugin_store::Builder::new().build())
             .plugin(tauri_plugin_keep_screen_on::init())
@@ -55,16 +59,6 @@ impl AppBuilder {
             .manage(provider)
             .manage(config_file.clone())
             .plugin(tauri_plugin_cli::init())
-            .plugin(
-                tauri_plugin_log::Builder::default()
-                    .clear_targets()
-                    .targets([
-                        Target::new(TargetKind::Webview),
-                        Target::new(TargetKind::Stdout),
-                    ])
-                    .level(log::LevelFilter::Info)
-                    .build(),
-            )
             .plugin(tauri_plugin_store::Builder::default().build())
             .setup(move |app| {
                 if let Some(setup) = setup {
@@ -101,7 +95,27 @@ impl AppBuilder {
                 get_config,
                 save_config,
                 get_version
-            ])
+            ]);
+
+        #[cfg(debug_assertions)]
+        {
+            builder = builder.plugin(devtools);
+        }
+        #[cfg(not(debug_assertions))]
+        {
+            builder.plugin(
+                tauri_plugin_log::Builder::default()
+                    .clear_targets()
+                    .targets([
+                        Target::new(TargetKind::Webview),
+                        Target::new(TargetKind::Stdout),
+                    ])
+                    .level(log::LevelFilter::Info)
+                    .build(),
+            );
+        }
+
+        builder
             .build(tauri::generate_context!())
             .expect("To build tauri app")
     }
