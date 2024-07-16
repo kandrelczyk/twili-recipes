@@ -12,6 +12,6 @@ pub fn ListItem(item: ListEntry) -> impl IntoView {
     };
 
     view! {
-        <Card on:click=on_click class="cursor-pointer shadow-md w-[150px] min-h-[150px]"><div class="w-full min-h-[150px] text-lg text-center flex flex-row justify-center items-center">{item.name}</div></Card>
+        <Card on:click=on_click class="cursor-pointer shadow-md w-[150px] min-h-[130px]"><div class="w-full min-h-[130px] text-lg text-center flex flex-row justify-center items-center">{item.name}</div></Card>
     }
 }

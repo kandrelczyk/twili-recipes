@@ -1,6 +1,7 @@
 use leptos::*;
 
 use leptos_router::{Route, Router, Routes};
+use leptos_use::{storage::use_local_storage, utils::FromToStringCodec};
 use thaw::{GlobalStyle, MessagePlacement, MessageProvider, Theme, ThemeProvider};
 
 use crate::components::{
@@ -10,8 +11,15 @@ use crate::components::{
 
 #[component]
 pub fn App() -> impl IntoView {
+    let (dark, set_dark, _) = use_local_storage::<bool, FromToStringCodec>("dark_mode");
+
+    log::info!("{}", dark.get_untracked());
     let theme = create_rw_signal(Theme::dark());
-    let dark_mode = create_rw_signal(true);
+    let dark_mode = create_rw_signal(dark.get_untracked());
+
+    create_effect(move |_| {
+        set_dark(dark_mode.get());
+    });
 
     let theme_clb = create_memo(move |_| {
         theme.set(match dark_mode.get() {

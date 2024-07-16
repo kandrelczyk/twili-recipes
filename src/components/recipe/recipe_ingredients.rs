@@ -34,7 +34,7 @@ pub fn RecipeIngredients(recipe: StoredValue<Recipe>, multiplier: RwSignal<f32>)
                 </div>
             </Button>
         </div>
-        <Card class="text-md sm:text-lg overflow-y-scroll">
+        <Card class="text-md sm:text-lg overflow-y-auto">
             {recipe()
                 .ingredients
                 .into_iter()

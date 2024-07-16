@@ -850,6 +850,17 @@ dependencies = [
 ]
 
 [[package]]
+name = "cookie"
+version = "0.18.1"
+source = "registry+https://github.com/rust-lang/crates.io-index"
+checksum = "4ddef33a339a91ea89fb53151bd0a4689cfce27055c291dfa69945475d22c747"
+dependencies = [
+ "percent-encoding",
+ "time",
+ "version_check",
+]
+
+[[package]]
 name = "core-foundation"
 version = "0.9.4"
 source = "registry+https://github.com/rust-lang/crates.io-index"
@@ -1040,6 +1051,18 @@ dependencies = [
  "lock_api",
  "once_cell",
  "parking_lot_core",
+]
+
+[[package]]
+name = "default-struct-builder"
+version = "0.5.0"
+source = "registry+https://github.com/rust-lang/crates.io-index"
+checksum = "f8fa90da96b8fd491f5754d1f7a731f73921e3b7aa0ce333c821a0e43666ac14"
+dependencies = [
+ "darling",
+ "proc-macro2",
+ "quote",
+ "syn 2.0.68",
 ]
 
 [[package]]
@@ -1321,7 +1344,7 @@ source = "registry+https://github.com/rust-lang/crates.io-index"
 checksum = "65f0fbe245d714b596ba5802b46f937f5ce68dcae0f32f9a70b5c3b04d3c6f64"
 dependencies = [
  "base64 0.13.1",
- "cookie",
+ "cookie 0.16.2",
  "futures-core",
  "futures-util",
  "http 0.2.12",
@@ -1813,6 +1836,18 @@ dependencies = [
  "wasm-bindgen",
  "wasm-bindgen-futures",
  "web-sys",
+]
+
+[[package]]
+name = "gloo-timers"
+version = "0.3.0"
+source = "registry+https://github.com/rust-lang/crates.io-index"
+checksum = "bbb143cf96099802033e0d4f4963b19fd2e0b728bcf076cd9cf7f6634f092994"
+dependencies = [
+ "futures-channel",
+ "futures-core",
+ "js-sys",
+ "wasm-bindgen",
 ]
 
 [[package]]
@@ -2510,6 +2545,29 @@ dependencies = [
  "typed-builder",
  "typed-builder-macro",
  "wasm-bindgen",
+ "web-sys",
+]
+
+[[package]]
+name = "leptos-use"
+version = "0.10.10"
+source = "registry+https://github.com/rust-lang/crates.io-index"
+checksum = "3272d90b77cdbb99e9060f90eb6f5738e56128b2f912db57a50efb006a26e262"
+dependencies = [
+ "async-trait",
+ "cfg-if",
+ "cookie 0.18.1",
+ "default-struct-builder",
+ "futures-util",
+ "gloo-timers",
+ "gloo-utils",
+ "js-sys",
+ "lazy_static",
+ "leptos",
+ "paste",
+ "thiserror",
+ "wasm-bindgen",
+ "wasm-bindgen-futures",
  "web-sys",
 ]
 
@@ -5469,7 +5527,9 @@ dependencies = [
 
 [[package]]
 name = "thaw"
-version = "0.3.2"
+version = "0.3.3"
+source = "registry+https://github.com/rust-lang/crates.io-index"
+checksum = "7867411b540f5d8aee5186926bc5ec4de86b6998e5e74f6145783fc4f832b073"
 dependencies = [
  "cfg-if",
  "chrono",
@@ -5487,7 +5547,9 @@ dependencies = [
 
 [[package]]
 name = "thaw_components"
-version = "0.1.2"
+version = "0.1.3"
+source = "registry+https://github.com/rust-lang/crates.io-index"
+checksum = "299d5dc25e0a985e6153243f29a3614fbab0f22fb85da1b02e487f80eded3993"
 dependencies = [
  "cfg-if",
  "leptos",
@@ -5498,7 +5560,9 @@ dependencies = [
 
 [[package]]
 name = "thaw_utils"
-version = "0.0.4"
+version = "0.0.5"
+source = "registry+https://github.com/rust-lang/crates.io-index"
+checksum = "41ba01c28b09d65b830ba87ff6001e0acfb6cdee3d8db3323cbf4b3e07b9f661"
 dependencies = [
  "cfg-if",
  "chrono",
@@ -5522,7 +5586,7 @@ dependencies = [
  "async-trait",
  "base64 0.13.1",
  "chrono",
- "cookie",
+ "cookie 0.16.2",
  "fantoccini",
  "futures",
  "http 0.2.12",
@@ -6014,6 +6078,7 @@ dependencies = [
  "icondata_ri",
  "js-sys",
  "leptos",
+ "leptos-use",
  "leptos_meta",
  "leptos_router",
  "log",
@@ -6380,7 +6445,7 @@ checksum = "9973cb72c8587d5ad5efdb91e663d36177dc37725e6c90ca86c626b0cc45c93f"
 dependencies = [
  "base64 0.13.1",
  "bytes",
- "cookie",
+ "cookie 0.16.2",
  "http 0.2.12",
  "log",
  "serde",

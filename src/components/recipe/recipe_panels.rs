@@ -36,7 +36,7 @@ pub fn RecipePanels(recipe: Recipe) -> impl IntoView {
     });
     view! {
         <div class="flex flex-col h-[90%] w-full bg-[url('/public/background.png')]">
-            <div class="w-full flex flex-col overflow-scroll items-center">
+            <div class="w-full flex flex-col overflow-auto items-center">
                 {move || {
                     if page.get() == 0.0 {
                         view! { <RecipeIngredients recipe multiplier=multiplier/> }.into_view()
