@@ -1,10 +1,10 @@
 use leptos::*;
 
 use leptos_router::use_navigate;
-use recipes_common::Config;
+use recipes_common::{Config, RecipesSource};
 use serde::{Deserialize, Serialize};
 use serde_wasm_bindgen::{from_value, to_value};
-use thaw::{use_message, Button, ButtonVariant, Divider, Icon, Input, Spinner};
+use thaw::{use_message, Button, ButtonVariant, Divider, Icon, Input, Spinner, Switch};
 use wasm_bindgen::prelude::*;
 
 use crate::{components::Header, error::CommandError};
@@ -32,6 +32,7 @@ pub fn Settings(init: bool) -> impl IntoView {
     let llm_token = create_rw_signal("".to_owned());
     let llm_token_invalid = create_rw_signal(false);
 
+    let cloud_storage = create_rw_signal(false);
     let cloud_uri = create_rw_signal("".to_owned());
     let cloud_uri_invalid = create_rw_signal(false);
 
@@ -50,6 +51,10 @@ pub fn Settings(init: bool) -> impl IntoView {
             match invoke("get_config", JsValue::NULL).await {
                 Ok(config) => {
                     let config: Config = from_value(config).unwrap();
+                    cloud_storage.set(match config.recipes_source {
+                        RecipesSource::Cloud => true,
+                        _ => false,
+                    });
                     llm_token.set(config.ai_token);
                     cloud_uri.set(config.cloud_uri);
                     cloud_username.set(config.cloud_username);
@@ -63,9 +68,15 @@ pub fn Settings(init: bool) -> impl IntoView {
 
     let submit = move |_| {
         llm_token_invalid.set(llm_token.get_untracked().is_empty());
-        cloud_uri_invalid.set(cloud_uri.get_untracked().is_empty());
-        cloud_username_invalid.set(cloud_username.get_untracked().is_empty());
-        cloud_pass_invalid.set(cloud_pass.get_untracked().is_empty());
+        if cloud_storage.get() {
+            cloud_uri_invalid.set(cloud_uri.get_untracked().is_empty());
+            cloud_username_invalid.set(cloud_username.get_untracked().is_empty());
+            cloud_pass_invalid.set(cloud_pass.get_untracked().is_empty());
+        } else {
+            cloud_uri_invalid.set(false);
+            cloud_username_invalid.set(false);
+            cloud_pass_invalid.set(false);
+        }
 
         if !llm_token_invalid.get()
             && !cloud_uri_invalid.get()
@@ -80,6 +91,10 @@ pub fn Settings(init: bool) -> impl IntoView {
                         cloud_uri: cloud_uri.get(),
                         cloud_username: cloud_username.get(),
                         cloud_pass: cloud_pass.get(),
+                        recipes_source: match cloud_storage.get() {
+                            true => RecipesSource::Cloud,
+                            false => RecipesSource::Local,
+                        },
                         ..Default::default()
                     },
                 })
@@ -143,6 +158,11 @@ pub fn Settings(init: bool) -> impl IntoView {
                                     />
                                 </div>
                                 <Divider/>
+                                <div id="recipes_source" class="p-1 mt-4 text-sm w-full flex flex-col gap-1">
+                                    "Store in NextCloud"
+                                    <Switch value=cloud_storage />
+                                </div>
+                                <Show when=move || cloud_storage.get()>
                                 <div id="cloud_uri" class="p-1 mt-4 text-sm w-full">
                                     Nextcloud URI
                                     <Input
@@ -167,6 +187,7 @@ pub fn Settings(init: bool) -> impl IntoView {
                                         invalid=cloud_pass_invalid
                                     />
                                 </div>
+                                </Show>
                             </div>
                             <div class="grow"></div>
                             <Button on:click=submit loading class="m-4">

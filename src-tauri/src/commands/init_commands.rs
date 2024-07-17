@@ -1,9 +1,6 @@
-use std::{
-    path::PathBuf,
-    sync::{Arc, OnceLock},
-};
+use std::sync::{Arc, OnceLock};
 
-use recipes_common::Config;
+use recipes_common::{Config, RecipesSource};
 use tauri::{async_runtime::Mutex, Wry};
 use tauri_plugin_store::{StoreBuilder, StoreCollection};
 
@@ -29,15 +26,20 @@ pub async fn initialize(
     if config.all_present() {
         let mut m = manager.lock().await;
 
-        // let m2: Box<dyn RecipesProvider> = Box::new(NCClient::new(
-        //     config.cloud_uri,
-        //     config.cloud_username,
-        //     config.cloud_pass,
-        // ));
+        let m2: Box<dyn RecipesProvider> = match config.recipes_source {
+            RecipesSource::Cloud => Box::new(NCClient::new(
+                config.cloud_uri,
+                config.cloud_username,
+                config.cloud_pass,
+            )),
+            RecipesSource::Local => {
+                let mut store =
+                    StoreBuilder::<tauri::Wry>::new("recipes.bin").build(app_handle.clone());
+                store.load()?;
+                Box::new(LocalClient { store })
+            }
+        };
 
-        let mut store = StoreBuilder::<tauri::Wry>::new("recipes.bin").build(app_handle.clone());
-        store.load()?;
-        let m2: Box<dyn RecipesProvider> = Box::new(LocalClient { store: store });
         *m = Some(m2);
 
         let mut ai = ai_client.lock().await;

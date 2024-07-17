@@ -1,7 +1,6 @@
 use leptos::*;
 use leptos_router::use_navigate;
-use recipes_common::{ListEntry, Recipe};
-use serde::{Deserialize, Serialize};
+use recipes_common::ListEntry;
 use serde_wasm_bindgen::from_value;
 use thaw::{
     Alert, AlertVariant, Button, ButtonVariant, Drawer, DrawerMount, DrawerPlacement, Icon, Input,
@@ -17,11 +16,6 @@ use crate::error::CommandError;
 extern "C" {
     #[wasm_bindgen(catch, js_namespace = ["window", "__TAURI__", "core"])]
     async fn invoke(cmd: &str, args: JsValue) -> Result<JsValue, JsValue>;
-}
-
-#[derive(Serialize, Deserialize, Clone, Debug)]
-struct Args {
-    recipe: Recipe,
 }
 
 #[component]

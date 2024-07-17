@@ -9,6 +9,7 @@ pub enum LLM {
 #[derive(Serialize, Deserialize, Clone, Debug)]
 pub enum RecipesSource {
     Cloud,
+    Local,
 }
 
 #[derive(Serialize, Deserialize, Clone, Debug)]
@@ -24,10 +25,15 @@ pub struct Config {
 
 impl Config {
     pub fn all_present(&self) -> bool {
-        !(self.ai_token.is_empty()
-            || self.cloud_uri.is_empty()
-            || self.cloud_username.is_empty()
-            || self.ai_prompt.is_empty())
+        match self.recipes_source {
+            RecipesSource::Cloud => {
+                !(self.ai_token.is_empty()
+                    || self.cloud_uri.is_empty()
+                    || self.cloud_username.is_empty()
+                    || self.ai_prompt.is_empty())
+            }
+            RecipesSource::Local => !self.ai_token.is_empty(),
+        }
     }
 }
 
