@@ -1,13 +1,16 @@
-use std::sync::{Arc, OnceLock};
+use std::{
+    path::PathBuf,
+    sync::{Arc, OnceLock},
+};
 
 use recipes_common::Config;
 use tauri::{async_runtime::Mutex, Wry};
-use tauri_plugin_store::StoreCollection;
+use tauri_plugin_store::{StoreBuilder, StoreCollection};
 
 use crate::{
     ai::{AIClient, ChatGTPClient},
     commands::error::CommandError,
-    recipes::{ncclient::NCClient, RecipesProvider},
+    recipes::{local::LocalClient, ncclient::NCClient, RecipesProvider},
 };
 
 use super::get_stored_or_default_config;
@@ -20,15 +23,21 @@ pub async fn initialize(
     ai_client: tauri::State<'_, Mutex<Option<Box<dyn AIClient>>>>,
     config_file: tauri::State<'_, Arc<OnceLock<String>>>,
 ) -> Result<bool, CommandError> {
-    let config: Config = get_stored_or_default_config(app_handle, store, config_file).await;
+    let config: Config =
+        get_stored_or_default_config(app_handle.clone(), store.clone(), config_file).await;
 
     if config.all_present() {
         let mut m = manager.lock().await;
-        let m2: Box<dyn RecipesProvider> = Box::new(NCClient::new(
-            config.cloud_uri,
-            config.cloud_username,
-            config.cloud_pass,
-        ));
+
+        // let m2: Box<dyn RecipesProvider> = Box::new(NCClient::new(
+        //     config.cloud_uri,
+        //     config.cloud_username,
+        //     config.cloud_pass,
+        // ));
+
+        let mut store = StoreBuilder::<tauri::Wry>::new("recipes.bin").build(app_handle.clone());
+        store.load()?;
+        let m2: Box<dyn RecipesProvider> = Box::new(LocalClient { store: store });
         *m = Some(m2);
 
         let mut ai = ai_client.lock().await;

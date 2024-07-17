@@ -102,7 +102,7 @@ impl RecipesProvider for NCClient {
         Ok(recipes)
     }
 
-    async fn save_recipe(&self, mut recipe: Recipe) -> Result<(), RecipesError> {
+    async fn save_recipe(&mut self, mut recipe: Recipe) -> Result<(), RecipesError> {
         if recipe.id.is_none() {
             recipe.id = Some(uuid::Uuid::new_v4().to_string());
         }
@@ -123,7 +123,7 @@ impl RecipesProvider for NCClient {
 
         Ok(())
     }
-    async fn delete_recipe(&self, filename: String) -> Result<(), RecipesError> {
+    async fn delete_recipe(&mut self, filename: String) -> Result<(), RecipesError> {
         let response = self
             .dav_client
             .delete(&format!("{}/{}", self.path, filename))

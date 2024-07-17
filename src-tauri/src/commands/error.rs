@@ -24,6 +24,14 @@ impl From<RecipesError> for CommandError {
     }
 }
 
+impl From<tauri_plugin_store::Error> for RecipesError {
+    fn from(value: tauri_plugin_store::Error) -> Self {
+        RecipesError {
+            reason: format!("Failed to store recipe: {:?}", value),
+        }
+    }
+}
+
 impl From<AIError> for CommandError {
     fn from(value: AIError) -> Self {
         CommandError {
@@ -31,6 +39,7 @@ impl From<AIError> for CommandError {
         }
     }
 }
+
 impl From<tauri_plugin_store::Error> for CommandError {
     fn from(value: tauri_plugin_store::Error) -> Self {
         CommandError {
@@ -38,4 +47,5 @@ impl From<tauri_plugin_store::Error> for CommandError {
         }
     }
 }
+
 impl Error for CommandError {}
