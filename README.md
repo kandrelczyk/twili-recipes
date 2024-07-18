@@ -1,5 +1,7 @@
 ### Twili Recipes
 
+Recipe manager done **The Way I Like It**. 
+
 Simple app to help you with cooking.
 
 Twili is not just another recipe manager. It's a cooking assistant app focusing 
