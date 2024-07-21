@@ -95,6 +95,15 @@ async fn test_initial_setup() -> WebDriverResult<()> {
     elem.send_keys("gpt_api_token").await?;
 
     let elem = driver
+        .query(By::Id("recipes_source"))
+        .first()
+        .await?
+        .find(By::Tag("div"))
+        .await?;
+    elem.wait_until().displayed().await?;
+    elem.click().await?;
+
+    let elem = driver
         .query(By::Id("cloud_uri"))
         .first()
         .await?
@@ -165,3 +174,5 @@ async fn test_initial_setup() -> WebDriverResult<()> {
     cleanup();
     Ok(())
 }
+
+

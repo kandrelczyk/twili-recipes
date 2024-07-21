@@ -48,9 +48,6 @@ impl AppBuilder {
         let ai_parser: Mutex<Option<Box<dyn AIClient>>> = Mutex::new(None);
         let config_file: Arc<OnceLock<String>> = Arc::new(OnceLock::new());
 
-        #[cfg(debug_assertions)]
-        let devtools = tauri_plugin_devtools::init();
-
         let mut builder = tauri::Builder::default()
             .plugin(tauri_plugin_shell::init())
             .plugin(tauri_plugin_store::Builder::new().build())
@@ -99,11 +96,12 @@ impl AppBuilder {
 
         #[cfg(debug_assertions)]
         {
+            let devtools = tauri_plugin_devtools::init();
             builder = builder.plugin(devtools);
         }
         #[cfg(not(debug_assertions))]
         {
-            builder.plugin(
+            builder = builder.plugin(
                 tauri_plugin_log::Builder::default()
                     .clear_targets()
                     .targets([

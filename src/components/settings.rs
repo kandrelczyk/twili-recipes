@@ -51,10 +51,7 @@ pub fn Settings(init: bool) -> impl IntoView {
             match invoke("get_config", JsValue::NULL).await {
                 Ok(config) => {
                     let config: Config = from_value(config).unwrap();
-                    cloud_storage.set(match config.recipes_source {
-                        RecipesSource::Cloud => true,
-                        _ => false,
-                    });
+                    cloud_storage.set(matches![config.recipes_source, RecipesSource::Cloud]);
                     llm_token.set(config.ai_token);
                     cloud_uri.set(config.cloud_uri);
                     cloud_username.set(config.cloud_username);

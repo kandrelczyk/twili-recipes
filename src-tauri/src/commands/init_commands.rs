@@ -1,8 +1,11 @@
-use std::sync::{Arc, OnceLock};
+use std::{
+    path::PathBuf,
+    sync::{Arc, OnceLock},
+};
 
 use recipes_common::{Config, RecipesSource};
 use tauri::{async_runtime::Mutex, Wry};
-use tauri_plugin_store::{StoreBuilder, StoreCollection};
+use tauri_plugin_store::StoreCollection;
 
 use crate::{
     ai::{AIClient, ChatGTPClient},
@@ -32,12 +35,10 @@ pub async fn initialize(
                 config.cloud_username,
                 config.cloud_pass,
             )),
-            RecipesSource::Local => {
-                let mut store =
-                    StoreBuilder::<tauri::Wry>::new("recipes.bin").build(app_handle.clone());
-                store.load()?;
-                Box::new(LocalClient { store })
-            }
+            RecipesSource::Local => Box::new(LocalClient {
+                app_handle: app_handle.clone(),
+                path: PathBuf::from("recipes"),
+            }),
         };
 
         *m = Some(m2);
