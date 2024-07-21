@@ -174,5 +174,3 @@ async fn test_initial_setup() -> WebDriverResult<()> {
     cleanup();
     Ok(())
 }
-
-
