@@ -64,6 +64,22 @@ pub fn RecipePanels(recipe: Recipe) -> impl IntoView {
                 </Button>
                 <div class="grow"></div>
             </div>
+            {move || if !last_page.get() {
+                view!{
+                    <div on:click=move |_| page.update(|p| *p += 1.0) class="fixed h-full w-[15vw] bg-transparent opacity-35 top-0 right-0 sm:hidden block flex-col justify-center items-center">
+                        <Icon class="w-full h-full" width="2em" icon=icondata_bi::BiChevronRightSolid/>
+                    </div>}
+             } else {
+               view!{<div></div>}
+            }}
+            {move || if !first_page.get() {
+                view!{
+                <div on:click=move |_| page.update(|p| *p -= 1.0) class="fixed h-full w-[15vw] opacity-35 top-0 left-0 bg-transparent sm:hidden block flex-col justify-center items-center">
+                    <Icon class="w-full h-full" width="2em" icon=icondata_bi::BiChevronLeftSolid/>
+                </div>}
+             } else {
+               view!{<div></div>}
+            }}
         </div>
     }
 }
