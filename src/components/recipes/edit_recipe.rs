@@ -12,7 +12,7 @@ use thaw::{
 use wasm_bindgen::prelude::*;
 
 use crate::{
-    components::{recipes::PreviewRecipe, Header},
+    components::{recipes::PreviewRecipe, ActionsSlot, Header},
     error::CommandError,
 };
 
@@ -109,32 +109,41 @@ pub fn EditRecipe(
                 title=move || {
                     view! { Add Recipe }
                 }
-            />
-
+            >
+                <ActionsSlot slot>
+                    <Show when=move || parsed_recipe.get().is_ok()>
+                        <Button
+                            class="mr-1"
+                            variant=ButtonVariant::Text
+                            round=true
+                            on:click=move |_| manual_edit.set(true)
+                        >
+                            <Icon width="1.5em" height="1.5em" icon=icondata_bi::BiEditAltSolid />
+                        </Button>
+                    </Show>
+                </ActionsSlot>
+            </Header>
+            <Modal width="90%" title="Edit JSON" show=manual_edit>
+                <div class="flex flex-col items-center">
+                    <TextArea attr:style="resize:none; height: 300px" value=json />
+                    <div class="grow"></div>
+                    <Button class="mt-4" on_click=save_json>
+                        Save
+                    </Button>
+                </div>
+            </Modal>
             <div class="flex flex-col items-center h-full w-full bg-[url('/public/background.png')]">
                 {move || match parsed_recipe.get() {
                     Ok(recipe) => {
                         view! {
                             <p>
-                                <PreviewRecipe recipe/>
+                                <PreviewRecipe recipe />
                             </p>
                         }
                     }
                     Err(error) => {
                         view! {
                             <p class="mt-24 p-4">
-                                <Modal width="90%" title="Edit JSON" show=manual_edit>
-                                    <div class="flex flex-col items-center">
-                                        <TextArea
-                                            attr:style="resize:none; height: 300px"
-                                            value=json
-                                        />
-                                        <div class="grow"></div>
-                                        <Button class="mt-4" on_click=save_json>
-                                            Save
-                                        </Button>
-                                    </div>
-                                </Modal>
                                 <Alert variant=AlertVariant::Error class="text-md mb-8">
                                     LMM returned invalid recipe code and we were not able to parse it.
                                     <Collapse class="max-w-sm mt-8" value=collapse>
@@ -158,12 +167,10 @@ pub fn EditRecipe(
                             </p>
                         }
                     }
-                }}
-                <div class="grow"></div>
+                }} <div class="grow"></div>
                 <div class="px-4 text-sm w-full max-w-lg">
-                    Name <Input value=name disabled=loading invalid=name_invalid/>
-                </div>
-                <Button on:click=save_recipe disabled=has_error loading class="m-4">
+                    Name <Input value=name disabled=loading invalid=name_invalid />
+                </div> <Button on:click=save_recipe disabled=has_error loading class="m-4">
                     Save
                 </Button>
             </div>

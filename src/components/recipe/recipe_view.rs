@@ -53,6 +53,9 @@ pub fn RecipeView() -> impl IntoView {
             filename: f.expect("Missing filename param").filename,
         })
         .expect("Failed to create params");
+        invoke("plugin:keep-screen-on|keep-screen-on", JsValue::TRUE)
+            .await
+            .unwrap();
 
         match invoke("get_recipe", args).await {
             Ok(recipe) => Ok(from_value::<Recipe>(recipe).expect("Failed to parse Recipe")),
@@ -69,7 +72,14 @@ pub fn RecipeView() -> impl IntoView {
         }
     });
 
-    on_cleanup(|| listener.remove());
+    on_cleanup(|| {
+        spawn_local(async move {
+            invoke("plugin:keep-screen-on|keep-screen-on", JsValue::FALSE)
+                .await
+                .unwrap();
+        });
+        listener.remove();
+    });
 
     let delete_recipe = create_action(move |file: &String| {
         let filename = file.clone();
@@ -110,11 +120,15 @@ pub fn RecipeView() -> impl IntoView {
                     view! {
                         <RecipeEditor
                             on_back=move |_| show_editor.set(false)
-                            on_save=Callback::new(move |_| {show_editor.set(false); recipe.refetch()})
+                            on_save=Callback::new(move |_| {
+                                show_editor.set(false);
+                                recipe.refetch()
+                            })
                             recipe=recipe
-                            .get()
-                            .expect("Recipe is None")
-                            .expect("Failed to get recipe")/>
+                                .get()
+                                .expect("Recipe is None")
+                                .expect("Failed to get recipe")
+                        />
                     }
                 }
                 when=move || !show_editor.get() || recipe.get().is_none()
@@ -142,10 +156,8 @@ pub fn RecipeView() -> impl IntoView {
                     title=move || view! { {recipe.and_then(|r| r.name.clone())} }
                 >
                     <ActionsSlot slot>
-                        <Show fallback=|| view!{} when=move || recipe.get().is_some()>
-                            <Dropdown on_select
-                                placement=thaw::DropdownPlacement::BottomEnd
-                            >
+                        <Show fallback=|| view! {} when=move || recipe.get().is_some()>
+                            <Dropdown on_select placement=thaw::DropdownPlacement::BottomEnd>
                                 <DropdownTrigger slot>
                                     <Button class="mr-1" variant=ButtonVariant::Text round=true>
                                         <Icon
@@ -155,54 +167,56 @@ pub fn RecipeView() -> impl IntoView {
                                         />
                                     </Button>
                                 </DropdownTrigger>
-                                    <DropdownItem
-                                        key="edit"
-                                        //on_click=move |_| show_editor.set(true)
-                                        label="Edit JSON"
-                                        icon=icondata_bi::BiEditAltSolid/>
-                                    <DropdownItem
-                                        key="delete"
-                                        //on_click=move |_| show_modal.set(true)
-                                        label="Delete"
-                                        icon=icondata_bi::BiTrashRegular/>
-                                        <Modal
-                                            class="max-w-lg w-[80%]"
-                                            title="Are you sure?"
-                                            mask_closeable=false
-                                            close_on_esc=false
-                                            closable=false
-                                            show=show_modal
+                                <DropdownItem
+                                    key="edit"
+                                    // on_click=move |_| show_editor.set(true)
+                                    label="Edit JSON"
+                                    icon=icondata_bi::BiEditAltSolid
+                                />
+                                <DropdownItem
+                                    key="delete"
+                                    // on_click=move |_| show_modal.set(true)
+                                    label="Delete"
+                                    icon=icondata_bi::BiTrashRegular
+                                />
+                                <Modal
+                                    class="max-w-lg w-[80%]"
+                                    title="Are you sure?"
+                                    mask_closeable=false
+                                    close_on_esc=false
+                                    closable=false
+                                    show=show_modal
+                                >
+                                    <div class="flex px-2 sm:px-8 gap-2">
+                                        <Button
+                                            on_click=move |_| show_modal.set(false)
+                                            variant=ButtonVariant::Outlined
                                         >
-                                            <div class="flex px-2 sm:px-8 gap-2">
-                                                <Button
-                                                    on_click=move |_| show_modal.set(false)
-                                                    variant=ButtonVariant::Outlined
-                                                >
-                                                    Cancel
-                                                </Button>
-                                                <div class="flex-grow"></div>
-                                                <Button
-                                                    loading=delete_recipe.pending()
-                                                    on:click=move |_| {
-                                                        delete_recipe.dispatch(filename.get_untracked())
-                                                    }
-                                                    color=ButtonColor::Error
-                                                >
-                                                    Delete
-                                                </Button>
-                                            </div>
-                                        </Modal>
-                                        <Modal
-                                            class="max-w-lg w-[80%]"
-                                            show=show_error_modal
-                                            title="Failed to delete recipe"
+                                            Cancel
+                                        </Button>
+                                        <div class="flex-grow"></div>
+                                        <Button
+                                            loading=delete_recipe.pending()
+                                            on:click=move |_| {
+                                                delete_recipe.dispatch(filename.get_untracked())
+                                            }
+                                            color=ButtonColor::Error
                                         >
-                                            <div class="flex px-2 sm:px-8 gap-2">
-                                                <Alert variant=AlertVariant::Error>
-                                                    <p>{move || delete_error.get()}</p>
-                                                </Alert>
-                                            </div>
-                                        </Modal>
+                                            Delete
+                                        </Button>
+                                    </div>
+                                </Modal>
+                                <Modal
+                                    class="max-w-lg w-[80%]"
+                                    show=show_error_modal
+                                    title="Failed to delete recipe"
+                                >
+                                    <div class="flex px-2 sm:px-8 gap-2">
+                                        <Alert variant=AlertVariant::Error>
+                                            <p>{move || delete_error.get()}</p>
+                                        </Alert>
+                                    </div>
+                                </Modal>
                             </Dropdown>
                         </Show>
                     </ActionsSlot>
@@ -211,7 +225,7 @@ pub fn RecipeView() -> impl IntoView {
                 <Suspense fallback=move || {
                     view! {
                         <div class="w-full h-full flex flex-rowl justify-center items-center bg-[url('/public/background.png')]">
-                            <Spinner/>
+                            <Spinner />
                         </div>
                     }
                 }>
@@ -244,7 +258,7 @@ pub fn RecipeView() -> impl IntoView {
                         {move || {
                             recipe
                                 .and_then(|recipe| {
-                                    view! { <RecipePanels recipe=recipe.clone()/> }
+                                    view! { <RecipePanels recipe=recipe.clone() /> }
                                 })
                         }}
 

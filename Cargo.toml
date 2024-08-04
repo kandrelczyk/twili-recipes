@@ -29,4 +29,4 @@ sysinfo = "0.30.5"
 mockito = "1.4.0"
 
 [workspace]
-members = [ "common","src-tauri", "tauri-plugin-keep-screen-on"]
+members = [ "common","src-tauri"]

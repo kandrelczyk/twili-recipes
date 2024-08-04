@@ -8,13 +8,16 @@ import app.tauri.annotation.TauriPlugin
 import app.tauri.plugin.JSObject
 import app.tauri.plugin.Plugin
 import app.tauri.plugin.Invoke
+import app.tauri.Logger
 
 @TauriPlugin
 class KeepScreenOnPlugin(private val activity: Activity): Plugin(activity) {
 
     @Command
     fun keepScreenOn(invoke: Invoke) {
-        
+
+        Logger.info("keepScreenOn command called");
+
         activity.getWindow().addFlags(WindowManager.LayoutParams.FLAG_KEEP_SCREEN_ON)
         val ret = JSObject()
         invoke.resolve(ret)

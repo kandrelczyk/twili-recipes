@@ -117,7 +117,6 @@ pub fn AddRecipe() -> impl IntoView {
                         view! { Add Recipe }
                     }
                 />
-
                 <div class="flex flex-col items-center h-full w-full bg-[url('/public/background.png')]">
                     <div class="p-2 w-full max-w-xl h-full">
                         <div class="p-1 text-sm w-full h-[95%]">

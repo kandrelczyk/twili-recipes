@@ -1,5 +1,6 @@
 use leptos::*;
 use leptos_router::use_navigate;
+use serde::{Deserialize, Serialize};
 use serde_wasm_bindgen::from_value;
 use thaw::Spinner;
 use wasm_bindgen::prelude::*;
@@ -10,6 +11,11 @@ use crate::error::CommandError;
 extern "C" {
     #[wasm_bindgen(catch, js_namespace = ["window", "__TAURI__", "core"])]
     async fn invoke(cmd: &str, args: JsValue) -> Result<JsValue, JsValue>;
+}
+
+#[derive(Serialize, Deserialize)]
+struct Args {
+    enable: bool,
 }
 
 #[component]

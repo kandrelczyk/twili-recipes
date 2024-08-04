@@ -558,37 +558,24 @@
           ]
         },
         {
+          "description": "keep-screen-on:default -> Default permissions for the plugin",
           "type": "string",
           "enum": [
             "keep-screen-on:default"
           ]
         },
         {
-          "description": "keep-screen-on:allow-execute -> Enables the execute command without any pre-configured scope.",
+          "description": "keep-screen-on:allow-keep-screen-on -> Enables the keep-screen-on command without any pre-configured scope.",
           "type": "string",
           "enum": [
-            "keep-screen-on:allow-execute"
+            "keep-screen-on:allow-keep-screen-on"
           ]
         },
         {
-          "description": "keep-screen-on:allow-ping -> Enables the ping command without any pre-configured scope.",
+          "description": "keep-screen-on:deny-keep-screen-on -> Denies the keep-screen-on command without any pre-configured scope.",
           "type": "string",
           "enum": [
-            "keep-screen-on:allow-ping"
-          ]
-        },
-        {
-          "description": "keep-screen-on:deny-execute -> Denies the execute command without any pre-configured scope.",
-          "type": "string",
-          "enum": [
-            "keep-screen-on:deny-execute"
-          ]
-        },
-        {
-          "description": "keep-screen-on:deny-ping -> Denies the ping command without any pre-configured scope.",
-          "type": "string",
-          "enum": [
-            "keep-screen-on:deny-ping"
+            "keep-screen-on:deny-keep-screen-on"
           ]
         },
         {

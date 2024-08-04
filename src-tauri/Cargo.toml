@@ -21,7 +21,6 @@ tauri = { features = ["image-png", "unstable"] , version = "2.0.0-beta.20" }
 serde = { version = "1.0", features = ["derive"] }
 serde_json = "1.0"
 log = "0.4"
-tauri-plugin-log = "2.0.0-beta.8"
 openssl = {version = "0.10.45", features = ["vendored"] }
 reqwest = "0.12.4"
 reqwest_dav = "0.1.9"
@@ -29,9 +28,10 @@ async-trait = "0.1.80"
 uuid = {version = "1.8.0", features = ["v4"] }
 tauri-plugin-cli = "2.0.0-beta"
 tauri-plugin-devtools = "2.0.0-beta"
-tauri-plugin-keep-screen-on = { path = "../tauri-plugin-keep-screen-on" }
 tauri-plugin-store = "2.0.0-beta.10"
 tauri-plugin-shell = "2.0.0-beta.9"
+tauri-plugin-log = "2.0.0-beta.8"
+tauri-plugin-keep-screen-on = { path = "../../screen-on"}
 
 [features]
 # this feature is used for production builds or when `devPath` points to the filesystem
