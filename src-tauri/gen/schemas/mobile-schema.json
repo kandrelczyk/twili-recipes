@@ -565,14 +565,14 @@
           ]
         },
         {
-          "description": "keep-screen-on:allow-keep-screen-on -> Enables the keep-screen-on command without any pre-configured scope.",
+          "description": "keep-screen-on:allow-keep-screen-on -> Enables the keep_screen_on command without any pre-configured scope.",
           "type": "string",
           "enum": [
             "keep-screen-on:allow-keep-screen-on"
           ]
         },
         {
-          "description": "keep-screen-on:deny-keep-screen-on -> Denies the keep-screen-on command without any pre-configured scope.",
+          "description": "keep-screen-on:deny-keep-screen-on -> Denies the keep_screen_on command without any pre-configured scope.",
           "type": "string",
           "enum": [
             "keep-screen-on:deny-keep-screen-on"

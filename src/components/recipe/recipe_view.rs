@@ -24,6 +24,11 @@ struct RecipeArgs {
     filename: String,
 }
 
+#[derive(Serialize)]
+struct KeepScreenOnArgs {
+    enable: bool,
+}
+
 #[wasm_bindgen]
 extern "C" {
     #[wasm_bindgen(catch, js_namespace = ["window", "__TAURI__", "core"])]
@@ -49,13 +54,18 @@ pub fn RecipeView() -> impl IntoView {
             .clone(),
     );
     let recipe = create_resource(params, move |f| async move {
+        invoke(
+            "plugin:keep-screen-on|keep_screen_on",
+            to_value(&KeepScreenOnArgs { enable: true })
+                .expect("Failed to serialize KeepScreenOnArgs"),
+        )
+        .await
+        .unwrap();
+
         let args = to_value(&RecipeArgs {
             filename: f.expect("Missing filename param").filename,
         })
         .expect("Failed to create params");
-        invoke("plugin:keep-screen-on|keep-screen-on", JsValue::TRUE)
-            .await
-            .unwrap();
 
         match invoke("get_recipe", args).await {
             Ok(recipe) => Ok(from_value::<Recipe>(recipe).expect("Failed to parse Recipe")),
@@ -74,9 +84,13 @@ pub fn RecipeView() -> impl IntoView {
 
     on_cleanup(|| {
         spawn_local(async move {
-            invoke("plugin:keep-screen-on|keep-screen-on", JsValue::FALSE)
-                .await
-                .unwrap();
+            invoke(
+                "plugin:keep-screen-on|keep_screen_on",
+                to_value(&KeepScreenOnArgs { enable: false })
+                    .expect("Failed to serialize KeepScreenOnArgs"),
+            )
+            .await
+            .unwrap();
         });
         listener.remove();
     });
