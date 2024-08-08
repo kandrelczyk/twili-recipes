@@ -7,15 +7,7 @@
     "main-*"
   ],
   "permissions": [
-    "path:default",
-    "event:default",
-    "app:default",
-    "resources:default",
-    "menu:default",
-    "tray:default",
     "log:default",
-    "window:default",
-    "webview:default",
     "store:allow-get",
     "store:allow-set",
     "store:allow-save",
