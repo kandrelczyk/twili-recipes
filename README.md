@@ -4,10 +4,10 @@ Recipe manager done **The Way I Like It**.
 
 Simple app to help you with cooking.
 
-Twili is not just another recipe manager. It's a cooking assistant app focusing 
+Twili is not just recipe manager. It's a cooking assistant app focusing 
 maily on ease of use. It's main features include:
 
-- Use LLM to automatically parse recipes - simply copy and paste recipes from any website
+- Use LLM to automatically parse recipes - simply copy and paste recipes from any website (or write them yourself)
 - NextCloud integrationto to easily share recipes between devices
 - Multiplatform support (desktop and mobile)
 - Unique recipe presentation to save you a lot of scrolling 
@@ -15,7 +15,9 @@ maily on ease of use. It's main features include:
 
 This project is still under development. 
 
-It currently supports NextCloud and ChatGPT but other cloud and LLM services can be easily added in the future. 
+It currently supports NextCloud and local device for storage. 
+ChatGPT LLM is supported.
+Other clound and LLM service can be easily added. 
 
 ![Add Recipe](screenshots/add-recipe.png)
 ![Recipe step](screenshots/step.png)
@@ -86,3 +88,7 @@ Don't forget to change namespace and applicationId parameters in the grandle bui
 
 Install tauri-driver and WebKitWebDriver (https://tauri.app/v1/guides/testing/webdriver/introduction). Build the app using `cargo tauri build`. Run the test using `cargo test`. 
 
+
+## License
+
+Twili Recipes application is distributed under the Apache 2.0 license. See the [LICENSE](/LICENSE) file for more information.
