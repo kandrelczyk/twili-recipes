@@ -211,7 +211,7 @@ jobs:
         with:
           releaseDirectory: /home/runner/work/twili-recipes/twili-recipes/src-tauri/gen/android/app/build/outputs/apk/universal/release/
           signingKeyBase64: ${{ secrets.KEY_FILE }}
-          alias: ahqstore
+          alias: app
           keyStorePassword: ${{ secrets.K_PASSWORD }}
           keyPassword: ${{ secrets.K_PASSWORD }}
         env:
