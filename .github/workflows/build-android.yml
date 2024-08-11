@@ -96,15 +96,6 @@ jobs:
           - args: --target armv7
             suffix: armv7
 
-          - args: --target aarch64
-            suffix: aarch64
-
-          - args: --target i686
-            suffix: i686
-
-          - args: --target x86_64
-            suffix: x86_64
-
     steps:
       - name: Checkout
         uses: actions/checkout@v4
