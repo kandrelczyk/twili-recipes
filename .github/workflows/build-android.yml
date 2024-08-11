@@ -160,7 +160,7 @@ jobs:
         uses: dtolnay/rust-toolchain@nightly
 
       - name: Install Rust Targets
-        run: rustup target add aarch64-linux-android armv7-linux-androideabi i686-linux-android x86_64-linux-android
+        run: rustup target add aarch64-linux-android armv7-linux-androideabi i686-linux-android x86_64-linux-android wasm32-unknown-unknown
 
       - name: Build Tauri App (Android)
         run: |
@@ -171,7 +171,6 @@ jobs:
           export JAVA_HOME="$CURRENT_DIR/jbr/jbr_jcef-17.0.11-linux-x64-b1312.2/"
 
           sudo chmod 777 -R ./src-tauri
-
           cargo install --path .
           cargo install tauri-cli@2.0.0-rc.3
           cargo install trunk
