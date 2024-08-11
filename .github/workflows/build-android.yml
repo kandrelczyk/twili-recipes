@@ -179,6 +179,26 @@ jobs:
           export NDK_HOME="$CURRENT_DIR/sdk/ndk/27.0.11902837/"
           export JAVA_HOME="$CURRENT_DIR/jbr/jbr_jcef-17.0.11-linux-x64-b1312.2/"
 
+          
+          export TOOLCHAIN=$NDK_HOME/toolchains/llvm/prebuilt/linux-x86_64
+          export TARGET=aarch64-linux-android
+          export API=33
+          
+          export AR=$TOOLCHAIN/bin/llvm-ar
+          export CC=$TOOLCHAIN/bin/$TARGET$API-clang
+          export AS=$CC
+          export CXX=$TOOLCHAIN/bin/$TARGET$API-clang++
+          export LD=$TOOLCHAIN/bin/ld
+          export RANLIB=$TOOLCHAIN/bin/llvm-ranlib
+          export STRIP=$TOOLCHAIN/bin/llvm-strip
+          
+          export PATH=$PATH:$ANDROID_HOME/cmdline-tools/latest/bin
+          export PATH=$PATH:$TOOLCHAIN/bin
+
+          echo '[target.aarch64-linux-android]' >  $HOME/.cargo/config
+          echo "linker = \"$NDK_HOME/toolchains/llvm/prebuilt/linux-x86_64/bin/aarch64-linux-android33-clang\"" >> $HOME/.cargo/config
+
+          cat $HOME/.cargo/config
           sudo chmod 777 -R ./src-tauri
           cargo install --path .
           cargo install tauri-cli@2.0.0-rc.3
