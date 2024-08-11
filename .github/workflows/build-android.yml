@@ -198,7 +198,6 @@ jobs:
           echo '[target.aarch64-linux-android]' >  $HOME/.cargo/config.toml
           echo "linker = \"$NDK_HOME/toolchains/llvm/prebuilt/linux-x86_64/bin/aarch64-linux-android33-clang\"" >> $HOME/.cargo/config.toml
 
-          cat $HOME/.cargo/config
           sudo chmod 777 -R ./src-tauri
           cargo install --path .
           cargo install tauri-cli@2.0.0-rc.3
