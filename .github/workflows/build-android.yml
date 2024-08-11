@@ -195,8 +195,8 @@ jobs:
           export PATH=$PATH:$ANDROID_HOME/cmdline-tools/latest/bin
           export PATH=$PATH:$TOOLCHAIN/bin
 
-          echo '[target.aarch64-linux-android]' >  $HOME/.cargo/config
-          echo "linker = \"$NDK_HOME/toolchains/llvm/prebuilt/linux-x86_64/bin/aarch64-linux-android33-clang\"" >> $HOME/.cargo/config
+          echo '[target.aarch64-linux-android]' >  $HOME/.cargo/config.toml
+          echo "linker = \"$NDK_HOME/toolchains/llvm/prebuilt/linux-x86_64/bin/aarch64-linux-android33-clang\"" >> $HOME/.cargo/config.toml
 
           cat $HOME/.cargo/config
           sudo chmod 777 -R ./src-tauri
@@ -210,13 +210,13 @@ jobs:
         name: Sign app APK
         id: sign_app
         with:
-          releaseDirectory: /home/runner/work/android-client/android-client/src-tauri/gen/android/app/build/outputs/apk/universal/release
+          releaseDirectory: /home/runner/work/twili-recipes/twili-recipes/src-tauri/gen/android/app/build/outputs/apk/universal/release/
           signingKeyBase64: ${{ secrets.KEY_FILE }}
           alias: ahqstore
           keyStorePassword: ${{ secrets.K_PASSWORD }}
           keyPassword: ${{ secrets.K_PASSWORD }}
         env:
-          ANDROID_HOME: /home/runner/work/android-client/android-client/sdk
+          ANDROID_HOME: /home/runner/work/twili-recipes/twili-recipes/sdk/
           BUILD_TOOLS_VERSION: 35.0.0-rc4
 
       - name: As Artifact
