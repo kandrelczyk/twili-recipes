@@ -181,7 +181,7 @@ jobs:
 
           sudo chmod 777 -R ./src-tauri
 
-          cargo install
+          cargo install --path .
           cargo tauri android build ${{ matrix.args }}
 
       - uses: r0adkll/sign-android-release@master
