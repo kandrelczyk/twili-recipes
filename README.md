@@ -1,4 +1,4 @@
-### Twili Recipes
+# Twili Recipes
 
 Recipes done **The Way I Like It**. 
 
@@ -27,7 +27,7 @@ Other clound and LLM service can be easily added.
 
 Intallers are available at [Github](https://github.com/kandrelczyk/twili-recipes/releases)
 
-### Building
+## Building
 
 Follow the typical Tauri setup process for your platform. Install all dependencies listed in prerequisites.
 
@@ -35,14 +35,14 @@ Install trunk (`cargo install trunk`) and tailwindcss (`npm install -g tailwindc
 
 Add wasm target (`rustup target add wasm32-unknown-unknown`)
 
-## Desktop app
+### Desktop app
 
 
 Make sure you have tauri-cli updated to the latestes version.
 
 Run `cargo tauri dev`
 
-## note
+#### note
 
 In case having problems with running `cargo tauri dev`
 make sure you have following things installed:
@@ -50,7 +50,7 @@ make sure you have following things installed:
 - cargo install trunk
 - rustup target add wasm32-unknown-unknown
 
-## Android app
+### Android app
 
 To build the app for Android on Linux insert following into .bashrc:
 
@@ -78,7 +78,7 @@ export PATH=$PATH:$TOOLCHAIN/bin
 
 Run `cargo tauri android init` and `cargo tauri android dev`
 
-## Signing apk file
+### Signing apk file
 
 Follow instructions at https://next--tauri.netlify.app/next/guides/distribution/sign-android/
 You can use the included local.properties and build.gradle.kts template files.
@@ -90,7 +90,7 @@ Copy `local.properties_template` to `src-tauri/gen/android/local.properties`.
 Copy `app_build.gradle.kts_template` to `src-tauri/gen/android/app/build.gradle.kts`.
 Don't forget to change namespace and applicationId parameters in the grandle build template. 
 
-### Integration tests
+## Integration tests
 
 Install tauri-driver and WebKitWebDriver (https://tauri.app/v1/guides/testing/webdriver/introduction). Build the app using `cargo tauri build`. Run the test using `cargo test`. 
 
