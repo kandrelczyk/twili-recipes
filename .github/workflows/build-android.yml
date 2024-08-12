@@ -40,18 +40,6 @@ jobs:
               draft: true,
             });
             return data
-
-      - name: Get Version
-        id: get-version
-        uses: actions/github-script@v7
-        env:
-          BRANCH: ${{ github.ref_name }}
-        with:
-          script: |
-            const version = require('./src-tauri/tauri.conf.json').version;
-            console.log(version)
-            return version
-          result-encoding: string
             
       - name: Get Release Id
         id: get-id
@@ -114,6 +102,18 @@ jobs:
             sdk
             target
 
+      - name: Get Version
+        id: get_version
+        uses: actions/github-script@v7
+        env:
+          BRANCH: ${{ github.ref_name }}
+        with:
+          script: |
+            const version = require('./src-tauri/tauri.conf.json').version;
+            console.log(version)
+            return version
+          result-encoding: string
+          
       - name: Install Android Requirements
         run: |
           sudo dpkg --add-architecture i386
@@ -225,7 +225,7 @@ jobs:
         with:
           upload_url: ${{ needs.create-release.outputs.upload_url }}
           asset_path: ${{ steps.sign_app.outputs.signedReleaseFile }}
-          asset_name: TwiliRecipes-${{ steps.get-version.outputs.result }}.apk
+          asset_name: TwiliRecipes-${{ steps.get_version.outputs.result }}.apk
           asset_content_type: application/octet-stream
           github_token: ${{ secrets.GITHUB_TOKEN }}
         env:
