@@ -134,6 +134,8 @@ jobs:
         with:
           releaseId: process.env.R_ID,
           args: ${{ matrix.args }}
+          releaseDraft: true
+          tauriScript: cargo tauri
 
           
   publish-android:
@@ -290,7 +292,7 @@ jobs:
   
 
   undraft-release:
-    needs: [create-release, publish-android]
+    needs: [create-release, publish-android, publish-desktop]
     name: Publish Release
     runs-on: ubuntu-latest
 
