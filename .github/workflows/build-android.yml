@@ -132,7 +132,7 @@ jobs:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
           R_ID: ${{ needs.create-release.outputs.release_id }}
         with:
-          release_id: process.env.R_ID,
+          releaseId: process.env.R_ID,
           args: ${{ matrix.args }}
 
           
