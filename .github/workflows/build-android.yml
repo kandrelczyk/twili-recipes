@@ -41,6 +41,16 @@ jobs:
             });
             return data
 
+      - name: Get Version
+        id: get-version
+        uses: actions/github-script@v7
+        env:
+          BRANCH: ${{ github.ref_name }}
+        with:
+          script: |
+            const version = require('./src-tauri/tauri.conf.json').version;
+            return version
+            
       - name: Get Release Id
         id: get-id
         uses: actions/github-script@v7
@@ -88,22 +98,6 @@ jobs:
 
     strategy:
       fail-fast: false
-      matrix:
-        include:
-          - args:
-            suffix: universal
-
-          - args: --target armv7
-            suffix: armv7
-
-          - args: --target aarch64
-            suffix: aarch64
-
-          - args: --target i686
-            suffix: i686
-
-          - args: --target x86_64
-            suffix: x86_64
 
     steps:
       - name: Checkout
@@ -112,7 +106,7 @@ jobs:
       - name: Cache
         uses: actions/cache@v4
         with:
-          key: build_${{ matrix.suffix }}
+          key: build_apk
           save-always: true
           path: |
             sdk
@@ -203,7 +197,7 @@ jobs:
           cargo install tauri-cli@2.0.0-rc.3
           cargo install trunk
           npm install -g tailwindcss
-          cargo tauri android build ${{ matrix.args }}
+          cargo tauri android build
 
       - uses: r0adkll/sign-android-release@master
         name: Sign app APK
@@ -222,14 +216,14 @@ jobs:
         uses: actions/upload-artifact@v4
         with:
           path: /home/runner/work/android-client/android-client/src-tauri/gen/android/app/build/outputs/apk/universal/release/*
-          name: ${{ matrix.suffix }}
+          name: universal_apk
 
       - name: Upload to Release
         uses: shogo82148/actions-upload-release-asset@v1
         with:
           upload_url: ${{ needs.create-release.outputs.upload_url }}
           asset_path: ${{ steps.sign_app.outputs.signedReleaseFile }}
-          asset_name: app-${{ matrix.suffix }}.apk
+          asset_name: TwiliRecipes-${{ needs.get-version.outputs }}.apk
           asset_content_type: application/octet-stream
           github_token: ${{ secrets.GITHUB_TOKEN }}
         env:
