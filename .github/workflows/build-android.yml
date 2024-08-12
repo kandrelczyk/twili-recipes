@@ -49,6 +49,7 @@ jobs:
         with:
           script: |
             const version = require('./src-tauri/tauri.conf.json').version;
+            echo version
             return version
             
       - name: Get Release Id
@@ -223,7 +224,7 @@ jobs:
         with:
           upload_url: ${{ needs.create-release.outputs.upload_url }}
           asset_path: ${{ steps.sign_app.outputs.signedReleaseFile }}
-          asset_name: TwiliRecipes-${{ needs.get-version.outputs }}.apk
+          asset_name: TwiliRecipes-${{ steps.get-version.outputs }}.apk
           asset_content_type: application/octet-stream
           github_token: ${{ secrets.GITHUB_TOKEN }}
         env:
