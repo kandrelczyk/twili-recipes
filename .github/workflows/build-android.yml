@@ -126,7 +126,7 @@ jobs:
           cargo install tauri-cli@2.0.0-rc.3
           cargo install trunk
           npm install -g tailwindcss
-
+          rustup target add wasm32-unknown-unknown
       - uses: tauri-apps/tauri-action@v0
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
