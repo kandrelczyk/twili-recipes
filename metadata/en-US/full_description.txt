@@ -1,0 +1,5 @@
+AI powered cooking assistant with Next Cloud integration.
+Easily add any recipe with the help of ChatGPT. Simply copy it from any page on the internet or type it manually. Recipes in all languages are supported. 
+Recipes can be stored locally or in Next Cloud instance.
+Unique UI makes it easy to scale recipes and follow instructions.
+App is available for Android and Desktop. You can download version for other platforms from my website. 

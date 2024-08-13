@@ -1,0 +1,1 @@
+Recipe manager and cooking assistant app with ChatGTP and Next Cloud integration
