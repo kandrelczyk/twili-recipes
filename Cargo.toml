@@ -21,6 +21,7 @@ console_error_panic_hook = "0.1.7"
 icondata_bi = "0.0.10"
 icondata_ri = "0.0.10"
 thaw = {version= "0.3.3", features = ["csr"]}
+codee = { version = "0.1", features = ["json_serde"] }
 leptos-use = "0.11.4"
 
 [dev-dependencies]
