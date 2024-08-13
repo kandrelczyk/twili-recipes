@@ -1,0 +1,3 @@
+Ten asystent kuchenny pomoże Ci dodać nowe przepisy do katalogu. Dzięki integracji z ChatGPT wystarczy skopiować treść przepisu z dowolnej strony w internecie lub napisać jej tekst ręcznie. 
+Integracja z Next Cloud pozwala łatwo dzielić przepisy między różnymi urządzeniami. 
+Aplikacja jest dostępna w wersji na Android i na PC. Odwiedź stronę aplikacji aby pobrać wersję na inne platformy. 
