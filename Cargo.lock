@@ -736,6 +736,8 @@ version = "0.1.2"
 source = "registry+https://github.com/rust-lang/crates.io-index"
 checksum = "af40247be877a1e3353fb406aa27ab3ef4bd3ff18cef91e75e667bfa3fde701d"
 dependencies = [
+ "serde",
+ "serde_json",
  "thiserror",
 ]
 
@@ -6081,6 +6083,7 @@ dependencies = [
 name = "twili-recipes-ui"
 version = "0.1.1"
 dependencies = [
+ "codee",
  "console_error_panic_hook",
  "console_log",
  "icondata_bi",
