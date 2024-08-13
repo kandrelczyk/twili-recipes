@@ -1,10 +1,10 @@
 ### Twili Recipes
 
-Recipe manager done **The Way I Like It**. 
+Recipes done **The Way I Like It**. 
 
 Simple app to help you with cooking.
 
-Twili is not just recipe manager. It's a cooking assistant app focusing 
+Twili is not just a recipe manager. It's a cooking assistant app focusing 
 maily on ease of use. It's main features include:
 
 - Use LLM to automatically parse recipes - simply copy and paste recipes from any website (or write them yourself)
@@ -23,12 +23,17 @@ Other clound and LLM service can be easily added.
 ![Recipe step](screenshots/step.png)
 ![Main Screen](screenshots/main-screen.png)
 
+### Download
+
+Intallers are available at [Github](https://github.com/kandrelczyk/twili-recipes/releases)
 
 ### Building
 
 Follow the typical Tauri setup process for your platform. Install all dependencies listed in prerequisites.
 
 Install trunk (`cargo install trunk`) and tailwindcss (`npm install -g tailwindcss`).
+
+Add wasm target (`rustup target add wasm32-unknown-unknown`)
 
 ## Desktop app
 
@@ -43,6 +48,7 @@ In case having problems with running `cargo tauri dev`
 make sure you have following things installed:
 - cargo install tauri-cli@2.0.0-beta.14 --locked
 - cargo install trunk
+- rustup target add wasm32-unknown-unknown
 
 ## Android app
 
@@ -72,7 +78,7 @@ export PATH=$PATH:$TOOLCHAIN/bin
 
 Run `cargo tauri android init` and `cargo tauri android dev`
 
-## Building apk file
+## Signing apk file
 
 Follow instructions at https://next--tauri.netlify.app/next/guides/distribution/sign-android/
 You can use the included local.properties and build.gradle.kts template files.
