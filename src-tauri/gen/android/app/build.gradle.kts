@@ -1,19 +1,28 @@
+import java.util.Properties
+
 plugins {
     id("com.android.application")
     id("org.jetbrains.kotlin.android")
     id("rust")
 }
 
+val tauriProperties = Properties().apply {
+    val propFile = file("tauri.properties")
+    if (propFile.exists()) {
+        propFile.inputStream().use { load(it) }
+    }
+}
+
 android {
-    compileSdk = 33
-    namespace = "net.curiana.twili_recipes"
+    compileSdk = 34
+    namespace = "net.curiana.recipes"
     defaultConfig {
         manifestPlaceholders["usesCleartextTraffic"] = "false"
-        applicationId = "net.curiana.twili_recipes"
+        applicationId = "net.curiana.recipes"
         minSdk = 24
-        targetSdk = 33
-        versionCode = 1
-        versionName = "1.0"
+        targetSdk = 34
+        versionCode = tauriProperties.getProperty("tauri.android.versionCode", "1").toInt()
+        versionName = tauriProperties.getProperty("tauri.android.versionName", "1.0")
     }
     buildTypes {
         getByName("debug") {
@@ -38,6 +47,9 @@ android {
     }
     kotlinOptions {
         jvmTarget = "1.8"
+    }
+    buildFeatures {
+        buildConfig = true
     }
 }
 
