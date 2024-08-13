@@ -150,6 +150,7 @@ async fn test_initial_setup() -> WebDriverResult<()> {
         .click()
         .await?;
 
+    std::thread::sleep(std::time::Duration::from_secs(2));
     let refresh = driver.query(By::Id("refresh")).first().await?;
     refresh.wait_until().displayed().await?;
     refresh.click().await?;
@@ -159,6 +160,7 @@ async fn test_initial_setup() -> WebDriverResult<()> {
         .first()
         .await?;
     elem.wait_until().displayed().await?;
+    elem.wait_until().enabled().await?;
 
     get_list.assert_async().await;
     get_list_full.assert_async().await;
