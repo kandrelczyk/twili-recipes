@@ -1,8 +1,8 @@
 use leptos::*;
 
-use leptos_router::{Route, Router, Routes};
 use codee::string::FromToStringCodec;
-use leptos_use::{storage::use_local_storage};
+use leptos_router::{Route, Router, Routes};
+use leptos_use::storage::use_local_storage;
 use thaw::{GlobalStyle, MessagePlacement, MessageProvider, Theme, ThemeProvider};
 
 use crate::components::{
