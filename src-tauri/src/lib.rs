@@ -108,7 +108,7 @@ impl AppBuilder {
                         Target::new(TargetKind::Webview),
                         Target::new(TargetKind::Stdout),
                     ])
-                    .level(log::LevelFilter::Info)
+                    .level(log::LevelFilter::Warn)
                     .build(),
             );
         }
