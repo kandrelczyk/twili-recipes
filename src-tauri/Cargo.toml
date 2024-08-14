@@ -22,7 +22,7 @@ serde = { version = "1.0", features = ["derive"] }
 serde_json = "1.0"
 log = "0.4"
 openssl = {version = "0.10.45", features = ["vendored"] }
-reqwest = "0.12.4"
+reqwest = "=0.12.4"
 reqwest_dav = "0.1.9"
 async-trait = "0.1.80"
 uuid = {version = "1.8.0", features = ["v4"] }

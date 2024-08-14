@@ -79,6 +79,7 @@ jobs:
             } catch (_) {
               return data.upload_url;
             }
+
   publish-desktop:
     needs: create-release
     name: Buld & Publish Tauri Desktop App
