@@ -1,4 +1,0 @@
-storePassword={pass}
-keyPassword={pass}
-keyAlias=upload
-storeFile=/opt/android.keystore
