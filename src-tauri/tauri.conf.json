@@ -32,9 +32,6 @@
             "icons/icon.icns",
             "icons/icon.ico"
         ],
-	"android": {
-	    "versionCode": "1"
-	},
         "targets": "all"
     },
     "app": {
