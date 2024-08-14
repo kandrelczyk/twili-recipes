@@ -4040,29 +4040,6 @@ dependencies = [
 ]
 
 [[package]]
-name = "recipes"
-version = "0.1.1"
-dependencies = [
- "async-trait",
- "log",
- "openssl",
- "recipes_common",
- "reqwest",
- "reqwest_dav",
- "serde",
- "serde_json",
- "tauri",
- "tauri-build",
- "tauri-plugin-cli",
- "tauri-plugin-devtools",
- "tauri-plugin-keep-screen-on",
- "tauri-plugin-log",
- "tauri-plugin-shell",
- "tauri-plugin-store",
- "uuid",
-]
-
-[[package]]
 name = "recipes_common"
 version = "0.1.0"
 dependencies = [
@@ -6034,6 +6011,29 @@ name = "try-lock"
 version = "0.2.5"
 source = "registry+https://github.com/rust-lang/crates.io-index"
 checksum = "e421abadd41a4225275504ea4d6566923418b7f05506fbc9c0fe86ba7396114b"
+
+[[package]]
+name = "twili-recipes"
+version = "0.1.1"
+dependencies = [
+ "async-trait",
+ "log",
+ "openssl",
+ "recipes_common",
+ "reqwest",
+ "reqwest_dav",
+ "serde",
+ "serde_json",
+ "tauri",
+ "tauri-build",
+ "tauri-plugin-cli",
+ "tauri-plugin-devtools",
+ "tauri-plugin-keep-screen-on",
+ "tauri-plugin-log",
+ "tauri-plugin-shell",
+ "tauri-plugin-store",
+ "uuid",
+]
 
 [[package]]
 name = "twili-recipes-ui"
