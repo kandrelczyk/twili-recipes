@@ -3,4 +3,3 @@ dist/
 style/
 src-tauri/.cargo
 src-tauri/gen/android/app/build
-src-tauri/gen/android/local.properties
