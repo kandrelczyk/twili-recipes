@@ -238,7 +238,7 @@ jobs:
   
 
   undraft-release:
-    needs: [create-release, publish-android, publish-desktop]
+    needs: [create-release, publish-android]
     name: Publish Release
     runs-on: ubuntu-latest
 
