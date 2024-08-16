@@ -261,9 +261,9 @@ jobs:
           cargo tauri android init
           cargo tauri icon icon.png
           ./copy-android.sh
-          cargo tauri android build --apk
+          cargo tauri android build
 
-      - uses: r0adkll/sign-android-release@master
+      - uses: r0adkll/sign-android-release@v1
         name: Sign app APK
         id: sign_app
         with:
