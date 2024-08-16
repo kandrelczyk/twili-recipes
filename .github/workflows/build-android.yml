@@ -202,10 +202,10 @@ jobs:
 
           echo y | sdkmanager "platform-tools"
           echo y | sdkmanager "platforms;android-34"
-          echo y | sdkmanager "ndk;27.0.11902837"
+          echo y | sdkmanager "ndk;27.0.12077973"
           echo y | sdkmanager "build-tools;35.0.0-rc4"
 
-          export NDK_HOME="$ANDROID_HOME/ndk/27.0.11902837"
+          export NDK_HOME="$ANDROID_HOME/ndk/27.0.12077973"
 
       - name: Install Tauri Requirements
         run: |
@@ -231,7 +231,7 @@ jobs:
           export CURRENT_DIR=$(pwd)
           export ANDROID_HOME="$CURRENT_DIR/sdk/"
           export ANDROID_SDK_ROOT="$CURRENT_DIR/sdk/"
-          export NDK_HOME="$CURRENT_DIR/sdk/ndk/27.0.11902837/"
+          export NDK_HOME="$CURRENT_DIR/sdk/ndk/27.0.12077973/"
           export JAVA_HOME="$CURRENT_DIR/jbr/jbr_jcef-17.0.11-linux-x64-b1312.2/"
 
           
