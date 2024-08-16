@@ -259,8 +259,9 @@ jobs:
           cargo install trunk
           npm install -g tailwindcss
           cargo tauri android init
+          cargo tauri icon icon.png
           ./copy-android.sh
-          cargo tauri android build
+          cargo tauri android build --apk
 
       - uses: r0adkll/sign-android-release@master
         name: Sign app APK
