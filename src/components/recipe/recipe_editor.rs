@@ -1,6 +1,6 @@
 use crate::{components::Header, error::CommandError};
 use leptos::prelude::*;
-use leptos::{web_sys, spawn::spawn_local};
+use leptos::{spawn::spawn_local, web_sys};
 use recipes_common::Recipe;
 use serde::Serialize;
 use serde_json::{from_str, to_string_pretty};
@@ -33,7 +33,7 @@ pub fn RecipeEditor(
     let invalid_json =
         Signal::derive(move || from_str::<Recipe>(recipe_json.get().as_str()).is_err());
 
-    let save_disabled = Signal::derive(move || {saving() || invalid_json()});
+    let save_disabled = Signal::derive(move || saving() || invalid_json());
 
     let title = recipe.name.clone();
 
@@ -56,9 +56,7 @@ pub fn RecipeEditor(
             .unwrap();
 
             match invoke("save_recipe", args).await {
-                Ok(_) => {
-                    on_save.run(())
-                }
+                Ok(_) => on_save.run(()),
                 Err(error) => {
                     save_error.set(Some(
                         from_value::<CommandError>(error).expect("Failed to parse CommandError"),

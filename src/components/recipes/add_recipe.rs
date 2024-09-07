@@ -1,5 +1,3 @@
-use std::collections::HashSet;
-
 use leptos::prelude::*;
 use leptos::spawn::spawn_local;
 use leptos_router::hooks::use_navigate;
@@ -30,7 +28,6 @@ pub fn AddRecipe() -> impl IntoView {
 
     let error: RwSignal<Option<CommandError>> = RwSignal::new(None);
     let show_error = Signal::derive(move || error.get().is_some());
-    let collapse = RwSignal::new(HashSet::from(["".to_string()]));
     let recipe: RwSignal<Option<String>> = RwSignal::new(None);
 
     let recipe_invalid = RwSignal::new(false);

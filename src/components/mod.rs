@@ -1,10 +1,10 @@
 mod about;
 mod app;
 mod common;
+mod recipe;
 mod recipes;
 mod settings;
 mod welcome;
-mod recipe;
 
 pub use about::*;
 pub use app::*;

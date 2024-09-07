@@ -102,102 +102,102 @@ pub fn Settings(init: bool) -> impl IntoView {
                     }
                     Err(err) => command_error.set(Some(from_value::<CommandError>(err).unwrap())),
                 };
-//                message.create(
-//                    "Saved".to_owned(),
-//                    thaw::MessageVariant::Success,
-//                    Default::default(),
-//                );
+                //                message.create(
+                //                    "Saved".to_owned(),
+                //                    thaw::MessageVariant::Success,
+                //                    Default::default(),
+                //                );
             });
         }
     };
 
     view! {
-        <main class="flex flex-col h-screen w-full items-center justify-start">
-            <Header
-                button=move || {
-                    if init {
-                        view! { "" }.into_any()
+            <main class="flex flex-col h-screen w-full items-center justify-start">
+                <Header
+                    button=move || {
+                        if init {
+                            view! { "" }.into_any()
+                        } else {
+                            view! {
+                                <Button
+                                    class="ml-1 absolute"
+                                    appearance=ButtonAppearance::Subtle
+                                    shape=ButtonShape::Circular
+                                    icon=icondata_bi::BiChevronLeftSolid
+                                    on:click=move |_| {
+                                        navigate.get_untracked()("/list", Default::default())
+                                    }
+                                >
+                                </Button>
+                            }
+                                .into_any()
+                        }
+                    }
+
+                    title=move || { if init { "Initial setup" } else { "Settings" } }
+                />
+                {move || {
+                    if init || has_config.get() {
+                        view! {
+                            <div class="flex flex-col items-center h-full w-full">
+                                <div class="p-2 w-full max-w-xl h-full">
+                                    <div id="api_token" class="p-2 text-sm w-full">
+                                        ChatGPT API Token
+                                        <Input class="w-full"
+                                            value=llm_token
+                                            disabled=loading
+     //                                       invalid=llm_token_invalid
+                                        />
+                                    </div>
+                                    <Divider/>
+                                    <div id="recipes_source" class="p-1 mt-4 text-sm w-full flex flex-col gap-1">
+                                        "Store in NextCloud"
+                                        <Switch checked=cloud_storage />
+                                    </div>
+                                    <Show when=move || cloud_storage.get()>
+                                    <div id="cloud_uri" class="p-1 mt-4 text-sm w-full">
+                                        Nextcloud URI
+                                        <Input class="w-full"
+                                            value=cloud_uri
+                                            disabled=loading
+     //                                       invalid=cloud_uri_invalid
+                                        />
+                                    </div>
+                                    <div id="cloud_username" class="p-1 mt-4 text-sm w-full">
+                                        Nextcloud username
+                                        <Input class="w-full"
+                                            value=cloud_username
+                                            disabled=loading
+     //                                       invalid=cloud_username_invalid
+                                        />
+                                    </div>
+                                    <div id="cloud_pass" class="p-1 mt-4 text-sm w-full">
+                                        Nextcloud password
+                                        <Input class="w-full"
+                                            value=cloud_pass
+                                            disabled=loading
+    //                                        invalid=cloud_pass_invalid
+                                        />
+                                    </div>
+                                    </Show>
+                                </div>
+                                <div class="grow"></div>
+                                <Button on:click=submit disabled=loading appearance=ButtonAppearance::Primary class="m-4">
+                                    Save
+                                </Button>
+                            </div>
+                        }
+                            .into_any()
                     } else {
                         view! {
-                            <Button
-                                class="ml-1 absolute"
-                                appearance=ButtonAppearance::Subtle
-                                shape=ButtonShape::Circular
-                                icon=icondata_bi::BiChevronLeftSolid
-                                on:click=move |_| {
-                                    navigate.get_untracked()("/list", Default::default())
-                                }
-                            >
-                            </Button>
+                            <div class="flex flex-col h-full justify-center">
+                                <Spinner/>
+                            </div>
                         }
                             .into_any()
                     }
-                }
+                }}
 
-                title=move || { if init { "Initial setup" } else { "Settings" } }
-            />
-            {move || {
-                if init || has_config.get() {
-                    view! {
-                        <div class="flex flex-col items-center h-full w-full">
-                            <div class="p-2 w-full max-w-xl h-full">
-                                <div id="api_token" class="p-2 text-sm w-full">
-                                    ChatGPT API Token
-                                    <Input class="w-full"
-                                        value=llm_token
-                                        disabled=loading
- //                                       invalid=llm_token_invalid
-                                    />
-                                </div>
-                                <Divider/>
-                                <div id="recipes_source" class="p-1 mt-4 text-sm w-full flex flex-col gap-1">
-                                    "Store in NextCloud"
-                                    <Switch checked=cloud_storage />
-                                </div>
-                                <Show when=move || cloud_storage.get()>
-                                <div id="cloud_uri" class="p-1 mt-4 text-sm w-full">
-                                    Nextcloud URI
-                                    <Input class="w-full"
-                                        value=cloud_uri
-                                        disabled=loading
- //                                       invalid=cloud_uri_invalid
-                                    />
-                                </div>
-                                <div id="cloud_username" class="p-1 mt-4 text-sm w-full">
-                                    Nextcloud username
-                                    <Input class="w-full"
-                                        value=cloud_username
-                                        disabled=loading
- //                                       invalid=cloud_username_invalid
-                                    />
-                                </div>
-                                <div id="cloud_pass" class="p-1 mt-4 text-sm w-full">
-                                    Nextcloud password
-                                    <Input class="w-full"
-                                        value=cloud_pass
-                                        disabled=loading
-//                                        invalid=cloud_pass_invalid
-                                    />
-                                </div>
-                                </Show>
-                            </div>
-                            <div class="grow"></div>
-                            <Button on:click=submit disabled=loading appearance=ButtonAppearance::Primary class="m-4">
-                                Save
-                            </Button>
-                        </div>
-                    }
-                        .into_any()
-                } else {
-                    view! {
-                        <div class="flex flex-col h-full justify-center">
-                            <Spinner/>
-                        </div>
-                    }
-                        .into_any()
-                }
-            }}
-
-        </main>
-    }
+            </main>
+        }
 }

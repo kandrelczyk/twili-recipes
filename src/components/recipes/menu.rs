@@ -1,8 +1,8 @@
+use codee::string::FromToStringCodec;
 use leptos::prelude::*;
 use leptos_router::hooks::use_navigate;
-use thaw::{Divider, Icon, Switch, Theme};
 use leptos_use::storage::use_local_storage;
-use codee::string::FromToStringCodec;
+use thaw::{Divider, Icon, Switch, Theme};
 
 #[component]
 pub fn AppMenu(reload_signal: RwSignal<i32>, show_menu: RwSignal<bool>) -> impl IntoView {

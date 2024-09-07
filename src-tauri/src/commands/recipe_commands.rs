@@ -8,7 +8,7 @@ pub async fn save_recipe(
     recipe: Recipe,
     manager: tauri::State<'_, Mutex<Option<Box<dyn RecipesProvider>>>>,
 ) -> Result<(), CommandError> {
-let mut m = manager.lock().await;
+    let mut m = manager.lock().await;
 
     Ok(m.as_mut().unwrap().save_recipe(recipe).await?)
 }

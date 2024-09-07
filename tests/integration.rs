@@ -95,12 +95,11 @@ async fn test_initial_setup() -> WebDriverResult<()> {
     elem.send_keys("gpt_api_token").await?;
 
     let elem = driver
-        .query(By::Id("recipes_source"))
+        .query(By::ClassName("thaw-switch"))
         .first()
         .await?
-        .find(By::Tag("div"))
+        .find(By::Tag("input"))
         .await?;
-    elem.wait_until().displayed().await?;
     elem.click().await?;
 
     let elem = driver

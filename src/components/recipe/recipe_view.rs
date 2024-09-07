@@ -18,7 +18,6 @@ struct RecipeParams {
     filename: Option<String>,
 }
 
-
 #[derive(Serialize)]
 struct RecipeArgs {
     filename: String,
@@ -65,7 +64,7 @@ pub fn RecipeView() -> impl IntoView {
         .unwrap();
 
         let args = to_value(&RecipeArgs {
-            filename: filename().unwrap()
+            filename: filename().unwrap(),
         })
         .expect("Failed to create params");
 
@@ -98,32 +97,37 @@ pub fn RecipeView() -> impl IntoView {
         listener.remove();
     });
 
+    let delete_recipe: Action<String, (), SyncStorage> =
+        Action::new_unsync(move |file: &String| {
+            let filename = file.clone();
+            async move {
+                let args = to_value(&RecipeArgs { filename }).expect("Failed to create args");
 
-    let delete_recipe : Action<String, (), SyncStorage> = Action::new_unsync(move |file: &String| {
-        let filename = file.clone();
-        async move {
-            let args = to_value(&RecipeArgs { filename }).expect("Failed to create args");
-
-            match invoke("delete_recipe", args).await {
-                Ok(_) => {
-                     toaster.dispatch_toast(view! {
-                         <Toast>
-                             <ToastTitle>"Recipe deleted"</ToastTitle>
-                         </Toast>
-                     }.into_any(), ToastOptions::default().with_position(ToastPosition::Top));
-                    navigate.get_untracked()("/list", Default::default());
-                }
-                Err(error) => {
-                    show_error_modal.set(true);
-                    delete_error.set(Some(format!(
-                        "{:?}",
-                        from_value::<CommandError>(error).expect("Failed to parse CommandError")
-                    )));
-                }
-            };
-            show_modal.set(false);
-        }
-    });
+                match invoke("delete_recipe", args).await {
+                    Ok(_) => {
+                        toaster.dispatch_toast(
+                            view! {
+                                <Toast>
+                                    <ToastTitle>"Recipe deleted"</ToastTitle>
+                                </Toast>
+                            }
+                            .into_any(),
+                            ToastOptions::default().with_position(ToastPosition::Top),
+                        );
+                        navigate.get_untracked()("/list", Default::default());
+                    }
+                    Err(error) => {
+                        show_error_modal.set(true);
+                        delete_error.set(Some(format!(
+                            "{:?}",
+                            from_value::<CommandError>(error)
+                                .expect("Failed to parse CommandError")
+                        )));
+                    }
+                };
+                show_modal.set(false);
+            }
+        });
 
     let on_select = move |key: String| match key.as_str() {
         "edit" => show_editor.set(true),
@@ -169,7 +173,7 @@ pub fn RecipeView() -> impl IntoView {
                     title=move || Suspend::new(async move { recipe.await.map(|r| r.name.clone()) })
                 >
                     <ActionsSlot slot>
-                        <Show fallback=|| view! {} when=move || recipe.get().is_some()>
+                        <Show fallback=|| view! {<div></div>} when=move || recipe.get().is_some()>
                             <Menu on_select position=MenuPosition::BottomEnd>
                                 <MenuTrigger slot>
                                     <Button

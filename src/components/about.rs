@@ -2,7 +2,7 @@ use leptos::prelude::*;
 use leptos::spawn::spawn_local;
 use leptos_router::hooks::use_navigate;
 use serde_wasm_bindgen::from_value;
-use thaw::{Button, ButtonShape, ButtonAppearance, Icon, Text};
+use thaw::{Button, ButtonAppearance, ButtonShape, Icon, Text};
 use wasm_bindgen::prelude::*;
 
 use crate::components::Header;

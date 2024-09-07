@@ -1,13 +1,13 @@
+use codee::string::FromToStringCodec;
 use leptos::prelude::*;
 use leptos_router::hooks::use_navigate;
+use leptos_use::storage::use_local_storage;
 use recipes_common::ListEntry;
 use serde_wasm_bindgen::from_value;
 use thaw::*;
 use wasm_bindgen::prelude::*;
-use codee::string::FromToStringCodec;
-use leptos_use::storage::use_local_storage;
 
-use crate::components::recipes::{ListItem, AppMenu};
+use crate::components::recipes::{AppMenu, ListItem};
 use crate::components::Header;
 use crate::error::CommandError;
 
@@ -28,7 +28,7 @@ pub fn List() -> impl IntoView {
     let theme = Theme::use_rw_theme();
     if dark() {
         theme.set(Theme::dark())
-    } 
+    }
 
     let add_recipe = move |_| navigate("/add", Default::default());
 
@@ -57,7 +57,7 @@ pub fn List() -> impl IntoView {
                             appearance=ButtonAppearance::Subtle
                             shape=ButtonShape::Circular
                             on_click=move |_| show_menu.set(true)
-                            icon=icondata_bi::BiMenuRegular 
+                            icon=icondata_bi::BiMenuRegular
                         >
                         </Button>
                     }

@@ -1,5 +1,3 @@
-use std::collections::HashSet;
-
 use leptos::prelude::*;
 use leptos::spawn::spawn_local;
 use leptos_router::hooks::use_navigate;
@@ -48,7 +46,7 @@ pub fn EditRecipe(
     let parsed_recipe: Signal<Result<Recipe, CommandError>> =
         Signal::derive(move || Ok(serde_json::from_str(recipe_json.get().as_str())?));
 
-    let has_error = Signal::derive(move || parsed_recipe.get().is_err());
+    let _has_error = Signal::derive(move || parsed_recipe.get().is_err());
 
     let save_json = move |_| {
         manual_edit.set(false);
@@ -71,11 +69,15 @@ pub fn EditRecipe(
                 .unwrap();
                 match invoke("save_recipe", args).await {
                     Ok(_) => {
-                     toaster.dispatch_toast(view! {
-                         <Toast>
-                             <ToastTitle>"Saved"</ToastTitle>
-                         </Toast>
-                     }.into_any(), ToastOptions::default().with_position(ToastPosition::Top));
+                        toaster.dispatch_toast(
+                            view! {
+                                <Toast>
+                                    <ToastTitle>"Saved"</ToastTitle>
+                                </Toast>
+                            }
+                            .into_any(),
+                            ToastOptions::default().with_position(ToastPosition::Top),
+                        );
                         navigate.get_untracked()("/list", Default::default());
                     }
                     Err(err) => error.set(Some(from_value::<CommandError>(err).unwrap())),
@@ -110,7 +112,7 @@ pub fn EditRecipe(
                             class="mr-1"
                             appearance=ButtonAppearance::Subtle
                             shape=ButtonShape::Circular
-                            icon=icondata_bi::BiEditAltSolid 
+                            icon=icondata_bi::BiEditAltSolid
                             on:click=move |_| manual_edit.set(true)
                         />
                     </Show>
@@ -173,9 +175,9 @@ pub fn EditRecipe(
                     }
                 }} <div class="grow"></div>
                 <div class="px-4 text-sm w-full max-w-lg">
-                    Name 
+                    Name
                     <Input value=name class="w-full" disabled=loading />//TODO invalid
-                </div> 
+                </div>
                 <Button on:click=save_recipe appearance=ButtonAppearance::Primary disabled=save_disabled class="m-4">
                     Save
                 </Button>

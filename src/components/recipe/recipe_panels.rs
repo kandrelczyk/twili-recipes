@@ -16,7 +16,9 @@ pub fn RecipePanels(recipe: Recipe) -> impl IntoView {
     let last_page = Signal::derive(move || page.get() as usize == recipe.get_value().steps.len());
 
     let step = Memo::new(move |_| {
-        let mut step = recipe.get_value().steps[page.get() as usize - 1].desc.clone();
+        let mut step = recipe.get_value().steps[page.get() as usize - 1]
+            .desc
+            .clone();
         recipe.get_value().ingredients.iter().for_each(|i| {
             step = step.replace(
                 format!("[{}]", i.name).as_str(),
