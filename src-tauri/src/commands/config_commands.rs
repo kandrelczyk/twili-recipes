@@ -32,7 +32,6 @@ pub async fn get_config(
     config_file: tauri::State<'_, Arc<OnceLock<String>>>,
 ) -> Result<Config, CommandError> {
     let config = get_stored_or_default_config(app_handle, store, config_file).await;
-
     Ok(config)
 }
 

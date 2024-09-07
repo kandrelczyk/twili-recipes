@@ -1,8 +1,10 @@
-use leptos::*;
-use leptos_router::use_navigate;
+use leptos::prelude::*;
+use leptos_router::hooks::use_navigate;
 use serde_wasm_bindgen::from_value;
-use thaw::Spinner;
+use thaw::{Spinner, Theme};
 use wasm_bindgen::prelude::*;
+use codee::string::FromToStringCodec;
+use leptos_use::storage::use_local_storage;
 
 use crate::error::CommandError;
 
@@ -14,11 +16,15 @@ extern "C" {
 
 #[component]
 pub fn Welcome() -> impl IntoView {
-    let navigate = create_rw_signal(use_navigate());
+    let navigate = RwSignal::new(use_navigate());
 
-    let initialized = create_resource(
-        || (),
-        move |_| async move {
+    let (dark, _, _) = use_local_storage::<bool, FromToStringCodec>("dark_mode");
+    let theme = Theme::use_rw_theme();
+    if dark() {
+        theme.set(Theme::dark())
+    } 
+    AsyncDerived::new_unsync(
+        move || async move {
             match invoke("initialize", JsValue::NULL).await {
                 Ok(success) => {
                     if from_value(success).expect("Wrong response from command") {
@@ -34,10 +40,9 @@ pub fn Welcome() -> impl IntoView {
     );
 
     view! {
-        <main class="p-4 flex justify-center items-center w-full h-full">
-            <Suspense fallback=|| {
-                view! { <Spinner/> }
-            }>
+        <main class="p-4 flex justify-center items-center w-full h-screen">
+
+            <Transition fallback=|| view! { <Spinner /> }>
                 <ErrorBoundary fallback=|errors| {
                     view! {
                         <p class="errors">
@@ -51,10 +56,13 @@ pub fn Welcome() -> impl IntoView {
                         </p>
                     }
                 }>
-                    {move || initialized}
+                    <ul>
+                        {move || Suspend::new(async move {
+                            view! { <Spinner /> }
+                        })}
+                    </ul>
                 </ErrorBoundary>
-            </Suspense>
-
+            </Transition>
         </main>
     }
 }

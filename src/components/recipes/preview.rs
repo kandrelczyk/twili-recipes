@@ -1,4 +1,4 @@
-use leptos::*;
+use leptos::prelude::*;
 use recipes_common::Recipe;
 use thaw::Card;
 
@@ -7,7 +7,7 @@ pub fn PreviewRecipe(recipe: Recipe) -> impl IntoView {
     view! {
         <div class="flex flex-col items-center overflow-hidden h-[70vh]">
             <p class="mt-2 text-lg text-center">Ingredients</p>
-            <Card class="mt-2 text-left overflow-y-auto h-full">
+            <Card class="mt-2 text-left overflow-y-auto h-full w-[100%]">
                 <div class="flex flex-col">
                     {recipe
                         .ingredients
@@ -34,9 +34,9 @@ pub fn PreviewRecipe(recipe: Recipe) -> impl IntoView {
                                 <Card class="w-full h-full min-h-[10vh] snap-center">
                                     {s.desc}
                                     {if s.time > 0 {
-                                        view! { <p>time: {s.time.to_owned()}</p> }
+                                        view! { <p>time: {s.time.to_owned()}</p> }.into_any()
                                     } else {
-                                        view! { <p></p> }
+                                        view! { <p></p> }.into_any()
                                     }}
                                 </Card>
                             }

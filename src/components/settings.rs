@@ -1,10 +1,11 @@
-use leptos::*;
+use leptos::prelude::*;
+use leptos::spawn::spawn_local;
 
-use leptos_router::use_navigate;
+use leptos_router::hooks::use_navigate;
 use recipes_common::{Config, RecipesSource};
 use serde::{Deserialize, Serialize};
 use serde_wasm_bindgen::{from_value, to_value};
-use thaw::{use_message, Button, ButtonVariant, Divider, Icon, Input, Spinner, Switch};
+use thaw::{Button, ButtonAppearance, ButtonShape, Divider, Input, Spinner, Switch};
 use wasm_bindgen::prelude::*;
 
 use crate::{components::Header, error::CommandError};
@@ -22,28 +23,27 @@ struct Args {
 
 #[component]
 pub fn Settings(init: bool) -> impl IntoView {
-    let navigate = create_rw_signal(use_navigate());
-    let message = use_message();
-    let loading = create_rw_signal(false);
-    let command_error: RwSignal<Option<CommandError>> = create_rw_signal(None);
+    let navigate = RwSignal::new(use_navigate());
+    let loading = RwSignal::new(false);
+    let command_error: RwSignal<Option<CommandError>> = RwSignal::new(None);
 
-    let has_config = create_rw_signal(init);
+    let has_config = RwSignal::new(init);
 
-    let llm_token = create_rw_signal("".to_owned());
-    let llm_token_invalid = create_rw_signal(false);
+    let llm_token = RwSignal::new("".to_owned());
+    let llm_token_invalid = RwSignal::new(false);
 
-    let cloud_storage = create_rw_signal(false);
-    let cloud_uri = create_rw_signal("".to_owned());
-    let cloud_uri_invalid = create_rw_signal(false);
+    let cloud_storage = RwSignal::new(false);
+    let cloud_uri = RwSignal::new("".to_owned());
+    let cloud_uri_invalid = RwSignal::new(false);
 
-    let cloud_username = create_rw_signal("".to_owned());
-    let cloud_username_invalid = create_rw_signal(false);
+    let cloud_username = RwSignal::new("".to_owned());
+    let cloud_username_invalid = RwSignal::new(false);
 
-    let cloud_pass = create_rw_signal("".to_owned());
-    let cloud_pass_invalid = create_rw_signal(false);
+    let cloud_pass = RwSignal::new("".to_owned());
+    let cloud_pass_invalid = RwSignal::new(false);
 
     if !init {
-        let listener = leptos::window_event_listener_untyped("popstate", move |_| {
+        let listener = window_event_listener_untyped("popstate", move |_| {
             navigate.get_untracked()("/list", Default::default())
         });
         on_cleanup(|| listener.remove());
@@ -102,40 +102,35 @@ pub fn Settings(init: bool) -> impl IntoView {
                     }
                     Err(err) => command_error.set(Some(from_value::<CommandError>(err).unwrap())),
                 };
-                message.create(
-                    "Saved".to_owned(),
-                    thaw::MessageVariant::Success,
-                    Default::default(),
-                );
+//                message.create(
+//                    "Saved".to_owned(),
+//                    thaw::MessageVariant::Success,
+//                    Default::default(),
+//                );
             });
         }
     };
 
     view! {
-        <main class="flex flex-col h-full w-full items-center justify-start">
+        <main class="flex flex-col h-screen w-full items-center justify-start">
             <Header
                 button=move || {
                     if init {
-                        view! { "" }.into_view()
+                        view! { "" }.into_any()
                     } else {
                         view! {
                             <Button
                                 class="ml-1 absolute"
-                                variant=ButtonVariant::Text
-                                round=true
+                                appearance=ButtonAppearance::Subtle
+                                shape=ButtonShape::Circular
+                                icon=icondata_bi::BiChevronLeftSolid
                                 on:click=move |_| {
                                     navigate.get_untracked()("/list", Default::default())
                                 }
                             >
-
-                                <Icon
-                                    width="1.5em"
-                                    height="1.5em"
-                                    icon=icondata_bi::BiChevronLeftSolid
-                                />
                             </Button>
                         }
-                            .into_view()
+                            .into_any()
                     }
                 }
 
@@ -144,62 +139,62 @@ pub fn Settings(init: bool) -> impl IntoView {
             {move || {
                 if init || has_config.get() {
                     view! {
-                        <div class="flex flex-col items-center h-full w-full bg-[url('/public/background.png')]">
+                        <div class="flex flex-col items-center h-full w-full">
                             <div class="p-2 w-full max-w-xl h-full">
-                                <div id="api_token" class="p-1 text-sm w-full">
+                                <div id="api_token" class="p-2 text-sm w-full">
                                     ChatGPT API Token
-                                    <Input
+                                    <Input class="w-full"
                                         value=llm_token
                                         disabled=loading
-                                        invalid=llm_token_invalid
+ //                                       invalid=llm_token_invalid
                                     />
                                 </div>
                                 <Divider/>
                                 <div id="recipes_source" class="p-1 mt-4 text-sm w-full flex flex-col gap-1">
                                     "Store in NextCloud"
-                                    <Switch value=cloud_storage />
+                                    <Switch checked=cloud_storage />
                                 </div>
                                 <Show when=move || cloud_storage.get()>
                                 <div id="cloud_uri" class="p-1 mt-4 text-sm w-full">
                                     Nextcloud URI
-                                    <Input
+                                    <Input class="w-full"
                                         value=cloud_uri
                                         disabled=loading
-                                        invalid=cloud_uri_invalid
+ //                                       invalid=cloud_uri_invalid
                                     />
                                 </div>
                                 <div id="cloud_username" class="p-1 mt-4 text-sm w-full">
                                     Nextcloud username
-                                    <Input
+                                    <Input class="w-full"
                                         value=cloud_username
                                         disabled=loading
-                                        invalid=cloud_username_invalid
+ //                                       invalid=cloud_username_invalid
                                     />
                                 </div>
                                 <div id="cloud_pass" class="p-1 mt-4 text-sm w-full">
                                     Nextcloud password
-                                    <Input
+                                    <Input class="w-full"
                                         value=cloud_pass
                                         disabled=loading
-                                        invalid=cloud_pass_invalid
+//                                        invalid=cloud_pass_invalid
                                     />
                                 </div>
                                 </Show>
                             </div>
                             <div class="grow"></div>
-                            <Button on:click=submit loading class="m-4">
+                            <Button on:click=submit disabled=loading appearance=ButtonAppearance::Primary class="m-4">
                                 Save
                             </Button>
                         </div>
                     }
-                        .into_view()
+                        .into_any()
                 } else {
                     view! {
                         <div class="flex flex-col h-full justify-center">
                             <Spinner/>
                         </div>
                     }
-                        .into_view()
+                        .into_any()
                 }
             }}
 
