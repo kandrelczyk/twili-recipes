@@ -20,9 +20,9 @@ pub fn Welcome() -> impl IntoView {
 
     let (dark, _, _) = use_local_storage::<bool, FromToStringCodec>("dark_mode");
     let theme = Theme::use_rw_theme();
-    if dark() {
-        theme.set(Theme::dark())
-    }
+    //    if dark() {
+    //        theme.set(Theme::dark())
+    //    }
     AsyncDerived::new_unsync(move || async move {
         match invoke("initialize", JsValue::NULL).await {
             Ok(success) => {

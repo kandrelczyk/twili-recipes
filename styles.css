@@ -5,6 +5,20 @@ body {
     overflow: hidden;
 }
 
+html {
+    height: 100%;
+}
+
 .thaw-textarea__textarea {
-    max-height: 1000px !important
+    max-height: 1000px !important;
+    width: 100%
+}
+
+.thaw-spinner__spinner-tail {
+    animation-duration: 0s !important;
+    mask-image: conic-gradient(transparent 20deg, white 105deg);
+}
+
+.thaw-spinner__spinner {
+    animation-duration: 1s !important;
 }

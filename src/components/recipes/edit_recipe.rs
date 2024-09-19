@@ -76,7 +76,9 @@ pub fn EditRecipe(
                                 </Toast>
                             }
                             .into_any(),
-                            ToastOptions::default().with_position(ToastPosition::Top),
+                            ToastOptions::default()
+                                .with_position(ToastPosition::Top)
+                                .with_intent(ToastIntent::Success),
                         );
                         navigate.get_untracked()("/list", Default::default());
                     }

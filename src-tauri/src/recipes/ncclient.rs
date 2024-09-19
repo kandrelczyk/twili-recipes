@@ -48,9 +48,16 @@ static LIST_FILE_NAME: &str = ".list.json";
 impl NCClient {
     async fn save_list(&self, list: &Vec<ListEntry>) -> Result<(), RecipesError> {
         let recipe_json: String = serde_json::to_string(list)?;
-        self.dav_client
+        let response = self
+            .dav_client
             .put(&format!("{}/{}", self.path, LIST_FILE_NAME), recipe_json)
-            .await?;
+            .await;
+
+        if response.is_err() {
+            return Err(RecipesError {
+                reason: format!("Failed to initialize list of recipes: {:?}", response),
+            });
+        }
 
         Ok(())
     }
