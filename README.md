@@ -12,7 +12,6 @@ maily on ease of use. It's main features include:
 - Multiplatform support (desktop and mobile)
 - Unique recipe presentation to save you a lot of scrolling 
 
-
 This project is still under development. 
 
 It currently supports NextCloud and local device for storage. 
@@ -25,7 +24,11 @@ Other clound and LLM service can be easily added.
 
 ### Download
 
-Intallers are available at [Github](https://github.com/kandrelczyk/twili-recipes/releases)
+[<img src="https://fdroid.gitlab.io/artwork/badge/get-it-on.png"
+     alt="Get it on F-Droid"
+     height="80">](https://f-droid.org/packages/net.curiana.recipes/)
+
+Intallers are also available at [Github](https://github.com/kandrelczyk/twili-recipes/releases/latest).
 
 ## Building
 
