@@ -2,7 +2,9 @@ use serde::{Deserialize, Serialize};
 
 #[derive(Serialize, Deserialize, Clone, Debug)]
 pub enum LLM {
-    Copilot,
+    Free,
+    Cloude,
+    Perplexity,
     GPT,
 }
 
@@ -51,6 +53,8 @@ impl std::default::Default for Config {
   5. Return only the JSON as response. Add standard indentation. Never include 'json' prefix at the begging.
   6. For quantities provided as fractions change them to decimal values.          
   7. If a step contains some execution or wait time (for example "bake for 15 minutes") "time" property of a given step should be equal to this time. Otherwise it should be 0.
+  8. 8. If two or more ingredients have the same name add a space symbols at the end of the name so that each name is different. For example change "sugar" to "sugar ".
+
 "#.to_owned(),
             recipes_source: RecipesSource::Cloud,
             cloud_uri: "".to_owned(),

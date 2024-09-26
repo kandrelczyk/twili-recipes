@@ -5,10 +5,10 @@ Recipes done **The Way I Like It**.
 Simple app to help you with cooking.
 
 Twili is not just a recipe manager. It's a cooking assistant app focusing 
-maily on ease of use. It's main features include:
+mainly on ease of use. It's main features include:
 
 - Use LLM to automatically parse recipes - simply copy and paste recipes from any website (or write them yourself)
-- NextCloud integrationto to easily share recipes between devices
+- NextCloud integration to to easily share recipes between devices
 - Multiplatform support (desktop and mobile)
 - Unique recipe presentation to save you a lot of scrolling 
 
@@ -16,7 +16,7 @@ This project is still under development.
 
 It currently supports NextCloud and local device for storage. 
 ChatGPT LLM is supported.
-Other clound and LLM service can be easily added. 
+Other cloud and LLM service can be easily added. 
 
 ![Add Recipe](screenshots/add-recipe.png)
 ![Recipe step](screenshots/step.png)
@@ -28,7 +28,74 @@ Other clound and LLM service can be easily added.
      alt="Get it on F-Droid"
      height="80">](https://f-droid.org/packages/net.curiana.recipes/)
 
-Intallers are also available at [Github](https://github.com/kandrelczyk/twili-recipes/releases/latest).
+Installers are also available at [Github](https://github.com/kandrelczyk/twili-recipes/releases/latest).
+
+### Supported LLMs
+
+All supported LLMs handle recipe translation without major issues. Known edge cases are:
+1. Ingredients with the same name: gpt-4 will sometimes correctly recognize and differentiae multiple instances of the same ingredient. 
+2. Different grammatical forms of ingredient names in some languages: gtp-3.5 will align grammatical forms to correctly display the quantity in the step description 
+When using other models fixing those issues may require manual editing. 
+
+gpt-4-turbo is the best performing LLM but it's significantly slower and more expensive than other models.
+gpt-3.5-turbo doesn't handle all the cases but is faster and less expensive. 
+Perplexity is the least expensive LLM with very good performance.
+
+Translation of a single recipe costs fractions  of a cent so in practice, cost of services is as follows:
+
+- Perplexity: $3 indefinitely 
+- ChatGPT: $5 per year
+- Claude: $5 per year
+
+## Free
+
+Free option uses rate limited OpenAI API. The token is shared between all users so it's not guaranteed to work. 
+
+## ChatGPT
+
+ChatGPT option uses gpt-3.5-turbo or gtp-4-turbo model.
+
+gpt-3.5-turbo handles recipe to JSON translation very well perfectly and is significantly cheaper than latest models.
+The pricing as of 09/2024 is:
+
+| Input            | Output            |
+|------------------|-------------------|
+|$0.50 / 1M tokens | $1.50 / 1M tokens |
+
+gpt-4-turbo is the best performing model handling all the edge cases but it's slower and more expensive than gpt-3.5.
+
+The pricing as of 09/2024 is:
+
+| Input            | Output            |
+|------------------|-------------------|
+|$10 / 1M tokens   | $30 / 1M tokens |
+
+To create the API token sign up for [OpenAI](https://platform.openai.com/signup) account and visit <https://platform.openai.com/api-keys>.
+The minimum amount of money that can be added to the balance is $5.
+Credits expire after 1 year so in practice using it will cost $5/year. 
+
+## Perplexity 
+
+Perplexity option uses llama-3.1-70b-instruct model. 
+The pricing as of 09/2024 is $1 / 1M tokens.
+
+To create the API token sign up for [Perplexity](https://www.perplexity.ai/) account and visit <https://www.perplexity.ai/settings/api>
+The minimum amount of money that can be added to the balance is $3.
+Credits don't expire. 
+
+## Claude
+
+Claude option uses claude-3-5-sonnet-20240620 model. 
+The pricing as of 09/2024 is:
+
+| Input            | Output            |
+|------------------|-------------------|
+|$3 / 1M tokens    | $15 / 1M tokens |
+
+To create the API token sign up for [Claude](https://console.anthropic.com/) account and visit <https://console.anthropic.com/settings/keys>
+The minimum amount of money that can be added to the balance is $5.
+Credits expire after 1 year so in practice using it will cost $5/year. 
+
 
 ## Building
 
@@ -41,7 +108,7 @@ Add wasm target (`rustup target add wasm32-unknown-unknown`)
 ### Desktop app
 
 
-Make sure you have tauri-cli updated to the latestes version.
+Make sure you have tauri-cli updated to the latest version.
 
 Run `cargo tauri dev`
 
@@ -80,18 +147,6 @@ export PATH=$PATH:$TOOLCHAIN/bin
 
 
 Run `cargo tauri android init` and `cargo tauri android dev`
-
-### Signing apk file
-
-Follow instructions at https://next--tauri.netlify.app/next/guides/distribution/sign-android/
-You can use the included local.properties and build.gradle.kts template files.
-
-Copy `AndroidManifest_template.xml` to `src-tauri/gen/android/app/src/main/AndroidManifest.xml`.
-
-Copy `local.properties_template` to `src-tauri/gen/android/local.properties`. 
-
-Copy `app_build.gradle.kts_template` to `src-tauri/gen/android/app/build.gradle.kts`.
-Don't forget to change namespace and applicationId parameters in the grandle build template. 
 
 ## Integration tests
 
