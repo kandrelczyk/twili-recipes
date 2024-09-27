@@ -26,9 +26,9 @@ pub fn List() -> impl IntoView {
 
     let (dark, _, _) = use_local_storage::<bool, FromToStringCodec>("dark_mode");
     let theme = Theme::use_rw_theme();
-    //    if dark.get() {
-    //        theme.set(Theme::dark())
-    //    }
+    if dark.get() {
+        theme.set(Theme::dark())
+    }
 
     let add_recipe = move |_| navigate("/add", Default::default());
 
@@ -45,9 +45,7 @@ pub fn List() -> impl IntoView {
     });
 
     view! {
-        <div
-            class="flex flex-col h-full w-full items-center justify-start"
-        >
+        <div class="flex flex-col h-full w-full items-center justify-start">
             <Header
                 button=move || {
                     view! {
@@ -56,8 +54,7 @@ pub fn List() -> impl IntoView {
                             shape=ButtonShape::Circular
                             on_click=move |_| show_menu.set(true)
                             icon=icondata_bi::BiMenuRegular
-                        >
-                        </Button>
+                        ></Button>
                     }
                 }
 
@@ -84,7 +81,10 @@ pub fn List() -> impl IntoView {
                 <ErrorBoundary fallback=move |errors| {
                     view! {
                         <div class="flex max-w-4xl p-4 flex-col text-wrap break-all mt-[40vh] justify-center">
-                            <MessageBar intent=MessageBarIntent::Error layout=MessageBarLayout::Multiline>
+                            <MessageBar
+                                intent=MessageBarIntent::Error
+                                layout=MessageBarLayout::Multiline
+                            >
                                 <MessageBarBody>
                                     <MessageBarTitle>"Failed to load recipes"</MessageBarTitle>
                                     <p>

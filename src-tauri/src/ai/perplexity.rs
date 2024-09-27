@@ -24,7 +24,7 @@ impl AIClient for PerplexityClient {
         let client = reqwest::Client::new();
 
         let res = client
-            .post("https://api.perplexity.ai/chat/completion")
+            .post("https://api.perplexity.ai/chat/completions")
             .header("Authorization", format!("Bearer {}", self.token))
             .json(&json!(
             {
@@ -69,7 +69,7 @@ impl AIClient for PerplexityClient {
             Ok(recipe)
         } else {
             Err(AIError {
-                reason: format!("Received error response from ChatGPT API: {:?}", res),
+                reason: format!("Received error response from Perplexity API: {:?}", res),
             })
         }
     }

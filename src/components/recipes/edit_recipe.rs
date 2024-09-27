@@ -70,12 +70,13 @@ pub fn EditRecipe(
                 match invoke("save_recipe", args).await {
                     Ok(_) => {
                         toaster.dispatch_toast(
-                            view! {
-                                <Toast>
-                                    <ToastTitle>"Saved"</ToastTitle>
-                                </Toast>
-                            }
-                            .into_any(),
+                            move || {
+                                view! {
+                                    <Toast>
+                                        <ToastTitle>"Saved"</ToastTitle>
+                                    </Toast>
+                                }
+                            },
                             ToastOptions::default()
                                 .with_position(ToastPosition::Top)
                                 .with_intent(ToastIntent::Success),

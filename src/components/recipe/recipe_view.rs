@@ -106,12 +106,13 @@ pub fn RecipeView() -> impl IntoView {
                 match invoke("delete_recipe", args).await {
                     Ok(_) => {
                         toaster.dispatch_toast(
-                            view! {
-                                <Toast>
-                                    <ToastTitle>"Recipe deleted"</ToastTitle>
-                                </Toast>
-                            }
-                            .into_any(),
+                            move || {
+                                view! {
+                                    <Toast>
+                                        <ToastTitle>"Recipe deleted"</ToastTitle>
+                                    </Toast>
+                                }
+                            },
                             ToastOptions::default().with_position(ToastPosition::Top),
                         );
                         navigate.get_untracked()("/list", Default::default());

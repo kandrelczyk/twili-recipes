@@ -28,7 +28,7 @@ impl AIClient for ChatGTPClient {
             .header("Authorization", format!("Bearer {}", self.token))
             .json(&json!(
             {
-                "model": "gpt-3.5-turbo",
+                "model": "gpt-4o",
                 "temperature": 0.0,
                 "messages": [
                 {

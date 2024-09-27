@@ -55,7 +55,7 @@ Free option uses rate limited OpenAI API. The token is shared between all users 
 
 ChatGPT option uses gpt-3.5-turbo or gtp-4-turbo model.
 
-gpt-3.5-turbo handles recipe to JSON translation very well perfectly and is significantly cheaper than latest models.
+gpt-3.5-turbo handles recipe to JSON translation very well and is significantly cheaper than latest models.
 The pricing as of 09/2024 is:
 
 | Input            | Output            |
@@ -83,7 +83,7 @@ To create the API token sign up for [Perplexity](https://www.perplexity.ai/) acc
 The minimum amount of money that can be added to the balance is $3.
 Credits don't expire. 
 
-## Claude
+## Claude (WIP)
 
 Claude option uses claude-3-5-sonnet-20240620 model. 
 The pricing as of 09/2024 is:

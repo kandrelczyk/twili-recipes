@@ -8,7 +8,10 @@ use serde_wasm_bindgen::{from_value, to_value};
 use thaw::*;
 use wasm_bindgen::prelude::*;
 
-use crate::{components::Header, error::CommandError};
+use crate::{
+    components::{Header, LLMInfo},
+    error::CommandError,
+};
 
 #[wasm_bindgen]
 extern "C" {
@@ -29,7 +32,7 @@ pub fn Settings(init: bool) -> impl IntoView {
     let command_error: RwSignal<Option<CommandError>> = RwSignal::new(None);
 
     let has_config = RwSignal::new(init);
-
+    let llm_service = RwSignal::new("Free".to_owned());
     let llm_token = RwSignal::new("".to_owned());
 
     let cloud_storage = RwSignal::new(false);
@@ -38,6 +41,8 @@ pub fn Settings(init: bool) -> impl IntoView {
     let cloud_username = RwSignal::new("".to_owned());
 
     let cloud_pass = RwSignal::new("".to_owned());
+
+    let show_info = RwSignal::new(false);
 
     if !init {
         let listener = window_event_listener_untyped("popstate", move |_| {
@@ -48,6 +53,7 @@ pub fn Settings(init: bool) -> impl IntoView {
             match invoke("get_config", JsValue::NULL).await {
                 Ok(config) => {
                     let config: Config = from_value(config).unwrap();
+                    llm_service.set(format!("{}", config.llm));
                     cloud_storage.set(matches![config.recipes_source, RecipesSource::Cloud]);
                     llm_token.set(config.ai_token);
                     cloud_uri.set(config.cloud_uri);
@@ -62,6 +68,9 @@ pub fn Settings(init: bool) -> impl IntoView {
 
     view! {
         <main class="flex flex-col h-screen w-full items-center justify-start">
+            <Dialog open=show_info>
+                <LLMInfo/>
+            </Dialog>
             <Header
                 button=move || {
                     if init {
@@ -90,20 +99,68 @@ pub fn Settings(init: bool) -> impl IntoView {
                         <FieldContextProvider>
                             <div class="flex flex-col items-center h-full w-full">
                                 <div class="p-2 w-full max-w-xl h-full">
-                                    <div id="api_token" class="p-2 text-sm w-full">
-                                        <Field label="ChatGPT API Token" required=true>
-                                            <Input
-                                                class="w-full"
-                                                value=llm_token
-                                                disabled=loading
-                                                rules=vec![
-                                                    InputRule::required_with_message(
-                                                        true.into(),
-                                                        "Please provide token".to_owned().into(),
-                                                    ),
-                                                ]
-                                            />
-                                        </Field>
+                                    <div id="lmm_service" class="p-2 text-sm w-full">
+                                        <div class="flex flex-row gap-1">
+                                            <Text>"LLM Service"</Text>
+                                            <Button
+                                                on_click=move |_| show_info.set(true)
+                                                appearance=ButtonAppearance::Transparent
+                                                size=ButtonSize::Small
+                                                icon=icondata_bi::BiInfoCircleRegular
+                                            ></Button>
+                                        </div>
+                                        <RadioGroup value=llm_service class="p-2">
+                                            <Radio value="Free" label="Free" />
+                                            <Radio value="GPT" label="OpenAI" />
+                                            <Radio value="Perplexity" label="Perplexity" />
+                                        </RadioGroup>
+                                        {move || match llm_service.get().as_str() {
+                                            "Free" => {
+                                                view! {
+                                                    <div>
+                                                        Use shared, rate limited LLM service. Click
+                                                        <Icon icon=icondata_bi::BiInfoCircleRegular /> for more info.
+                                                    </div>
+                                                }
+                                                    .into_any()
+                                            }
+                                            "OpenAI" => {
+                                                view! {
+                                                    <Field label="ChatGPT API Token" required=true>
+                                                        <Input
+                                                            class="w-full"
+                                                            value=llm_token
+                                                            disabled=loading
+                                                            rules=vec![
+                                                                InputRule::required_with_message(
+                                                                    true.into(),
+                                                                    "Please provide token".to_owned().into(),
+                                                                ),
+                                                            ]
+                                                        />
+                                                    </Field>
+                                                }
+                                                    .into_any()
+                                            }
+                                            _ => {
+                                                view! {
+                                                    <Field label="Perplexity API Token" required=true>
+                                                        <Input
+                                                            class="w-full"
+                                                            value=llm_token
+                                                            disabled=loading
+                                                            rules=vec![
+                                                                InputRule::required_with_message(
+                                                                    true.into(),
+                                                                    "Please provide token".to_owned().into(),
+                                                                ),
+                                                            ]
+                                                        />
+                                                    </Field>
+                                                }
+                                                    .into_any()
+                                            }
+                                        }}
                                     </div>
                                     <Divider />
                                     <div id="recipes_source" class="p-1 mt-4 text-sm w-full gap-1">
@@ -175,6 +232,7 @@ pub fn Settings(init: bool) -> impl IntoView {
                                                     let args = to_value(
                                                             &Args {
                                                                 config: Config {
+                                                                    llm: llm_service.get_untracked().into(),
                                                                     ai_token: llm_token.get_untracked(),
                                                                     cloud_uri: cloud_uri.get_untracked(),
                                                                     cloud_username: cloud_username.get_untracked(),
@@ -192,15 +250,16 @@ pub fn Settings(init: bool) -> impl IntoView {
                                                         Ok(_) => {
                                                             toaster
                                                                 .dispatch_toast(
-                                                                    view! {
-                                                                        <Toast>
-                                                                            <ToastTitle>"Saved"</ToastTitle>
-                                                                        </Toast>
-                                                                    }
-                                                                        .into_any(),
+                                                                    move || {
+                                                                        view! {
+                                                                            <Toast>
+                                                                                <ToastTitle>"Saved"</ToastTitle>
+                                                                            </Toast>
+                                                                        }
+                                                                    },
                                                                     ToastOptions::default()
                                                                         .with_intent(ToastIntent::Success)
-                                                                        .with_position(ToastPosition::Top)
+                                                                        .with_position(ToastPosition::Top),
                                                                 );
                                                             navigate.get_untracked()("/", Default::default());
                                                         }
@@ -228,6 +287,42 @@ pub fn Settings(init: bool) -> impl IntoView {
                         .into_any()
                 } else {
                     view! {
+                        // invalid=cloud_uri_invalid
+
+                        // invalid=cloud_username_invalid
+                        // invalid=cloud_pass_invalid
+                        // invalid=cloud_uri_invalid
+
+                        // invalid=cloud_username_invalid
+                        // invalid=cloud_pass_invalid
+                        // invalid=cloud_uri_invalid
+
+                        // invalid=cloud_username_invalid
+                        // invalid=cloud_pass_invalid
+                        // invalid=cloud_uri_invalid
+
+                        // invalid=cloud_username_invalid
+                        // invalid=cloud_pass_invalid
+                        // invalid=cloud_uri_invalid
+
+                        // invalid=cloud_username_invalid
+                        // invalid=cloud_pass_invalid
+                        // invalid=cloud_uri_invalid
+
+                        // invalid=cloud_username_invalid
+                        // invalid=cloud_pass_invalid
+                        // invalid=cloud_uri_invalid
+
+                        // invalid=cloud_username_invalid
+                        // invalid=cloud_pass_invalid
+                        // invalid=cloud_uri_invalid
+
+                        // invalid=cloud_username_invalid
+                        // invalid=cloud_pass_invalid
+                        // invalid=cloud_uri_invalid
+
+                        // invalid=cloud_username_invalid
+                        // invalid=cloud_pass_invalid
                         <div class="flex flex-col h-full justify-center">
                             <Spinner />
                         </div>
