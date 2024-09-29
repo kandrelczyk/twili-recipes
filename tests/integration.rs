@@ -40,11 +40,12 @@ async fn cleanup(driver: &WebDriver, tauri_driver: Child) -> Result<(), WebDrive
 
 async fn populate_config(driver: &WebDriver, host: String) -> Result<(), WebDriverError> {
     let elem = driver
-        .query(By::Id("api_token"))
+        .query(By::XPath("//label[text()[contains(., 'OpenAI')]]"))
         .first()
-        .await?
-        .find(By::Tag("input"))
         .await?;
+    elem.wait_until().displayed().await?;
+    elem.click().await?;
+    let elem = driver.query(By::Id("gpt_api_token")).first().await?;
     elem.wait_until().displayed().await?;
     elem.send_keys("gpt_api_token").await?;
 

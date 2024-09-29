@@ -124,10 +124,11 @@ pub fn Settings(init: bool) -> impl IntoView {
                                                 }
                                                     .into_any()
                                             }
-                                            "OpenAI" => {
+                                            "GPT" => {
                                                 view! {
                                                     <Field label="ChatGPT API Token" required=true>
                                                         <Input
+                                                            id="gpt_api_token"
                                                             class="w-full"
                                                             value=llm_token
                                                             disabled=loading
