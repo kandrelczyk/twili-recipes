@@ -1,4 +1,4 @@
-use std::env;
+use std::process::Child;
 
 use serde_json::json;
 use serial_test::serial;
