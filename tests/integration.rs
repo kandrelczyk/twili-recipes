@@ -1,4 +1,4 @@
-use std::process::Child;
+use std::env;
 
 use serde_json::json;
 use serial_test::serial;
@@ -118,6 +118,7 @@ async fn test_initial_setup() -> WebDriverResult<()> {
         .with_body("[]")
         .create_async()
         .await;
+
     let get_list_full = server
         .mock(
             "GET",
@@ -134,13 +135,6 @@ async fn test_initial_setup() -> WebDriverResult<()> {
         .first()
         .await?;
     elem.wait_until().displayed().await?;
-
-    //    driver
-    //        .query(By::XPath("//button[text()[contains(., 'Save')]]"))
-    //        .first()
-    //        .await?
-    //        .click()
-    //        .await?;
 
     populate_config(&driver, server.host_with_port()).await?;
 
@@ -201,6 +195,12 @@ async fn test_init_recipes_list() -> WebDriverResult<()> {
         .create_async()
         .await;
 
+    let init_dir = server
+        .mock("MKCOL", "/remote.php/dav/files/username/.TwiliRecipes")
+        .with_status(200)
+        .create_async()
+        .await;
+
     let init_list = server
         .mock(
             "PUT",
@@ -233,7 +233,58 @@ async fn test_init_recipes_list() -> WebDriverResult<()> {
     elem.wait_until().displayed().await?;
 
     get_list.assert_async().await;
+    init_dir.assert_async().await;
     init_list.assert_async().await;
+
+    cleanup(&driver, tauri_driver).await?;
+    Ok(())
+}
+
+#[tokio::test(flavor = "current_thread")]
+#[serial]
+async fn test_error_when_initializing_recipes() -> WebDriverResult<()> {
+    let (tauri_driver, driver) = setup().await;
+
+    let mut server = mockito::Server::new_async().await;
+
+    let get_list = server
+        .mock(
+            "GET",
+            "/remote.php/dav/files/username/.TwiliRecipes/.list.json",
+        )
+        .with_status(404)
+        .create_async()
+        .await;
+
+    let init_dir = server
+        .mock("MKCOL", "/remote.php/dav/files/username/.TwiliRecipes")
+        .with_status(400)
+        .create_async()
+        .await;
+
+    driver.goto("tauri://localhost/").await?;
+
+    let elem = driver
+        .query(By::XPath("//div[text()[contains(., 'Initial setup')]]"))
+        .first()
+        .await?;
+    elem.wait_until().displayed().await?;
+
+    populate_config(&driver, server.host_with_port()).await?;
+    driver
+        .query(By::XPath("//button[text()[contains(., 'Save')]]"))
+        .first()
+        .await?
+        .click()
+        .await?;
+
+    let elem = driver
+        .query(By::XPath("//span[text()[contains(., 'Failed to load')]]"))
+        .first()
+        .await?;
+    elem.wait_until().displayed().await?;
+    get_list.assert_async().await;
+    init_dir.assert_async().await;
 
     cleanup(&driver, tauri_driver).await?;
     Ok(())

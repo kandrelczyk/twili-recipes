@@ -46,6 +46,17 @@ impl From<reqwest_dav::re_exports::reqwest::Error> for RecipesError {
 static LIST_FILE_NAME: &str = ".list.json";
 
 impl NCClient {
+    async fn initialize_list(&self) -> Result<(), RecipesError> {
+        let response = self.dav_client.mkcol(self.path.as_str()).await;
+
+        if response.is_err() {
+            return Err(RecipesError {
+                reason: format!("Failed to initialize list of recipes: {:?}", response),
+            });
+        }
+
+        Ok(())
+    }
     async fn save_list(&self, list: &Vec<ListEntry>) -> Result<(), RecipesError> {
         let recipe_json: String = serde_json::to_string(list)?;
         let response = self
@@ -55,7 +66,7 @@ impl NCClient {
 
         if response.is_err() {
             return Err(RecipesError {
-                reason: format!("Failed to initialize list of recipes: {:?}", response),
+                reason: format!("Failed to save recipes: {:?}", response),
             });
         }
 
@@ -101,6 +112,7 @@ impl RecipesProvider for NCClient {
             .await;
 
         if response.is_err() && format!("{:?}", response).contains("response_code: 404") {
+            self.initialize_list().await?;
             self.save_list(&Vec::<ListEntry>::new()).await?;
             return Ok(Vec::new());
         }

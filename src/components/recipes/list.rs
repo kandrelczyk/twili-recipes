@@ -26,9 +26,9 @@ pub fn List() -> impl IntoView {
 
     let (dark, _, _) = use_local_storage::<bool, FromToStringCodec>("dark_mode");
     let theme = Theme::use_rw_theme();
-    if dark.get() {
-        theme.set(Theme::dark())
-    }
+    //if dark.get() {
+    //    theme.set(Theme::dark())
+    // }
 
     let add_recipe = move |_| navigate("/add", Default::default());
 
