@@ -279,7 +279,7 @@ async fn test_error_when_initializing_recipes() -> WebDriverResult<()> {
         .await?;
 
     let elem = driver
-        .query(By::XPath("//span[text()[contains(., 'Failed to load')]]"))
+        .query(By::XPath("//p[text()[contains(., 'Failed to load')]]"))
         .first()
         .await?;
     elem.wait_until().displayed().await?;

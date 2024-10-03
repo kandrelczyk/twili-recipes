@@ -81,21 +81,28 @@ pub fn AddRecipe() -> impl IntoView {
         >
 
             <Dialog open=show_error.get()>
-                <DialogSurface>
+                <DialogSurface class="mx-2">
                     <DialogBody>
-                        <DialogTitle>"LLM Error"</DialogTitle>
                         <DialogContent>
-                            <p class="text-md mb-4">
-                                Failed to call LLM service. Check your configuration or try again later
-                            </p>
-                            <Accordion collapsible=true>
-                                <AccordionItem value="error">
-                                    <AccordionHeader slot>"Error details"</AccordionHeader>
-                                    <p class="text-sm break-all text-wrap">
-                                        {move || error.get().unwrap().reason}
+                            <MessageBar
+                                layout=MessageBarLayout::Multiline
+                                intent=MessageBarIntent::Error
+                            >
+                                <MessageBarBody>
+                                    <h3 class="m-0 text-lg font-semibold">"LLM Error"</h3>
+                                    <p class="text-md mb-4">
+                                        Failed to call LLM service. Check your configuration or try again later
                                     </p>
-                                </AccordionItem>
-                            </Accordion>
+                                    <Accordion collapsible=true>
+                                        <AccordionItem value="error">
+                                            <AccordionHeader slot>"Error details"</AccordionHeader>
+                                            <p class="text-sm break-all text-wrap">
+                                                {move || error.get().unwrap().reason}
+                                            </p>
+                                        </AccordionItem>
+                                    </Accordion>
+                                </MessageBarBody>
+                            </MessageBar>
                         </DialogContent>
                     </DialogBody>
                 </DialogSurface>

@@ -86,7 +86,9 @@ pub fn List() -> impl IntoView {
                                 layout=MessageBarLayout::Multiline
                             >
                                 <MessageBarBody>
-                                    <MessageBarTitle>"Failed to load recipes"</MessageBarTitle>
+                                    <MessageBarTitle>
+                                        <p class="text-lg">"Failed to load recipes"</p>
+                                    </MessageBarTitle>
                                     <p>
                                         {move || {
                                             errors
