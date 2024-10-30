@@ -21,8 +21,7 @@ pub async fn initialize(
     ai_client: tauri::State<'_, Mutex<Option<Box<dyn AIClient>>>>,
     config_file: tauri::State<'_, Arc<OnceLock<String>>>,
 ) -> Result<bool, CommandError> {
-    let config: Config =
-        get_stored_or_default_config(app_handle.clone(), config_file).await;
+    let config: Config = get_stored_or_default_config(app_handle.clone(), config_file).await;
 
     if config.all_present() {
         let mut m = manager.lock().await;
