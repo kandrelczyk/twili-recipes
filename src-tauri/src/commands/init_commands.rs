@@ -4,8 +4,7 @@ use std::{
 };
 
 use recipes_common::{Config, RecipesSource, LLM};
-use tauri::{async_runtime::Mutex, Wry};
-use tauri_plugin_store::StoreCollection;
+use tauri::async_runtime::Mutex;
 
 use crate::{
     ai::{AIClient, ChatGTPClient, PerplexityClient},
@@ -18,13 +17,12 @@ use super::get_stored_or_default_config;
 #[tauri::command]
 pub async fn initialize(
     app_handle: tauri::AppHandle,
-    store: tauri::State<'_, StoreCollection<Wry>>,
     manager: tauri::State<'_, Mutex<Option<Box<dyn RecipesProvider>>>>,
     ai_client: tauri::State<'_, Mutex<Option<Box<dyn AIClient>>>>,
     config_file: tauri::State<'_, Arc<OnceLock<String>>>,
 ) -> Result<bool, CommandError> {
     let config: Config =
-        get_stored_or_default_config(app_handle.clone(), store.clone(), config_file).await;
+        get_stored_or_default_config(app_handle.clone(), config_file).await;
 
     if config.all_present() {
         let mut m = manager.lock().await;

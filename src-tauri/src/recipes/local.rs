@@ -2,8 +2,8 @@ use std::path::PathBuf;
 
 use async_trait::async_trait;
 use recipes_common::{ListEntry, Recipe};
-use tauri::{AppHandle, Manager, State, Wry};
-use tauri_plugin_store::{with_store, StoreCollection};
+use tauri::AppHandle;
+use tauri_plugin_store::StoreExt;
 
 use super::{error::RecipesError, RecipesProvider};
 
@@ -14,30 +14,24 @@ pub struct LocalClient {
 
 impl LocalClient {
     fn get_recipes(&self) -> Result<Vec<Recipe>, RecipesError> {
-        let store: State<'_, StoreCollection<Wry>> = self.app_handle.state();
-        let recipes = with_store(self.app_handle.clone(), store, self.path.clone(), |store| {
-            let recipes: Vec<Recipe> = match store.get("recipes").cloned() {
-                None => Vec::<Recipe>::new(),
-                Some(recipes) => {
-                    serde_json::from_value(recipes).expect("Failed to deserialize recipes")
-                }
-            };
-            Ok(recipes)
-        })?;
+        let store = self.app_handle.store(self.path.clone())?;
+        let recipes: Vec<Recipe> = match store.get("recipes") {
+            None => Vec::<Recipe>::new(),
+            Some(recipes) => {
+                serde_json::from_value(recipes).expect("Failed to deserialize recipes")
+            }
+        };
 
         Ok(recipes)
     }
 
     fn save_recipes(&self, recipes: Vec<Recipe>) -> Result<(), RecipesError> {
-        let store: State<'_, StoreCollection<Wry>> = self.app_handle.state();
-        with_store(self.app_handle.clone(), store, self.path.clone(), |store| {
-            store.insert(
-                "recipes".to_string(),
-                serde_json::to_value(recipes).expect("Failed to serialize recipes"),
-            )?;
-            store.save()?;
-            Ok(())
-        })?;
+        let store = self.app_handle.store(self.path.clone())?;
+        store.set(
+            "recipes".to_string(),
+            serde_json::to_value(recipes).expect("Failed to serialize recipes"),
+        );
+        store.save()?;
 
         Ok(())
     }

@@ -13,11 +13,11 @@ crate-type = ["staticlib", "cdylib", "rlib"]
 
 
 [build-dependencies]
-tauri-build = {features = [] , version = "2.0.0-rc.12" }
+tauri-build = {features = [] , version = "2.0.1" }
 
 [dependencies]
 recipes_common = { path = "../common" }
-tauri = { features = ["image-png", "unstable"] , version = "2.0.0-rc.15" }
+tauri = { features = ["image-png", "unstable"] , version = "2.0.5" }
 serde = { version = "1.0", features = ["derive"] }
 serde_json = "1.0"
 log = "0.4"
@@ -26,11 +26,11 @@ reqwest = "=0.12.4"
 reqwest_dav = "0.1.9"
 async-trait = "0.1.80"
 uuid = {version = "1.8.0", features = ["v4"] }
-tauri-plugin-cli = "2.0.0-beta"
-tauri-plugin-devtools = "2.0.0-beta"
-tauri-plugin-store = "2.0.0-beta.10"
-tauri-plugin-shell = "2.0.0-beta.9"
-tauri-plugin-log = "2.0.0-beta.8"
+tauri-plugin-cli = "2.0.1"
+tauri-plugin-devtools = "2.0.0"
+tauri-plugin-store = "2.1.0"
+tauri-plugin-shell = "2.0.2"
+tauri-plugin-log = "2.0.1"
 tauri-plugin-keep-screen-on = "0.1.3"
 
 [features]
