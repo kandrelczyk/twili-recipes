@@ -111,7 +111,7 @@ pub fn List() -> impl IntoView {
                         </div>
                     }
                 }>
-                    <div class="h-full w-full">
+                    <div class="h-screen w-full overflow-y-scroll">
                         <div class="w-full flex flex-row justify-center p-4">
                             <div class="flex flex-row flex-wrap gap-4 pt-4 justify-around">
                                 {move || Suspend::new(async move {

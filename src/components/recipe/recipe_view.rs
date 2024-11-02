@@ -113,7 +113,9 @@ pub fn RecipeView() -> impl IntoView {
                                     </Toast>
                                 }
                             },
-                            ToastOptions::default().with_position(ToastPosition::Top),
+                            ToastOptions::default()
+                                .with_position(ToastPosition::Top)
+                                .with_intent(ToastIntent::Success),
                         );
                         navigate.get_untracked()("/list", Default::default());
                     }
@@ -191,7 +193,7 @@ pub fn RecipeView() -> impl IntoView {
                                     "Delete"
                                 </MenuItem>
                                 <Dialog mask_closeable=false close_on_esc=false open=show_modal>
-                                    <DialogSurface class="max-w-lg mx-[10%]">
+                                    <DialogSurface class="max-w-lg">
                                         <DialogBody>
                                             <DialogTitle>"Are you sure?"</DialogTitle>
                                             <DialogContent>

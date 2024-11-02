@@ -40,13 +40,14 @@ pub fn EditRecipe(
     let loading = RwSignal::new(false);
     let error: RwSignal<Option<CommandError>> = RwSignal::new(None);
 
-    let save_disabled = Signal::derive(move || loading() || name_invalid());
     let toaster = ToasterInjection::expect_context();
 
     let parsed_recipe: Signal<Result<Recipe, CommandError>> =
         Signal::derive(move || Ok(serde_json::from_str(recipe_json.get().as_str())?));
 
-    let _has_error = Signal::derive(move || parsed_recipe.get().is_err());
+    let has_error = Signal::derive(move || parsed_recipe.get().is_err());
+
+    let save_disabled = Signal::derive(move || loading() || has_error());
 
     let save_json = move |_| {
         manual_edit.set(false);
@@ -127,12 +128,19 @@ pub fn EditRecipe(
                         <DialogTitle>"Edit JSON"</DialogTitle>
                         <DialogContent>
                             <div class="flex flex-col items-center">
-                                <Textarea attr:style="resize:none; height: 300px; width: 100%" value=json />
+                                <Textarea
+                                    attr:style="resize:none; height: 300px; width: 100%"
+                                    value=json
+                                />
                                 <div class="grow"></div>
                             </div>
                         </DialogContent>
                         <DialogActions>
-                            <Button class="mt-4" appearance=ButtonAppearance::Primary on_click=save_json>
+                            <Button
+                                class="mt-4"
+                                appearance=ButtonAppearance::Primary
+                                on_click=save_json
+                            >
                                 Save
                             </Button>
                         </DialogActions>
@@ -146,42 +154,62 @@ pub fn EditRecipe(
                             <p>
                                 <PreviewRecipe recipe />
                             </p>
-                        }.into_any()
+                        }
+                            .into_any()
                     }
                     Err(error) => {
                         view! {
                             <p class="mt-24 p-4">
-                                <MessageBar  intent=MessageBarIntent::Error class="text-md mb-8">
-                                    "LMM returned invalid recipe code and we were not able to parse it."
-                                    <Accordion class="max-w-sm mt-8" collapsible=true>
-                                        <AccordionItem value="error">
-                                            <AccordionHeader slot>
-                                                "ErrorDetails"
-                                            </AccordionHeader>
-                                            <p class="text-sm text-wrap">{error.reason}</p>
-                                        </AccordionItem>
-                                    </Accordion>
+                                <MessageBar
+                                    layout=MessageBarLayout::Multiline
+                                    intent=MessageBarIntent::Error
+                                    class="text-md mb-8"
+                                >
+                                    <MessageBarBody>
+                                        <p class="text-md mb-4">
+                                            "LLM returned invalid recipe code and we were not able to parse it."
+                                        </p>
+                                        <Accordion class="max-w-sm mt-8" collapsible=true>
+                                            <AccordionItem value="error">
+                                                <AccordionHeader slot>"ErrorDetails"</AccordionHeader>
+                                                <p class="text-sm text-wrap">{error.reason}</p>
+                                            </AccordionItem>
+                                        </Accordion>
+                                    </MessageBarBody>
                                 </MessageBar>
                                 <div class="mt-8 flex flex-row m-4 bg-[--thaw-background]">
-                                    <Button on_click=move |e| go_back.run(e)>
-                                        Go back
-                                    </Button>
+                                    <Button on_click=move |e| go_back.run(e)>Go back</Button>
                                     <div class="grow"></div>
-                                    <Button
-                                        on:click=move |_| manual_edit.set(true)
-                                    >
-                                        Edit manually
-                                    </Button>
+                                    <Button on:click=move |_| {
+                                        manual_edit.set(true)
+                                    }>Edit manually</Button>
                                 </div>
                             </p>
-                        }.into_any()
+                        }
+                            .into_any()
                     }
-                }} <div class="grow"></div>
-                <div class="px-4 text-sm w-full max-w-lg">
-                    Name
-                    <Input value=name class="w-full" disabled=loading />//TODO invalid
+                }} <div class="grow"></div> <div class="px-4 text-sm w-full max-w-lg">
+                    <Field label="Name" required=true>
+                        <Input
+                            value=name
+                            class="w-full"
+                            disabled=loading
+                            rules=vec![
+                                InputRule::required_with_message(
+                                    true.into(),
+                                    "Please provide name".to_owned().into(),
+                                ),
+                            ]
+                        />
+                    </Field>
+
                 </div>
-                <Button on:click=save_recipe appearance=ButtonAppearance::Primary disabled=save_disabled class="m-4">
+                <Button
+                    on:click=save_recipe
+                    appearance=ButtonAppearance::Primary
+                    disabled=save_disabled
+                    class="m-4"
+                >
                     Save
                 </Button>
             </div>

@@ -7,7 +7,7 @@ pub fn PreviewRecipe(recipe: Recipe) -> impl IntoView {
     view! {
         <div class="flex flex-col items-center overflow-hidden h-[70vh]">
             <p class="mt-2 text-lg text-center">Ingredients</p>
-            <Card class="mt-2 text-left overflow-y-auto h-full w-[100%]">
+            <Card class="mt-2 text-left overflow-y-auto h-full w-[60%]">
                 <div class="flex flex-col">
                     {recipe
                         .ingredients
