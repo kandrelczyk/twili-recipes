@@ -1,5 +1,5 @@
 use leptos::prelude::*;
-use leptos::spawn::spawn_local;
+use leptos::task::spawn_local;
 use leptos_router::hooks::use_navigate;
 use serde::{Deserialize, Serialize};
 use serde_wasm_bindgen::{from_value, to_value};

@@ -18,11 +18,11 @@ extern "C" {
 pub fn Welcome() -> impl IntoView {
     let navigate = RwSignal::new(use_navigate());
 
-    //let (dark, _, _) = use_local_storage::<bool, FromToStringCodec>("dark_mode");
-    //let theme = Theme::use_rw_theme();
-    //if dark() {
-    //theme.set(Theme::dark())
-    //}
+    let (dark, _, _) = use_local_storage::<bool, FromToStringCodec>("dark_mode");
+    let theme = Theme::use_rw_theme();
+    if dark() {
+        theme.set(Theme::dark())
+    }
     AsyncDerived::new_unsync(move || async move {
         match invoke("initialize", JsValue::NULL).await {
             Ok(success) => {

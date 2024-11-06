@@ -1,6 +1,6 @@
 use crate::{components::Header, error::CommandError};
 use leptos::prelude::*;
-use leptos::{spawn::spawn_local, web_sys};
+use leptos::{task::spawn_local, web_sys};
 use recipes_common::Recipe;
 use serde::Serialize;
 use serde_json::{from_str, to_string_pretty};

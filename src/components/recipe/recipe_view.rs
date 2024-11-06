@@ -1,5 +1,5 @@
 use leptos::prelude::*;
-use leptos::spawn::spawn_local;
+use leptos::task::spawn_local;
 use leptos_router::hooks::{use_navigate, use_params};
 use leptos_router::params::Params;
 use recipes_common::Recipe;
