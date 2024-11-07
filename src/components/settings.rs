@@ -288,42 +288,6 @@ pub fn Settings(init: bool) -> impl IntoView {
                         .into_any()
                 } else {
                     view! {
-                        // invalid=cloud_uri_invalid
-
-                        // invalid=cloud_username_invalid
-                        // invalid=cloud_pass_invalid
-                        // invalid=cloud_uri_invalid
-
-                        // invalid=cloud_username_invalid
-                        // invalid=cloud_pass_invalid
-                        // invalid=cloud_uri_invalid
-
-                        // invalid=cloud_username_invalid
-                        // invalid=cloud_pass_invalid
-                        // invalid=cloud_uri_invalid
-
-                        // invalid=cloud_username_invalid
-                        // invalid=cloud_pass_invalid
-                        // invalid=cloud_uri_invalid
-
-                        // invalid=cloud_username_invalid
-                        // invalid=cloud_pass_invalid
-                        // invalid=cloud_uri_invalid
-
-                        // invalid=cloud_username_invalid
-                        // invalid=cloud_pass_invalid
-                        // invalid=cloud_uri_invalid
-
-                        // invalid=cloud_username_invalid
-                        // invalid=cloud_pass_invalid
-                        // invalid=cloud_uri_invalid
-
-                        // invalid=cloud_username_invalid
-                        // invalid=cloud_pass_invalid
-                        // invalid=cloud_uri_invalid
-
-                        // invalid=cloud_username_invalid
-                        // invalid=cloud_pass_invalid
                         <div class="flex flex-col h-full justify-center">
                             <Spinner />
                         </div>

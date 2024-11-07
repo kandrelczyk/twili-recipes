@@ -12,12 +12,11 @@ pub async fn get_stored_or_default_config(
     let store = app_handle
         .store(config_file.get().unwrap().as_str())
         .unwrap();
-    let stored_config = match store.get("config") {
+
+    match store.get("config") {
         None => Config::default(),
         Some(config) => serde_json::from_value(config).unwrap(),
-    };
-
-    stored_config
+    }
 }
 
 #[tauri::command]
