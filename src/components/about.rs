@@ -1,7 +1,7 @@
-use leptos::*;
-use leptos_router::use_navigate;
+use leptos::{prelude::*, task::spawn_local};
+use leptos_router::hooks::use_navigate;
 use serde_wasm_bindgen::from_value;
-use thaw::{Button, ButtonVariant, Icon, Text};
+use thaw::{Button, ButtonAppearance, ButtonShape, Icon, Text};
 use wasm_bindgen::prelude::*;
 
 use crate::components::Header;
@@ -14,9 +14,9 @@ extern "C" {
 
 #[component]
 pub fn About() -> impl IntoView {
-    let navigate = create_rw_signal(use_navigate());
+    let navigate = RwSignal::new(use_navigate());
 
-    let version = create_rw_signal("".to_owned());
+    let version = RwSignal::new("".to_owned());
 
     spawn_local(async move {
         version.set(from_value::<String>(invoke("get_version", JsValue::NULL).await).unwrap());
@@ -28,19 +28,13 @@ pub fn About() -> impl IntoView {
                     view! {
                         <Button
                             class="ml-1 absolute"
-                            variant=ButtonVariant::Text
-                            round=true
+                            appearance=ButtonAppearance::Subtle
+                            shape=ButtonShape::Circular
+                            icon=icondata_bi::BiChevronLeftSolid
                             on:click=move |_| {
                                 navigate.get_untracked()("/list", Default::default())
                             }
-                        >
-
-                            <Icon
-                                width="1.5em"
-                                height="1.5em"
-                                icon=icondata_bi::BiChevronLeftSolid
-                            />
-                        </Button>
+                        ></Button>
                     }
                         .into_view()
                 }
@@ -50,16 +44,24 @@ pub fn About() -> impl IntoView {
             <div class="flex flex-col mt-8 gap-3 items-center justify-center">
                 <Text class="text-xl mb-8">"Twili Recipes version "{move || version.get()}</Text>
 
-                <Icon width="2em" height="2em" icon=icondata_bi::BiGitlab/>
+                <Icon width="2em" height="2em" icon=icondata_bi::BiGitlab />
                 <Text>
                     "Code available on "
-                    <a class="text-blue-500" target="_blank" href="https://gitlab.com/cristofa/twili-recipes">
+                    <a
+                        class="text-blue-500"
+                        target="_blank"
+                        href="https://gitlab.com/cristofa/twili-recipes"
+                    >
                         gitlab
                     </a>
                 </Text>
                 <Text class="mt-8">
                     "Logo based on "
-                    <a class="text-blue-500" target="_blank" href="https://github.com/atisawd/boxicons">
+                    <a
+                        class="text-blue-500"
+                        target="_blank"
+                        href="https://github.com/atisawd/boxicons"
+                    >
                         BoxIcons
                     </a>
                 </Text>

@@ -1,13 +1,17 @@
-use leptos::*;
+use leptos::prelude::*;
+use leptos::task::spawn_local;
 
-use leptos_router::use_navigate;
+use leptos_router::hooks::use_navigate;
 use recipes_common::{Config, RecipesSource};
 use serde::{Deserialize, Serialize};
 use serde_wasm_bindgen::{from_value, to_value};
-use thaw::{use_message, Button, ButtonVariant, Divider, Icon, Input, Spinner, Switch};
+use thaw::*;
 use wasm_bindgen::prelude::*;
 
-use crate::{components::Header, error::CommandError};
+use crate::{
+    components::{Header, LLMInfo},
+    error::CommandError,
+};
 
 #[wasm_bindgen]
 extern "C" {
@@ -22,28 +26,26 @@ struct Args {
 
 #[component]
 pub fn Settings(init: bool) -> impl IntoView {
-    let navigate = create_rw_signal(use_navigate());
-    let message = use_message();
-    let loading = create_rw_signal(false);
-    let command_error: RwSignal<Option<CommandError>> = create_rw_signal(None);
+    let navigate = RwSignal::new(use_navigate());
+    let loading = RwSignal::new(false);
+    let toaster = ToasterInjection::expect_context();
+    let command_error: RwSignal<Option<CommandError>> = RwSignal::new(None);
 
-    let has_config = create_rw_signal(init);
+    let has_config = RwSignal::new(init);
+    let llm_service = RwSignal::new("Free".to_owned());
+    let llm_token = RwSignal::new("".to_owned());
 
-    let llm_token = create_rw_signal("".to_owned());
-    let llm_token_invalid = create_rw_signal(false);
+    let cloud_storage = RwSignal::new(false);
+    let cloud_uri = RwSignal::new("".to_owned());
 
-    let cloud_storage = create_rw_signal(false);
-    let cloud_uri = create_rw_signal("".to_owned());
-    let cloud_uri_invalid = create_rw_signal(false);
+    let cloud_username = RwSignal::new("".to_owned());
 
-    let cloud_username = create_rw_signal("".to_owned());
-    let cloud_username_invalid = create_rw_signal(false);
+    let cloud_pass = RwSignal::new("".to_owned());
 
-    let cloud_pass = create_rw_signal("".to_owned());
-    let cloud_pass_invalid = create_rw_signal(false);
+    let show_info = RwSignal::new(false);
 
     if !init {
-        let listener = leptos::window_event_listener_untyped("popstate", move |_| {
+        let listener = window_event_listener_untyped("popstate", move |_| {
             navigate.get_untracked()("/list", Default::default())
         });
         on_cleanup(|| listener.remove());
@@ -51,6 +53,7 @@ pub fn Settings(init: bool) -> impl IntoView {
             match invoke("get_config", JsValue::NULL).await {
                 Ok(config) => {
                     let config: Config = from_value(config).unwrap();
+                    llm_service.set(format!("{}", config.llm));
                     cloud_storage.set(matches![config.recipes_source, RecipesSource::Cloud]);
                     llm_token.set(config.ai_token);
                     cloud_uri.set(config.cloud_uri);
@@ -63,79 +66,28 @@ pub fn Settings(init: bool) -> impl IntoView {
         });
     }
 
-    let submit = move |_| {
-        llm_token_invalid.set(llm_token.get_untracked().is_empty());
-        if cloud_storage.get() {
-            cloud_uri_invalid.set(cloud_uri.get_untracked().is_empty());
-            cloud_username_invalid.set(cloud_username.get_untracked().is_empty());
-            cloud_pass_invalid.set(cloud_pass.get_untracked().is_empty());
-        } else {
-            cloud_uri_invalid.set(false);
-            cloud_username_invalid.set(false);
-            cloud_pass_invalid.set(false);
-        }
-
-        if !llm_token_invalid.get()
-            && !cloud_uri_invalid.get()
-            && !cloud_username_invalid.get()
-            && !cloud_pass_invalid.get()
-        {
-            loading.set(true);
-            spawn_local(async move {
-                let args = to_value(&Args {
-                    config: Config {
-                        ai_token: llm_token.get(),
-                        cloud_uri: cloud_uri.get(),
-                        cloud_username: cloud_username.get(),
-                        cloud_pass: cloud_pass.get(),
-                        recipes_source: match cloud_storage.get() {
-                            true => RecipesSource::Cloud,
-                            false => RecipesSource::Local,
-                        },
-                        ..Default::default()
-                    },
-                })
-                .unwrap();
-                match invoke("save_config", args).await {
-                    Ok(_) => {
-                        navigate.get_untracked()("/", Default::default());
-                    }
-                    Err(err) => command_error.set(Some(from_value::<CommandError>(err).unwrap())),
-                };
-                message.create(
-                    "Saved".to_owned(),
-                    thaw::MessageVariant::Success,
-                    Default::default(),
-                );
-            });
-        }
-    };
-
     view! {
-        <main class="flex flex-col h-full w-full items-center justify-start">
+        <main class="flex flex-col h-screen w-full items-center justify-start">
+            <Dialog open=show_info>
+                <LLMInfo/>
+            </Dialog>
             <Header
                 button=move || {
                     if init {
-                        view! { "" }.into_view()
+                        view! { "" }.into_any()
                     } else {
                         view! {
                             <Button
                                 class="ml-1 absolute"
-                                variant=ButtonVariant::Text
-                                round=true
+                                appearance=ButtonAppearance::Subtle
+                                shape=ButtonShape::Circular
+                                icon=icondata_bi::BiChevronLeftSolid
                                 on:click=move |_| {
                                     navigate.get_untracked()("/list", Default::default())
                                 }
-                            >
-
-                                <Icon
-                                    width="1.5em"
-                                    height="1.5em"
-                                    icon=icondata_bi::BiChevronLeftSolid
-                                />
-                            </Button>
+                            ></Button>
                         }
-                            .into_view()
+                            .into_any()
                     }
                 }
 
@@ -144,62 +96,203 @@ pub fn Settings(init: bool) -> impl IntoView {
             {move || {
                 if init || has_config.get() {
                     view! {
-                        <div class="flex flex-col items-center h-full w-full bg-[url('/public/background.png')]">
-                            <div class="p-2 w-full max-w-xl h-full">
-                                <div id="api_token" class="p-1 text-sm w-full">
-                                    ChatGPT API Token
-                                    <Input
-                                        value=llm_token
-                                        disabled=loading
-                                        invalid=llm_token_invalid
-                                    />
+                        <FieldContextProvider>
+                            <div class="flex flex-col items-center h-full w-full">
+                                <div class="p-2 w-full max-w-xl h-full">
+                                    <div id="lmm_service" class="p-2 text-sm w-full">
+                                        <div class="flex flex-row gap-1">
+                                            <Text>"LLM Service"</Text>
+                                            <Button
+                                                on_click=move |_| show_info.set(true)
+                                                appearance=ButtonAppearance::Transparent
+                                                size=ButtonSize::Small
+                                                icon=icondata_bi::BiInfoCircleRegular
+                                            ></Button>
+                                        </div>
+                                        <RadioGroup value=llm_service class="p-2">
+                                            <Radio value="Free" label="Free" />
+                                            <Radio value="GPT" label="OpenAI" />
+                                            <Radio value="Perplexity" label="Perplexity" />
+                                        </RadioGroup>
+                                        {move || match llm_service.get().as_str() {
+                                            "Free" => {
+                                                view! {
+                                                    <div>
+                                                        Use shared, rate limited LLM service. Click
+                                                        <Icon icon=icondata_bi::BiInfoCircleRegular /> for more info.
+                                                    </div>
+                                                }
+                                                    .into_any()
+                                            }
+                                            "GPT" => {
+                                                view! {
+                                                    <Field label="ChatGPT API Token" required=true>
+                                                        <Input
+                                                            id="gpt_api_token"
+                                                            class="w-full"
+                                                            value=llm_token
+                                                            disabled=loading
+                                                            rules=vec![
+                                                                InputRule::required_with_message(
+                                                                    true.into(),
+                                                                    "Please provide token".to_owned().into(),
+                                                                ),
+                                                            ]
+                                                        />
+                                                    </Field>
+                                                }
+                                                    .into_any()
+                                            }
+                                            _ => {
+                                                view! {
+                                                    <Field label="Perplexity API Token" required=true>
+                                                        <Input
+                                                            class="w-full"
+                                                            value=llm_token
+                                                            disabled=loading
+                                                            rules=vec![
+                                                                InputRule::required_with_message(
+                                                                    true.into(),
+                                                                    "Please provide token".to_owned().into(),
+                                                                ),
+                                                            ]
+                                                        />
+                                                    </Field>
+                                                }
+                                                    .into_any()
+                                            }
+                                        }}
+                                    </div>
+                                    <Divider />
+                                    <div id="recipes_source" class="p-1 mt-4 text-sm w-full gap-1">
+                                        <Field label="Store in NextCloud">
+                                            <Switch checked=cloud_storage />
+                                        </Field>
+                                    </div>
+                                    <Show when=cloud_storage>
+                                        <div id="cloud_uri" class="p-1 mt-4 text-sm w-full">
+                                            <Field label="Nextcloud URI" required=true>
+                                                <Input
+                                                    class="w-full"
+                                                    rules=vec![
+                                                        InputRule::required_with_message(
+                                                            cloud_storage.get().into(),
+                                                            "Please provide URI".to_owned().into(),
+                                                        ),
+                                                    ]
+                                                    value=cloud_uri
+                                                    disabled=loading
+                                                />
+                                            // invalid=cloud_uri_invalid
+                                            </Field>
+                                        </div>
+                                        <div id="cloud_username" class="p-1 mt-4 text-sm w-full">
+                                            <Field label="Nextcloud username" required=true>
+                                                <Input
+                                                    class="w-full"
+                                                    rules=vec![
+                                                        InputRule::required_with_message(
+                                                            cloud_storage.get().into(),
+                                                            "Please provide username".to_owned().into(),
+                                                        ),
+                                                    ]
+
+                                                    value=cloud_username
+                                                    disabled=loading
+                                                />
+                                            // invalid=cloud_username_invalid
+                                            </Field>
+                                        </div>
+                                        <div id="cloud_pass" class="p-1 mt-4 text-sm w-full">
+                                            <Field label="Nextcloud password" required=true>
+                                                <Input
+                                                    class="w-full"
+                                                    input_type=InputType::Password
+                                                    rules=vec![
+                                                        InputRule::required_with_message(
+                                                            cloud_storage.get().into(),
+                                                            "Please provide password".to_owned().into(),
+                                                        ),
+                                                    ]
+                                                    value=cloud_pass
+                                                    disabled=loading
+                                                />
+                                            // invalid=cloud_pass_invalid
+                                            </Field>
+                                        </div>
+                                    </Show>
                                 </div>
-                                <Divider/>
-                                <div id="recipes_source" class="p-1 mt-4 text-sm w-full flex flex-col gap-1">
-                                    "Store in NextCloud"
-                                    <Switch value=cloud_storage />
-                                </div>
-                                <Show when=move || cloud_storage.get()>
-                                <div id="cloud_uri" class="p-1 mt-4 text-sm w-full">
-                                    Nextcloud URI
-                                    <Input
-                                        value=cloud_uri
-                                        disabled=loading
-                                        invalid=cloud_uri_invalid
-                                    />
-                                </div>
-                                <div id="cloud_username" class="p-1 mt-4 text-sm w-full">
-                                    Nextcloud username
-                                    <Input
-                                        value=cloud_username
-                                        disabled=loading
-                                        invalid=cloud_username_invalid
-                                    />
-                                </div>
-                                <div id="cloud_pass" class="p-1 mt-4 text-sm w-full">
-                                    Nextcloud password
-                                    <Input
-                                        value=cloud_pass
-                                        disabled=loading
-                                        invalid=cloud_pass_invalid
-                                    />
-                                </div>
-                                </Show>
+                                <div class="grow"></div>
+                                <Button
+                                    on:click={
+                                        let field_context = FieldContextInjection::expect_context();
+                                        move |_e: leptos::ev::MouseEvent| {
+                                            loading.set(true);
+                                            if field_context.validate() {
+                                                spawn_local(async move {
+                                                    let args = to_value(
+                                                            &Args {
+                                                                config: Config {
+                                                                    llm: llm_service.get_untracked().into(),
+                                                                    ai_token: llm_token.get_untracked(),
+                                                                    cloud_uri: cloud_uri.get_untracked(),
+                                                                    cloud_username: cloud_username.get_untracked(),
+                                                                    cloud_pass: cloud_pass.get_untracked(),
+                                                                    recipes_source: match cloud_storage.get_untracked() {
+                                                                        true => RecipesSource::Cloud,
+                                                                        false => RecipesSource::Local,
+                                                                    },
+                                                                    ..Default::default()
+                                                                },
+                                                            },
+                                                        )
+                                                        .unwrap();
+                                                    match invoke("save_config", args).await {
+                                                        Ok(_) => {
+                                                            toaster
+                                                                .dispatch_toast(
+                                                                    move || {
+                                                                        view! {
+                                                                            <Toast>
+                                                                                <ToastTitle>"Saved"</ToastTitle>
+                                                                            </Toast>
+                                                                        }
+                                                                    },
+                                                                    ToastOptions::default()
+                                                                        .with_intent(ToastIntent::Success)
+                                                                        .with_position(ToastPosition::Top),
+                                                                );
+                                                            navigate.get_untracked()("/", Default::default());
+                                                        }
+                                                        Err(err) => {
+                                                            loading.set(false);
+                                                            command_error
+                                                                .set(Some(from_value::<CommandError>(err).unwrap()))
+                                                        }
+                                                    };
+                                                });
+                                            } else {
+                                                loading.set(false);
+                                            }
+                                        }
+                                    }
+                                    disabled=loading
+                                    appearance=ButtonAppearance::Primary
+                                    class="m-4"
+                                >
+                                    Save
+                                </Button>
                             </div>
-                            <div class="grow"></div>
-                            <Button on:click=submit loading class="m-4">
-                                Save
-                            </Button>
-                        </div>
+                        </FieldContextProvider>
                     }
-                        .into_view()
+                        .into_any()
                 } else {
                     view! {
                         <div class="flex flex-col h-full justify-center">
-                            <Spinner/>
+                            <Spinner />
                         </div>
                     }
-                        .into_view()
+                        .into_any()
                 }
             }}
 

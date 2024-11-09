@@ -7,28 +7,28 @@ use crate::ai::AIClient;
 
 use super::AIError;
 
-pub struct ChatGTPClient {
+pub struct PerplexityClient {
     pub token: String,
     pub prompt: String,
 }
 
-impl ChatGTPClient {
-    pub fn new(token: String, prompt: String) -> ChatGTPClient {
-        ChatGTPClient { token, prompt }
+impl PerplexityClient {
+    pub fn new(token: String, prompt: String) -> PerplexityClient {
+        PerplexityClient { token, prompt }
     }
 }
 
 #[async_trait]
-impl AIClient for ChatGTPClient {
+impl AIClient for PerplexityClient {
     async fn parse_recipe(&self, recipe: String) -> Result<String, AIError> {
         let client = reqwest::Client::new();
 
         let res = client
-            .post("https://api.openai.com/v1/chat/completions")
+            .post("https://api.perplexity.ai/chat/completions")
             .header("Authorization", format!("Bearer {}", self.token))
             .json(&json!(
             {
-                "model": "gpt-4o",
+                "model": "llama-3.1-70b-instruct",
                 "temperature": 0.0,
                 "messages": [
                 {
@@ -69,7 +69,7 @@ impl AIClient for ChatGTPClient {
             Ok(recipe)
         } else {
             Err(AIError {
-                reason: format!("Received error response from ChatGPT API: {:?}", res),
+                reason: format!("Received error response from Perplexity API: {:?}", res),
             })
         }
     }

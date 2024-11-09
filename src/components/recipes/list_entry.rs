@@ -1,11 +1,11 @@
-use leptos::*;
-use leptos_router::use_navigate;
+use leptos::prelude::*;
+use leptos_router::hooks::use_navigate;
 use recipes_common::ListEntry;
 use thaw::Card;
 
 #[component]
 pub fn ListItem(item: ListEntry) -> impl IntoView {
-    let navigate = create_rw_signal(use_navigate());
+    let navigate = RwSignal::new(use_navigate());
 
     let on_click = move |_| {
         navigate.get()(&format!("/item/{}", item.filename), Default::default());

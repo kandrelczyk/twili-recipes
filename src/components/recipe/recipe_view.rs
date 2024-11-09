@@ -1,12 +1,11 @@
-use leptos::*;
-use leptos_router::{use_navigate, use_params, Params};
+use leptos::prelude::*;
+use leptos::task::spawn_local;
+use leptos_router::hooks::{use_navigate, use_params};
+use leptos_router::params::Params;
 use recipes_common::Recipe;
 use serde::Serialize;
 use serde_wasm_bindgen::{from_value, to_value};
-use thaw::{
-    use_message, Alert, AlertVariant, Button, ButtonColor, ButtonVariant, Dropdown, DropdownItem,
-    DropdownTrigger, Icon, Modal, Spinner,
-};
+use thaw::*;
 use wasm_bindgen::prelude::*;
 
 use crate::{
@@ -16,7 +15,7 @@ use crate::{
 
 #[derive(Params, Clone, PartialEq)]
 struct RecipeParams {
-    filename: String,
+    filename: Option<String>,
 }
 
 #[derive(Serialize)]
@@ -37,23 +36,25 @@ extern "C" {
 
 #[component]
 pub fn RecipeView() -> impl IntoView {
-    let navigate = create_rw_signal(use_navigate());
-    let message = use_message();
+    let navigate = RwSignal::new(use_navigate());
     let params = use_params::<RecipeParams>();
+    let reload_count = RwSignal::new(0);
 
-    let show_modal = create_rw_signal(false);
-    let show_error_modal = create_rw_signal(false);
-    let delete_error = create_rw_signal(None::<String>);
-    let show_editor = create_rw_signal(false);
+    let show_modal = RwSignal::new(false);
+    let show_error_modal = RwSignal::new(false);
+    let delete_error = RwSignal::new(None::<String>);
+    let show_editor = RwSignal::new(false);
+    let toaster = ToasterInjection::expect_context();
 
-    let filename = create_rw_signal(
+    let filename = RwSignal::new(
         params
             .get_untracked()
             .expect("Missing param")
             .filename
             .clone(),
     );
-    let recipe = create_resource(params, move |f| async move {
+    let recipe = AsyncDerived::new_unsync(move || async move {
+        reload_count.get();
         invoke(
             "plugin:keep-screen-on|keep_screen_on",
             to_value(&KeepScreenOnArgs { enable: true })
@@ -63,7 +64,7 @@ pub fn RecipeView() -> impl IntoView {
         .unwrap();
 
         let args = to_value(&RecipeArgs {
-            filename: f.expect("Missing filename param").filename,
+            filename: filename().unwrap(),
         })
         .expect("Failed to create params");
 
@@ -74,7 +75,8 @@ pub fn RecipeView() -> impl IntoView {
             }
         }
     });
-    let listener = leptos::window_event_listener_untyped("popstate", move |_| {
+
+    let listener = window_event_listener_untyped("popstate", move |_| {
         if show_editor.get() {
             show_editor.set(false);
         } else {
@@ -95,31 +97,40 @@ pub fn RecipeView() -> impl IntoView {
         listener.remove();
     });
 
-    let delete_recipe = create_action(move |file: &String| {
-        let filename = file.clone();
-        async move {
-            let args = to_value(&RecipeArgs { filename }).expect("Failed to create args");
+    let delete_recipe: Action<String, (), SyncStorage> =
+        Action::new_unsync(move |file: &String| {
+            let filename = file.clone();
+            async move {
+                let args = to_value(&RecipeArgs { filename }).expect("Failed to create args");
 
-            match invoke("delete_recipe", args).await {
-                Ok(_) => {
-                    message.create(
-                        "Recipe deleted".to_owned(),
-                        thaw::MessageVariant::Success,
-                        Default::default(),
-                    );
-                    navigate.get_untracked()("/list", Default::default());
-                }
-                Err(error) => {
-                    show_error_modal.set(true);
-                    delete_error.set(Some(format!(
-                        "{:?}",
-                        from_value::<CommandError>(error).expect("Failed to parse CommandError")
-                    )));
-                }
-            };
-            show_modal.set(false);
-        }
-    });
+                match invoke("delete_recipe", args).await {
+                    Ok(_) => {
+                        toaster.dispatch_toast(
+                            move || {
+                                view! {
+                                    <Toast>
+                                        <ToastTitle>"Recipe deleted"</ToastTitle>
+                                    </Toast>
+                                }
+                            },
+                            ToastOptions::default()
+                                .with_position(ToastPosition::Top)
+                                .with_intent(ToastIntent::Success),
+                        );
+                        navigate.get_untracked()("/list", Default::default());
+                    }
+                    Err(error) => {
+                        show_error_modal.set(true);
+                        delete_error.set(Some(format!(
+                            "{:?}",
+                            from_value::<CommandError>(error)
+                                .expect("Failed to parse CommandError")
+                        )));
+                    }
+                };
+                show_modal.set(false);
+            }
+        });
 
     let on_select = move |key: String| match key.as_str() {
         "edit" => show_editor.set(true),
@@ -128,15 +139,15 @@ pub fn RecipeView() -> impl IntoView {
     };
 
     view! {
-        <main class="flex flex-col h-full w-full items-center justify-start">
+        <div class="flex flex-col h-screen w-full items-center justify-start">
             <Show
                 fallback=move || {
                     view! {
                         <RecipeEditor
-                            on_back=move |_| show_editor.set(false)
+                            on_back=Callback::new(move |_| show_editor.set(false))
                             on_save=Callback::new(move |_| {
                                 show_editor.set(false);
-                                recipe.refetch()
+                                reload_count.update(|count: &mut i32| *count += 1);
                             })
                             recipe=recipe
                                 .get()
@@ -152,93 +163,85 @@ pub fn RecipeView() -> impl IntoView {
                         view! {
                             <Button
                                 class="ml-1"
-                                variant=ButtonVariant::Text
-                                round=true
+                                appearance=ButtonAppearance::Subtle
+                                shape=ButtonShape::Circular
+                                icon=icondata_bi::BiChevronLeftSolid
                                 on:click=move |_| navigate
                                     .get_untracked()("/list", Default::default())
-                            >
-                                <Icon
-                                    width="1.5em"
-                                    height="1.5em"
-                                    icon=icondata_bi::BiChevronLeftSolid
-                                />
-                            </Button>
+                            />
                         }
                             .into_view()
                     }
 
-                    title=move || view! { {recipe.and_then(|r| r.name.clone())} }
+                    title=move || Suspend::new(async move { recipe.await.map(|r| r.name.clone()) })
                 >
                     <ActionsSlot slot>
-                        <Show fallback=|| view! {} when=move || recipe.get().is_some()>
-                            <Dropdown on_select placement=thaw::DropdownPlacement::BottomEnd>
-                                <DropdownTrigger slot>
-                                    <Button class="mr-1" variant=ButtonVariant::Text round=true>
-                                        <Icon
-                                            width="1.5em"
-                                            height="1.5em"
-                                            icon=icondata_bi::BiDotsVerticalRegular
-                                        />
-                                    </Button>
-                                </DropdownTrigger>
-                                <DropdownItem
-                                    key="edit"
-                                    // on_click=move |_| show_editor.set(true)
-                                    label="Edit JSON"
-                                    icon=icondata_bi::BiEditAltSolid
-                                />
-                                <DropdownItem
-                                    key="delete"
-                                    // on_click=move |_| show_modal.set(true)
-                                    label="Delete"
-                                    icon=icondata_bi::BiTrashRegular
-                                />
-                                <Modal
-                                    class="max-w-lg w-[80%]"
-                                    title="Are you sure?"
-                                    mask_closeable=false
-                                    close_on_esc=false
-                                    closable=false
-                                    show=show_modal
-                                >
-                                    <div class="flex px-2 sm:px-8 gap-2">
-                                        <Button
-                                            on_click=move |_| show_modal.set(false)
-                                            variant=ButtonVariant::Outlined
-                                        >
-                                            Cancel
-                                        </Button>
-                                        <div class="flex-grow"></div>
-                                        <Button
-                                            loading=delete_recipe.pending()
-                                            on:click=move |_| {
-                                                delete_recipe.dispatch(filename.get_untracked())
-                                            }
-                                            color=ButtonColor::Error
-                                        >
-                                            Delete
-                                        </Button>
-                                    </div>
-                                </Modal>
-                                <Modal
-                                    class="max-w-lg w-[80%]"
-                                    show=show_error_modal
-                                    title="Failed to delete recipe"
-                                >
-                                    <div class="flex px-2 sm:px-8 gap-2">
-                                        <Alert variant=AlertVariant::Error>
-                                            <p>{move || delete_error.get()}</p>
-                                        </Alert>
-                                    </div>
-                                </Modal>
-                            </Dropdown>
+                        <Show fallback=|| view! {<div></div>} when=move || recipe.get().is_some()>
+                            <Menu on_select position=MenuPosition::BottomEnd>
+                                <MenuTrigger slot>
+                                    <Button
+                                        class="mr-1"
+                                        appearance=ButtonAppearance::Subtle
+                                        shape=ButtonShape::Circular
+                                        icon=icondata_bi::BiDotsVerticalRegular
+                                    />
+                                </MenuTrigger>
+                                <MenuItem value="edit" icon=icondata_bi::BiEditAltSolid>
+                                    "Edit JSON"
+                                </MenuItem>
+                                <MenuItem value="delete" icon=icondata_bi::BiTrashRegular>
+                                    "Delete"
+                                </MenuItem>
+                                <Dialog mask_closeable=false close_on_esc=false open=show_modal>
+                                    <DialogSurface class="max-w-lg">
+                                        <DialogBody>
+                                            <DialogTitle>"Are you sure?"</DialogTitle>
+                                            <DialogContent>
+                                                <div class="flex px-2 sm:px-8 gap-2">
+                                                    <Button
+                                                        disabled=delete_recipe.pending()
+                                                        on_click=move |_| { show_modal.set(false) }
+                                                    >
+                                                        Cancel
+                                                    </Button>
+                                                    <div class="flex-grow"></div>
+                                                    <Button
+                                                        appearance=ButtonAppearance::Primary
+                                                        disabled=delete_recipe.pending()
+                                                        on:click=move |_| {
+                                                            delete_recipe.dispatch(filename.get_untracked().unwrap());
+                                                        }
+                                                    >
+                                                        Delete
+                                                    </Button>
+                                                </div>
+                                            </DialogContent>
+                                        </DialogBody>
+                                    </DialogSurface>
+
+                                </Dialog>
+                                <Dialog class="max-w-lg w-[80%]" open=show_error_modal>
+                                    <DialogSurface>
+                                        <DialogBody>
+                                            <DialogTitle>"Failed to delete recipe"</DialogTitle>
+                                            <DialogContent>
+                                                <div class="flex px-2 sm:px-8 gap-2">
+                                                    <MessageBar intent=MessageBarIntent::Error>
+                                                        <p>{move || delete_error.get()}</p>
+                                                    </MessageBar>
+                                                </div>
+                                            </DialogContent>
+                                        </DialogBody>
+                                    </DialogSurface>
+                                </Dialog>
+                            </Menu>
                         </Show>
                     </ActionsSlot>
                 </Header>
 
-                <Suspense fallback=move || {
+                <Transition fallback=move || {
                     view! {
-                        <div class="w-full h-full flex flex-rowl justify-center items-center bg-[url('/public/background.png')]">
+                        <div class="w-full h-full flex flex-row justify-center items-center">
                             <Spinner />
                         </div>
                     }
@@ -246,39 +249,41 @@ pub fn RecipeView() -> impl IntoView {
                     <ErrorBoundary fallback=move |errors| {
                         view! {
                             <div class="flex max-w-4xl p-4 flex-col text-wrap break-all h-full justify-center">
-                                <Alert variant=AlertVariant::Error title="Failed to load recipes">
-                                    <p>
-                                        {move || {
-                                            errors
-                                                .get()
-                                                .into_iter()
-                                                .map(|(_, e)| { e.to_string() })
-                                                .collect_view()
-                                        }}
-
-                                    </p>
-                                </Alert>
+                                <MessageBar intent=MessageBarIntent::Error>
+                                    <MessageBarBody>
+                                        <MessageBarTitle>"Failed to load recipes"</MessageBarTitle>
+                                        <p>
+                                            {move || {
+                                                errors
+                                                    .get()
+                                                    .into_iter()
+                                                    .map(|(_, e)| { e.to_string() })
+                                                    .collect_view()
+                                            }}
+                                        </p>
+                                    </MessageBarBody>
+                                </MessageBar>
                                 <Button
                                     class="w-32 mt-2 mx-auto"
-                                    on:click=move |_| recipe.refetch()
+                                    on_click=move |_| reload_count.set(reload_count.get() + 1)
                                     icon=icondata_bi::BiRevisionRegular
-                                    variant=ButtonVariant::Outlined
                                 >
                                     Try again
                                 </Button>
                             </div>
                         }
                     }>
-                        {move || {
+                        {move || Suspend::new(async move {
                             recipe
-                                .and_then(|recipe| {
+                                .await
+                                .map(|recipe| {
                                     view! { <RecipePanels recipe=recipe.clone() /> }
                                 })
-                        }}
+                        })}
 
                     </ErrorBoundary>
-                </Suspense>
+                </Transition>
             </Show>
-        </main>
+        </div>
     }
 }

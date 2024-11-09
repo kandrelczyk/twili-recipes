@@ -1,6 +1,6 @@
-use leptos::*;
+use leptos::prelude::*;
 use recipes_common::Recipe;
-use thaw::{Button, ButtonVariant, Card, Icon};
+use thaw::{Button, Card, Icon};
 
 #[component]
 pub fn RecipeIngredients(recipe: StoredValue<Recipe>, multiplier: RwSignal<f32>) -> impl IntoView {
@@ -8,7 +8,6 @@ pub fn RecipeIngredients(recipe: StoredValue<Recipe>, multiplier: RwSignal<f32>)
         <div class="text-xl p-4">Ingredients</div>
         <div class="flex flex-row sm:gap-4 gap-2 m-4 justify-center items-center">
             <Button
-                variant=ButtonVariant::Outlined
                 on_click=move |_| multiplier.update(|m| *m /= 2.0)
             >
                 <div class="flex items-center">
@@ -22,7 +21,6 @@ pub fn RecipeIngredients(recipe: StoredValue<Recipe>, multiplier: RwSignal<f32>)
             <div class="text-xl">Size: {move || multiplier.get()}</div>
 
             <Button
-                variant=ButtonVariant::Outlined
                 on:click=move |_| multiplier.update(|m| *m *= 2.0)
             >
                 <div class="flex items-center">
@@ -34,8 +32,8 @@ pub fn RecipeIngredients(recipe: StoredValue<Recipe>, multiplier: RwSignal<f32>)
                 </div>
             </Button>
         </div>
-        <Card class="text-md sm:text-lg overflow-y-auto">
-            {recipe()
+        <Card class="text-md max-w-md w-[80%] m-2 sm:text-lg overflow-y-auto">
+            {recipe.get_value()
                 .ingredients
                 .into_iter()
                 .map(|i| {
@@ -49,7 +47,7 @@ pub fn RecipeIngredients(recipe: StoredValue<Recipe>, multiplier: RwSignal<f32>)
                     }
                         .into_view()
                 })
-                .collect::<Vec<View>>()}
+                .collect::<Vec<_>>()}
         </Card>
     }
 }

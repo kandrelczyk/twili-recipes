@@ -7,32 +7,34 @@ use crate::ai::AIClient;
 
 use super::AIError;
 
-pub struct ChatGTPClient {
+pub struct ClaudeClient {
     pub token: String,
     pub prompt: String,
 }
 
-impl ChatGTPClient {
-    pub fn new(token: String, prompt: String) -> ChatGTPClient {
-        ChatGTPClient { token, prompt }
+impl ClaudeClient {
+    pub fn new(token: String, prompt: String) -> ClaudeClient {
+        ClaudeClient { token, prompt }
     }
 }
 
 #[async_trait]
-impl AIClient for ChatGTPClient {
+impl AIClient for ClaudeClient {
     async fn parse_recipe(&self, recipe: String) -> Result<String, AIError> {
         let client = reqwest::Client::new();
 
         let res = client
-            .post("https://api.openai.com/v1/chat/completions")
-            .header("Authorization", format!("Bearer {}", self.token))
+            .post("https://api.anthropic.com/v1/messages")
+            .header("x-api-key", format!("{}", self.token))
+            .header("anthropic-version", "2023-06-01")
             .json(&json!(
             {
-                "model": "gpt-4o",
+                "model": "claude-3-5-sonnet-20240620",
+                "max_tokens": 3000,
                 "temperature": 0.0,
                 "messages": [
                 {
-                    "role": "system",
+                    "role": "user",
                     "content": self.prompt
                 },
                 {
@@ -47,29 +49,25 @@ impl AIClient for ChatGTPClient {
         if res.status().is_success() {
             let json_str = res.text().await?;
             let result: Value = serde_json::from_str(&json_str)?;
-            let recipe = result["choices"]
+            let recipe = result["content"]
                 .as_array()
                 .ok_or(AIError {
-                    reason: "Invalid response from openai API".to_owned(),
+                    reason: "Invalid response from anthropic API".to_owned(),
                 })?
                 .first()
                 .ok_or(AIError {
-                    reason: "Invalid response from openai API".to_owned(),
-                })?["message"]
-                .as_object()
-                .ok_or(AIError {
-                    reason: "Invalid response from openai API".to_owned(),
-                })?["content"]
+                    reason: "Invalid response from anthropic API".to_owned(),
+                })?["text"]
                 .as_str()
                 .ok_or(AIError {
-                    reason: "Invalid response from openai API".to_owned(),
+                    reason: "Invalid response from anthropic API".to_owned(),
                 })?
                 .to_owned();
 
             Ok(recipe)
         } else {
             Err(AIError {
-                reason: format!("Received error response from ChatGPT API: {:?}", res),
+                reason: format!("Received error response from anthropic API: {:?}", res),
             })
         }
     }

@@ -1,12 +1,11 @@
-use std::collections::HashSet;
-
 use crate::{components::Header, error::CommandError};
-use leptos::*;
+use leptos::prelude::*;
+use leptos::{task::spawn_local, web_sys};
 use recipes_common::Recipe;
 use serde::Serialize;
 use serde_json::{from_str, to_string_pretty};
 use serde_wasm_bindgen::{from_value, to_value};
-use thaw::{Button, ButtonVariant, Collapse, CollapseItem, Icon, Modal, TextArea};
+use thaw::*;
 use wasm_bindgen::prelude::*;
 
 #[derive(Serialize)]
@@ -26,14 +25,15 @@ pub fn RecipeEditor(
     #[prop(into)] on_back: Callback<web_sys::MouseEvent>,
     #[prop(into)] on_save: Callback<()>,
 ) -> impl IntoView {
-    let saving = create_rw_signal(false);
-    let save_error = create_rw_signal(None);
-    let show_error = create_rw_signal(false);
+    let saving = RwSignal::new(false);
+    let save_error = RwSignal::new(None);
+    let show_error = RwSignal::new(false);
     let recipe_json =
-        create_rw_signal(to_string_pretty(&recipe).expect("Failed to deserialize recipe"));
+        RwSignal::new(to_string_pretty(&recipe).expect("Failed to deserialize recipe"));
     let invalid_json =
         Signal::derive(move || from_str::<Recipe>(recipe_json.get().as_str()).is_err());
-    let collapse = create_rw_signal(HashSet::from(["".to_string()]));
+
+    let save_disabled = Signal::derive(move || saving() || invalid_json());
 
     let title = recipe.name.clone();
 
@@ -56,9 +56,7 @@ pub fn RecipeEditor(
             .unwrap();
 
             match invoke("save_recipe", args).await {
-                Ok(_) => {
-                    Callable::call(&on_save, ());
-                }
+                Ok(_) => on_save.run(()),
                 Err(error) => {
                     save_error.set(Some(
                         from_value::<CommandError>(error).expect("Failed to parse CommandError"),
@@ -73,39 +71,47 @@ pub fn RecipeEditor(
             <Header
                 button=move || {
                     view! {
-                        <Button on_click=on_back class="ml-1 absolute" variant=ButtonVariant::Text round=true disabled=saving>
-                            <Icon
-                                width="1.5em"
-                                height="1.5em"
-                                icon=icondata_bi::BiChevronLeftSolid
-                            />
-                        </Button>
+                        <Button
+                            on_click=move |e| on_back.run(e)
+                            icon=icondata_bi::BiChevronLeftSolid
+                            class="ml-1 absolute"
+                            appearance=ButtonAppearance::Subtle
+                            shape=ButtonShape::Circular
+                            disabled=saving
+                        />
                     }
-                        .into_view()
+                        .into_any()
                 }
 
                 title=move || title.clone()
             />
-            <Modal title="Save Error" width="300px" show=show_error>
-                <p class="text-md mb-4">
-                    Failed to save recipe.
-                </p>
-                <Collapse value=collapse>
-                    <CollapseItem title="Error details" key="error">
-                        <p class="text-sm break-all text-wrap">
-                            {move || save_error.get().unwrap().reason}
-                        </p>
-                    </CollapseItem>
-                </Collapse>
-            </Modal>
+            <Dialog open=show_error>
+                <DialogSurface>
+                    <DialogBody>
+                        <DialogTitle>"Save Error"</DialogTitle>
+                        <DialogContent>
+                            <p class="text-md mb-4">Failed to save recipe.</p>
+                            <Accordion collapsible=true>
+                                <AccordionItem value="error">
+                                    <AccordionHeader slot>"Error details"</AccordionHeader>
+                                    <p class="text-sm break-all text-wrap">
+                                        {move || save_error.get().unwrap().reason}
+                                    </p>
+                                </AccordionItem>
+                            </Accordion>
+                        </DialogContent>
+                    </DialogBody>
+                </DialogSurface>
+            </Dialog>
             <div class="flex flex-col items-center w-full h-full p-4">
-                <TextArea
-                    class="w-full h-full"
-                    attr:style="resize:none"
-                    value=recipe_json
-                    invalid=invalid_json
-                />
-                <Button on:click=save_callback disabled=invalid_json loading=saving class="mt-4">
+                <Textarea class="w-full h-full" attr:style="resize:none" value=recipe_json />
+                // invalid=invalid_json
+                <Button
+                    on:click=save_callback
+                    disabled=save_disabled
+                    appearance=ButtonAppearance::Primary
+                    class="mt-4"
+                >
                     Save
                 </Button>
             </div>

@@ -56,7 +56,6 @@ impl AppBuilder {
             .manage(provider)
             .manage(config_file.clone())
             .plugin(tauri_plugin_cli::init())
-            .plugin(tauri_plugin_store::Builder::default().build())
             .setup(move |app| {
                 if let Some(setup) = setup {
                     (setup)(app)?;
