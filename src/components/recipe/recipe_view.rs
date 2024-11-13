@@ -24,6 +24,12 @@ struct RecipeArgs {
 }
 
 #[derive(Serialize)]
+struct RenameArgs {
+    filename: String,
+    name: String,
+}
+
+#[derive(Serialize)]
 struct KeepScreenOnArgs {
     enable: bool,
 }
@@ -39,10 +45,12 @@ pub fn RecipeView() -> impl IntoView {
     let navigate = RwSignal::new(use_navigate());
     let params = use_params::<RecipeParams>();
     let reload_count = RwSignal::new(0);
+    let name: RwSignal<String> = RwSignal::new("".to_owned());
 
     let show_modal = RwSignal::new(false);
+    let show_rename_modal = RwSignal::new(false);
     let show_error_modal = RwSignal::new(false);
-    let delete_error = RwSignal::new(None::<String>);
+    let command_error = RwSignal::new(None::<String>);
     let show_editor = RwSignal::new(false);
     let toaster = ToasterInjection::expect_context();
 
@@ -121,7 +129,7 @@ pub fn RecipeView() -> impl IntoView {
                     }
                     Err(error) => {
                         show_error_modal.set(true);
-                        delete_error.set(Some(format!(
+                        command_error.set(Some(format!(
                             "{:?}",
                             from_value::<CommandError>(error)
                                 .expect("Failed to parse CommandError")
@@ -132,9 +140,46 @@ pub fn RecipeView() -> impl IntoView {
             }
         });
 
+    let rename_recipe: Action<(String, String), (), SyncStorage> =
+        Action::new_unsync(move |args: &(String, String)| {
+            let filename = args.0.clone();
+            let name = args.1.clone();
+            async move {
+                let args = to_value(&RenameArgs { filename, name }).expect("Failed to create args");
+
+                match invoke("rename_recipe", args).await {
+                    Ok(_) => {
+                        toaster.dispatch_toast(
+                            move || {
+                                view! {
+                                    <Toast>
+                                        <ToastTitle>"Recipe renamed"</ToastTitle>
+                                    </Toast>
+                                }
+                            },
+                            ToastOptions::default()
+                                .with_position(ToastPosition::Top)
+                                .with_intent(ToastIntent::Success),
+                        );
+                        reload_count.update(|count: &mut i32| *count += 1);
+                    }
+                    Err(error) => {
+                        show_error_modal.set(true);
+                        command_error.set(Some(format!(
+                            "{:?}",
+                            from_value::<CommandError>(error)
+                                .expect("Failed to parse CommandError")
+                        )));
+                    }
+                };
+                show_rename_modal.set(false);
+            }
+        });
+
     let on_select = move |key: String| match key.as_str() {
         "edit" => show_editor.set(true),
         "delete" => show_modal.set(true),
+        "rename" => show_rename_modal.set(true),
         _ => (),
     };
 
@@ -176,7 +221,7 @@ pub fn RecipeView() -> impl IntoView {
                     title=move || Suspend::new(async move { recipe.await.map(|r| r.name.clone()) })
                 >
                     <ActionsSlot slot>
-                        <Show fallback=|| view! {<div></div>} when=move || recipe.get().is_some()>
+                        <Show fallback=|| view! { <div></div> } when=move || recipe.get().is_some()>
                             <Menu on_select position=MenuPosition::BottomEnd>
                                 <MenuTrigger slot>
                                     <Button
@@ -189,9 +234,57 @@ pub fn RecipeView() -> impl IntoView {
                                 <MenuItem value="edit" icon=icondata_bi::BiEditAltSolid>
                                     "Edit JSON"
                                 </MenuItem>
+                                <MenuItem value="rename" icon=icondata_bi::BiRenameSolid>
+                                    "Rename"
+                                </MenuItem>
                                 <MenuItem value="delete" icon=icondata_bi::BiTrashRegular>
                                     "Delete"
                                 </MenuItem>
+                                <Dialog
+                                    mask_closeable=false
+                                    close_on_esc=false
+                                    open=show_rename_modal
+                                >
+                                    <DialogSurface class="max-w-lg">
+                                        <DialogBody>
+                                            <DialogTitle>
+                                                <Field label="Name" required=true>
+                                                    <Input
+                                                        value=name
+                                                        class="w-full"
+                                                        rules=vec![
+                                                            InputRule::required_with_message(
+                                                                true.into(),
+                                                                "Please provide name".to_owned().into(),
+                                                            ),
+                                                        ]
+                                                    />
+                                                </Field>
+                                            </DialogTitle>
+                                            <DialogContent>
+                                                <div class="flex px-2 sm:px-8 w-full">
+                                                    <Button
+                                                        disabled=delete_recipe.pending()
+                                                        on_click=move |_| { show_rename_modal.set(false) }
+                                                    >
+                                                        Cancel
+                                                    </Button>
+                                                    <div class="flex-grow"></div>
+                                                    <Button
+                                                        appearance=ButtonAppearance::Primary
+                                                        disabled=rename_recipe.pending()
+                                                        on:click=move |_| {
+                                                            rename_recipe.dispatch((filename.get_untracked().unwrap(), name.get_untracked()));
+        }
+                                                    >
+                                                        Rename
+                                                    </Button>
+                                                </div>
+                                            </DialogContent>
+                                        </DialogBody>
+                                    </DialogSurface>
+
+                                </Dialog>
                                 <Dialog mask_closeable=false close_on_esc=false open=show_modal>
                                     <DialogSurface class="max-w-lg">
                                         <DialogBody>
@@ -223,11 +316,11 @@ pub fn RecipeView() -> impl IntoView {
                                 <Dialog class="max-w-lg w-[80%]" open=show_error_modal>
                                     <DialogSurface>
                                         <DialogBody>
-                                            <DialogTitle>"Failed to delete recipe"</DialogTitle>
+                                            <DialogTitle>"Failed to perform operation"</DialogTitle>
                                             <DialogContent>
                                                 <div class="flex px-2 sm:px-8 gap-2">
                                                     <MessageBar intent=MessageBarIntent::Error>
-                                                        <p>{move || delete_error.get()}</p>
+                                                        <p>{move || command_error.get()}</p>
                                                     </MessageBar>
                                                 </div>
                                             </DialogContent>

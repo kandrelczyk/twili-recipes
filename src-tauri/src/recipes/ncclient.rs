@@ -142,6 +142,14 @@ impl RecipesProvider for NCClient {
 
         Ok(())
     }
+
+    async fn rename_recipe(&mut self, id: String, name: String) -> Result<(), RecipesError> {
+        let mut recipe = self.get_recipe(id.clone()).await?;
+        recipe.name = Some(name.clone());
+        self.save_recipe(recipe).await?;
+        Ok(())
+    }
+
     async fn delete_recipe(&mut self, filename: String) -> Result<(), RecipesError> {
         let response = self
             .dav_client

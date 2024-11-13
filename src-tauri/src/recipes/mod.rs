@@ -13,4 +13,5 @@ pub trait RecipesProvider: Send + Sync {
     async fn save_recipe(&mut self, recipe: Recipe) -> Result<(), RecipesError>;
     async fn get_recipe(&self, filename: String) -> Result<Recipe, RecipesError>;
     async fn delete_recipe(&mut self, filename: String) -> Result<(), RecipesError>;
+    async fn rename_recipe(&mut self, filename: String, name: String) -> Result<(), RecipesError>;
 }

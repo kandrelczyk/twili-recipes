@@ -72,6 +72,16 @@ impl RecipesProvider for LocalClient {
         self.save_recipes(recipes)
     }
 
+    async fn rename_recipe(&mut self, id: String, name: String) -> Result<(), RecipesError> {
+        let mut recipes = self.get_recipes()?;
+        let recipe = recipes
+            .iter_mut()
+            .find(|r| r.id.as_ref().expect("Recipe's ID is None") == &id)
+            .expect("Recipe not found");
+        recipe.name = Some(name);
+        self.save_recipes(recipes)
+    }
+
     async fn get_recipe(&self, id: String) -> Result<Recipe, RecipesError> {
         let recipe = self
             .get_recipes()?
