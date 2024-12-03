@@ -55,7 +55,7 @@ pub fn RecipePanels(recipe: Recipe) -> impl IntoView {
 
             </div>
             <div class="grow"></div>
-            <div class="flex flex-row m-4 justify-center items-center">
+            <div class="flex max-w-4xl m-auto flex-row m-4 justify-center items-center">
                 <div class="grow"></div>
                 <Button class="m-2" on_click=move |_| page.update(|p| *p -= 1.0) disabled=first_page>
                     <Icon width="1.5em" height="1.5em" icon=icondata_bi::BiChevronLeftSolid/>

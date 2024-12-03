@@ -5,7 +5,7 @@ use thaw::*;
 #[component]
 pub fn LLMInfo() -> impl IntoView {
     view! {
-        <DialogSurface class="my-9 mx-2">
+        <DialogSurface>
             <DialogBody class="pb-4">
                 <DialogTitle>"Supported LLM Services"</DialogTitle>
                 <DialogContent>
