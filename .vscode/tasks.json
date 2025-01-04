@@ -12,7 +12,7 @@
             },
             "problemMatcher": {
                 "pattern": {
-                    "regexp": "^([^:]+):(\\d+).*ERROR.*",
+                    "regexp": "error:.*",
                     "file": 1,
                     "line": 2
                 },
