@@ -1,3 +1,5 @@
+use std::collections::HashMap;
+
 use codee::string::FromToStringCodec;
 use leptos::prelude::*;
 use leptos_router::hooks::use_navigate;
@@ -22,6 +24,25 @@ pub fn AppMenu(reload_signal: RwSignal<i32>, show_menu: RwSignal<bool>) -> impl 
         navigate.get()("/about", Default::default());
     };
 
+    let brand_colors = RwSignal::new(HashMap::from([
+        (10, "#050202"),
+        (20, "#211316"),
+        (30, "#381D23"),
+        (40, "#4C242E"),
+        (50, "#602C39"),
+        (60, "#753444"),
+        (70, "#8A3B50"),
+        (80, "#A1435D"),
+        (90, "#B74B69"),
+        (100, "#CF5376"),
+        (110, "#E65B83"),
+        (120, "#EF7192"),
+        (130, "#F489A2"),
+        (140, "#F89FB2"),
+        (150, "#FBB4C2"),
+        (160, "#FEC9D3"),
+    ]));
+
     let (dark, set_dark, _) = use_local_storage::<bool, FromToStringCodec>("dark_mode");
 
     let is_dark = RwSignal::new(dark.get());
@@ -29,10 +50,10 @@ pub fn AppMenu(reload_signal: RwSignal<i32>, show_menu: RwSignal<bool>) -> impl 
 
     Effect::new(move |_| {
         if is_dark() {
-            theme.set(Theme::dark());
+            theme.set(Theme::custom_dark(&brand_colors.get()));
             set_dark.set(true);
         } else {
-            theme.set(Theme::light());
+            theme.set(Theme::custom_light(&brand_colors.get()));
             set_dark.set(false);
         }
     });
@@ -55,7 +76,7 @@ pub fn AppMenu(reload_signal: RwSignal<i32>, show_menu: RwSignal<bool>) -> impl 
                 <Icon icon=icondata_bi::BiMoonRegular />
                 Dark mode
                 <div class="grow"></div>
-                 <Switch checked=is_dark />
+                <Switch checked=is_dark />
             </div>
             <div
                 id="refresh"
