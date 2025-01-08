@@ -1,35 +1,22 @@
 use leptos::prelude::*;
 use recipes_common::Recipe;
-use thaw::{Button, Card, Icon};
+use thaw::{Button, Card};
 
 #[component]
 pub fn RecipeIngredients(recipe: StoredValue<Recipe>, multiplier: RwSignal<f32>) -> impl IntoView {
     view! {
         <div class="text-xl p-4">Ingredients</div>
-        <div class="flex flex-row sm:gap-4 gap-2 m-4 justify-center items-center">
-            <Button
-                on_click=move |_| multiplier.update(|m| *m /= 2.0)
+        <div class="flex flex-row sm:gap-8 gap-6 m-4 justify-center items-center">
+            <Button icon=icondata_bi::BiMinusRegular
+                on_click=move |_| multiplier.update(|m| if *m <= 1.0 { *m /= 2.0 } else { *m -= 1.0 })
             >
-                <div class="flex items-center">
-                    <Icon
-                        width="1.5em"
-                        height="1.5em"
-                        icon=icondata_bi::BiMinusRegular
-                    />
-                </div>
             </Button>
+
             <div class="text-xl">Size: {move || multiplier.get()}</div>
 
-            <Button
-                on:click=move |_| multiplier.update(|m| *m *= 2.0)
+            <Button icon=icondata_bi::BiPlusRegular
+                on_click=move |_| multiplier.update(|m| if *m < 1.0 { *m *= 2.0 } else { *m += 1.0 })
             >
-                <div class="flex items-center">
-                    <Icon
-                        width="1.5em"
-                        height="1.5em"
-                        icon=icondata_bi::BiPlusRegular
-                    />
-                </div>
             </Button>
         </div>
         <Card class="text-md max-w-md w-[80%] m-2 sm:text-lg overflow-y-auto">

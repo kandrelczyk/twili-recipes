@@ -264,7 +264,7 @@ pub fn RecipeView() -> impl IntoView {
                                             <DialogContent>
                                                 <div class="flex px-2 sm:px-8 w-full">
                                                     <Button
-                                                        disabled=delete_recipe.pending()
+                                                        disabled=rename_recipe.pending()
                                                         on_click=move |_| { show_rename_modal.set(false) }
                                                     >
                                                         Cancel

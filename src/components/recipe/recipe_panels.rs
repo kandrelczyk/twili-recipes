@@ -57,12 +57,10 @@ pub fn RecipePanels(recipe: Recipe) -> impl IntoView {
             <div class="grow"></div>
             <div class="flex max-w-4xl m-auto flex-row m-4 justify-center items-center">
                 <div class="grow"></div>
-                <Button class="m-2" on_click=move |_| page.update(|p| *p -= 1.0) disabled=first_page>
-                    <Icon width="1.5em" height="1.5em" icon=icondata_bi::BiChevronLeftSolid/>
+                <Button icon=icondata_bi::BiChevronLeftSolid class="m-2" on_click=move |_| page.update(|p| *p -= 1.0) disabled=first_page>
                 </Button>
                 <Slider step=1.0 max={page_count - 1.0} value=page class="w-full m-4"/>
-                <Button class="m-2" on_click=move |_| page.update(|p| *p += 1.0) disabled=last_page>
-                    <Icon width="1.5em" height="1.5em" icon=icondata_bi::BiChevronRightSolid/>
+                <Button icon=icondata_bi::BiChevronRightSolid class="m-2" on_click=move |_| page.update(|p| *p += 1.0) disabled=last_page>
                 </Button>
                 <div class="grow"></div>
             </div>
