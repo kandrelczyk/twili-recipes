@@ -1,8 +1,9 @@
+use crate::components::ThemeSetter;
 use codee::string::FromToStringCodec;
 use leptos::prelude::*;
 use leptos_router::hooks::use_navigate;
 use leptos_use::storage::use_local_storage;
-use thaw::{Divider, Icon, Switch, Theme};
+use thaw::{Divider, Icon, Switch};
 
 #[component]
 pub fn AppMenu(reload_signal: RwSignal<i32>, show_menu: RwSignal<bool>) -> impl IntoView {
@@ -22,19 +23,14 @@ pub fn AppMenu(reload_signal: RwSignal<i32>, show_menu: RwSignal<bool>) -> impl 
         navigate.get()("/about", Default::default());
     };
 
-    let (dark, set_dark, _) = use_local_storage::<bool, FromToStringCodec>("dark_mode");
+    let theme_setter: ThemeSetter = use_context().unwrap();
+
+    let (dark, _, _) = use_local_storage::<bool, FromToStringCodec>("dark_mode");
 
     let is_dark = RwSignal::new(dark.get());
-    let theme = Theme::use_rw_theme();
 
     Effect::new(move |_| {
-        if is_dark() {
-            theme.set(Theme::dark());
-            set_dark.set(true);
-        } else {
-            theme.set(Theme::light());
-            set_dark.set(false);
-        }
+        theme_setter.set_theme(is_dark());
     });
 
     view! {
@@ -55,7 +51,7 @@ pub fn AppMenu(reload_signal: RwSignal<i32>, show_menu: RwSignal<bool>) -> impl 
                 <Icon icon=icondata_bi::BiMoonRegular />
                 Dark mode
                 <div class="grow"></div>
-                 <Switch checked=is_dark />
+                <Switch checked=is_dark />
             </div>
             <div
                 id="refresh"
