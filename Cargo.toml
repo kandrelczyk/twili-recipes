@@ -20,7 +20,7 @@ recipes_common = { path = "./common" }
 console_error_panic_hook = "0.1.7"
 icondata_bi = "0.0.10"
 icondata_ri = "0.0.10"
-thaw = { version = "0.4.0-beta5", features = ["csr", "nightly"]}
+thaw = { version = "0.4.0", features = ["csr", "nightly"]}
 codee = { version = "0.2", features = ["json_serde"] }
 web-sys = "0.3.70"
 

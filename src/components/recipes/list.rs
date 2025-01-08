@@ -1,7 +1,5 @@
-use codee::string::FromToStringCodec;
 use leptos::prelude::*;
 use leptos_router::hooks::use_navigate;
-use leptos_use::storage::use_local_storage;
 use recipes_common::ListEntry;
 use serde_wasm_bindgen::from_value;
 use thaw::*;
@@ -23,12 +21,6 @@ pub fn List() -> impl IntoView {
     let show_menu = RwSignal::new(false);
     let reload_count = RwSignal::new(0);
     let navigate = use_navigate();
-
-    let (dark, _, _) = use_local_storage::<bool, FromToStringCodec>("dark_mode");
-    let theme = Theme::use_rw_theme();
-    if dark.get() {
-        theme.set(Theme::dark())
-    }
 
     let add_recipe = move |_| navigate("/add", Default::default());
 
