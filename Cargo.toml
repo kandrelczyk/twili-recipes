@@ -23,6 +23,7 @@ icondata_ri = "0.0.10"
 thaw = { version = "0.4.0", features = ["csr", "nightly"]}
 codee = { version = "0.2", features = ["json_serde"] }
 web-sys = "0.3.70"
+tauri-cli = "2.2.2"
 
 [dev-dependencies]
 tokio = {version = "1.35.0", features = ["rt", "macros"]}
