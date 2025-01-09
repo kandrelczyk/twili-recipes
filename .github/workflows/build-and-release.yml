@@ -172,34 +172,18 @@ jobs:
             console.log(version)
             return version
           result-encoding: string
+
+      - name: Setup Java
+        uses: actions/setup-java@v4
+        with:
+          distribution: "zulu"
+          java-version: "17"
           
-      - name: Install Android Requirements
-        run: |
-          sudo dpkg --add-architecture i386
-          sudo apt-get update
-          sudo apt-get install libc6:i386 libncurses5:i386 libstdc++6:i386 lib32z1 libbz2-1.0:i386
+      - name: Setup Android SDK
+        uses: android-actions/setup-android@v3
 
       - name: Download & Install Android Build Things
         run: |
-          sudo curl -L -o ./jbr.tar.gz https://cache-redirector.jetbrains.com/intellij-jbr/jbr_jcef-17.0.11-linux-x64-b1312.2.tar.gz
-          sudo mkdir jbr
-          sudo tar -xvf ./jbr.tar.gz -C ./jbr
-          sudo chmod 777 -R ./jbr
-
-          sudo curl -L -o ./sdk.zip https://dl.google.com/android/repository/commandlinetools-linux-11076708_latest.zip
-          sudo unzip ./sdk.zip -d ./sdk
-          sudo mkdir ./sdk/cmdline-tools-test
-          sudo mv ./sdk/cmdline-tools/* ./sdk/cmdline-tools-test
-          sudo mkdir ./sdk/cmdline-tools/latest
-          sudo mv ./sdk/cmdline-tools-test/* ./sdk/cmdline-tools/latest
-          sudo rm -rf ./sdk/cmdline-tools-test
-          sudo chmod 777 -R ./sdk
-
-          export JAVA_HOME="./jbr/jbr_jcef-17.0.11-linux-x64-b1312.2"
-          export ANDROID_HOME="./sdk"
-
-          export PATH=$PATH:$ANDROID_HOME/cmdline-tools/latest/bin
-
           echo y | sdkmanager "platform-tools"
           echo y | sdkmanager "platforms;android-34"
           echo y | sdkmanager "ndk;27.0.12077973"
