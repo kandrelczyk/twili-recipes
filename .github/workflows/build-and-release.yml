@@ -210,7 +210,7 @@ jobs:
 
       - name: Build Tauri App (Android)
         env:
-          NDK_HOME: ${{ env.ANDROID_HOME }}/ndk/27.0.12077973"
+          NDK_HOME: ${{ env.ANDROID_HOME }}/ndk/27.0.12077973
         run: |
           export TOOLCHAIN=$NDK_HOME/toolchains/llvm/prebuilt/linux-x86_64
           export TARGET=aarch64-linux-android
