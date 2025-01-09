@@ -189,8 +189,6 @@ jobs:
           echo y | sdkmanager "ndk;27.0.12077973"
           echo y | sdkmanager "build-tools;35.0.0-rc4"
 
-          export NDK_HOME="$ANDROID_HOME/ndk/27.0.12077973"
-
       - name: Install Tauri Requirements
         run: |
           sudo apt update
@@ -207,21 +205,13 @@ jobs:
       - name: Install Rust Nightly
         uses: dtolnay/rust-toolchain@nightly
 
-      - name: Install Adnroid Requirements
-        run: sudo apt install gcc-aarch64-linux-gnu g++-aarch64-linux-gnu clang-aarch64-linux-gnu
-
       - name: Install Rust Targets
         run: rustup target add aarch64-linux-android armv7-linux-androideabi i686-linux-android x86_64-linux-android wasm32-unknown-unknown
 
       - name: Build Tauri App (Android)
+        env:
+          NDK_HOME: ${{ env.ANDROID_HOME }}/ndk/27.0.12077973"
         run: |
-          export CURRENT_DIR=$(pwd)
-          export ANDROID_HOME="$CURRENT_DIR/sdk/"
-          export ANDROID_SDK_ROOT="$CURRENT_DIR/sdk/"
-          export NDK_HOME="$CURRENT_DIR/sdk/ndk/27.0.12077973/"
-          export JAVA_HOME="$CURRENT_DIR/jbr/jbr_jcef-17.0.11-linux-x64-b1312.2/"
-
-          
           export TOOLCHAIN=$NDK_HOME/toolchains/llvm/prebuilt/linux-x86_64
           export TARGET=aarch64-linux-android
           export API=33
