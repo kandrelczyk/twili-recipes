@@ -121,7 +121,18 @@ jobs:
         # webkitgtk 4.0 is for Tauri v1 - webkitgtk 4.1 is for Tauri v2.
         # You can remove the one that doesn't apply to your app to speed up the workflow a bit.
 
+          
+      - name: Install OpenSSL
+        if: matrix.target.os == 'windows-latest'
+        shell: bash
+        run: |
+          set -e
+          choco install openssl -y --no-progress
+          echo 'OPENSSL_DIR=C:\Program Files\OpenSSL' >> $GITHUB_ENV
+
       - name: install frontend dependencies
+        env:
+          OPENSSL_DIR: 
         run: |
           cargo install --path .
           cargo install tauri-cli --version "^2.0.0" --locked
