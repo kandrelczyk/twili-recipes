@@ -123,7 +123,7 @@ jobs:
 
           
       - name: Install OpenSSL
-        if: matrix.target == 'windows-latest'
+        if: matrix.platform == 'windows-latest'
         shell: bash
         run: |
           set -e
