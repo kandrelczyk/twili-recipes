@@ -131,8 +131,6 @@ jobs:
           echo 'OPENSSL_DIR=C:\Program Files\OpenSSL' >> $GITHUB_ENV
 
       - name: install frontend dependencies
-        env:
-          OPENSSL_DIR: 
         run: |
           cargo install --path .
           cargo install tauri-cli --version "^2.0.0" --locked
