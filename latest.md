@@ -1,5 +1,3 @@
-Version 0.2.0
+Version 0.2.1
 
-Updated to Leptos 0.7 and Thaw 0.4
-Bug fixing
-New Theme
+Fixed free ChatGPT option
