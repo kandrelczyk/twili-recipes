@@ -260,6 +260,8 @@ jobs:
           keyPassword: ${{ secrets.K_PASSWORD }}
         env:
           BUILD_TOOLS_VERSION: 35.0.0-rc4
+          TAURI_SIGNING_PRIVATE_KEY: ${{secrets.TAURI_SIGNING_PRIVATE_KEY}}
+          TAURI_SIGNING_PRIVATE_KEY_PASSWORD: ${{secrets.TAURI_SIGNING_PRIVATE_KEY_PASSWORD}}
 
       - name: As Artifact
         uses: actions/upload-artifact@v4
