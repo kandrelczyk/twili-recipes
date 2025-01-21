@@ -14,6 +14,7 @@ use tauri::{async_runtime::Mutex, App};
 use tauri_plugin_cli::CliExt;
 #[cfg(not(debug_assertions))]
 use tauri_plugin_log::{Target, TargetKind};
+use tauri_plugin_updater::UpdaterExt;
 
 #[cfg(mobile)]
 mod mobile;
@@ -49,6 +50,7 @@ impl AppBuilder {
         let config_file: Arc<OnceLock<String>> = Arc::new(OnceLock::new());
 
         let mut builder = tauri::Builder::default()
+            .plugin(tauri_plugin_updater::Builder::new().build())
             .plugin(tauri_plugin_shell::init())
             .plugin(tauri_plugin_store::Builder::new().build())
             .plugin(tauri_plugin_keep_screen_on::init())
@@ -79,6 +81,10 @@ impl AppBuilder {
                         .set(".settings.dat".to_owned())
                         .expect("Failed to set settings file");
                 }
+                let handle = app.handle().clone();
+                tauri::async_runtime::spawn(async move {
+                    update(handle).await.unwrap();
+                });
                 Ok(())
             })
             .invoke_handler(tauri::generate_handler![
@@ -117,4 +123,26 @@ impl AppBuilder {
             .build(tauri::generate_context!())
             .expect("To build tauri app")
     }
+}
+
+async fn update(app: tauri::AppHandle) -> tauri_plugin_updater::Result<()> {
+    if let Some(update) = app.updater()?.check().await? {
+        let mut downloaded = 0;
+        update
+            .download_and_install(
+                |chunk_length, content_length| {
+                    downloaded += chunk_length;
+                    println!("downloaded {downloaded} from {content_length:?}");
+                },
+                || {
+                    println!("download finished");
+                },
+            )
+            .await?;
+
+        println!("update installed");
+        app.restart();
+    }
+
+    Ok(())
 }

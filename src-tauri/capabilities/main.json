@@ -13,6 +13,7 @@
     "store:allow-save",
     "store:allow-has",
     "shell:allow-open",
-    "keep-screen-on:default"
+    "keep-screen-on:default",
+    "updater:default"
   ]
 }
