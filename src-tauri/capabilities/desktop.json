@@ -1,0 +1,20 @@
+{
+  "$schema": "./schemas/desktop-schema.json",
+  "identifier": "desktop-capability",
+  "platforms": ["linux", "macOS", "windows"],
+  "description": "permissions to run the app",
+  "windows": [
+    "main",
+    "main-*"
+  ],
+  "permissions": [
+    "log:default",
+    "store:allow-get",
+    "store:allow-set",
+    "store:allow-save",
+    "store:allow-has",
+    "shell:allow-open",
+    "keep-screen-on:default",
+    "updater:default"
+  ]
+}

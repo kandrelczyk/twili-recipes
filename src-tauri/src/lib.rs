@@ -14,6 +14,7 @@ use tauri::{async_runtime::Mutex, App};
 use tauri_plugin_cli::CliExt;
 #[cfg(not(debug_assertions))]
 use tauri_plugin_log::{Target, TargetKind};
+#[cfg(not(mobile))]
 use tauri_plugin_updater::UpdaterExt;
 
 #[cfg(mobile)]
@@ -50,7 +51,6 @@ impl AppBuilder {
         let config_file: Arc<OnceLock<String>> = Arc::new(OnceLock::new());
 
         let mut builder = tauri::Builder::default()
-            .plugin(tauri_plugin_updater::Builder::new().build())
             .plugin(tauri_plugin_shell::init())
             .plugin(tauri_plugin_store::Builder::new().build())
             .plugin(tauri_plugin_keep_screen_on::init())
@@ -81,10 +81,16 @@ impl AppBuilder {
                         .set(".settings.dat".to_owned())
                         .expect("Failed to set settings file");
                 }
-                let handle = app.handle().clone();
-                tauri::async_runtime::spawn(async move {
-                    update(handle).await.unwrap();
-                });
+                #[cfg(not(mobile))]
+                {            
+                    let handle = app.handle().clone();
+                    tauri::async_runtime::spawn(async move {
+                        match update(handle).await {
+                            Ok(_) => println!("Update check successfull"),
+                            Err(_) => println!("Update not found") 
+                        }
+                    });
+                }
                 Ok(())
             })
             .invoke_handler(tauri::generate_handler![
@@ -118,6 +124,10 @@ impl AppBuilder {
                     .build(),
             );
         }
+        #[cfg(not(mobile))] 
+        {
+            builder = builder.plugin(tauri_plugin_updater::Builder::new().build())
+        }
 
         builder
             .build(tauri::generate_context!())
@@ -125,6 +135,7 @@ impl AppBuilder {
     }
 }
 
+#[cfg(not(mobile))]
 async fn update(app: tauri::AppHandle) -> tauri_plugin_updater::Result<()> {
     if let Some(update) = app.updater()?.check().await? {
         let mut downloaded = 0;

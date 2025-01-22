@@ -1,7 +1,9 @@
 {
-  "$schema": "./schemas/desktop-schema.json",
-  "identifier": "run-app",
+  "$schema": "./schemas/mobile-schema.json",
+  "identifier": "mobile-capability",
+  "platforms": ["iOS", "android"],
   "description": "permissions to run the app",
+
   "windows": [
     "main",
     "main-*"
@@ -13,7 +15,6 @@
     "store:allow-save",
     "store:allow-has",
     "shell:allow-open",
-    "keep-screen-on:default",
-    "updater:default"
+    "keep-screen-on:default"
   ]
 }
