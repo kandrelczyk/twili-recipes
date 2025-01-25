@@ -7,7 +7,7 @@ use recipes_common::{Config, RecipesSource, LLM};
 use tauri::async_runtime::Mutex;
 
 use crate::{
-    ai::{AIClient, ChatGTPClient, PerplexityClient},
+    ai::{AIClient, ChatGTPClient, ClaudeClient, PerplexityClient},
     commands::error::CommandError,
     recipes::{local::LocalClient, ncclient::NCClient, RecipesProvider},
 };
@@ -42,9 +42,10 @@ pub async fn initialize(
 
         let mut ai = ai_client.lock().await;
         let ai2: Box<dyn AIClient> = match config.llm {
-            LLM::Free => Box::new(ChatGTPClient::new(format!("sk-proj{}-aGt2fUKIu1-Ut-SGpPLunlckqiNa_WJbs7dpqT3BlbkFJQIDCIrtY7Tz2-ROGTjEKXjeF7MaiT4ue5Z8-{}", "-_M0lMl6hlgGUEkeOoXxNxwxhsnNt8zbcXcvk", "vxY5Sb009ifC6UXOT1JTL3F9DfzHYEizT8TFkA"), config.ai_prompt)),
+            LLM::Free => Box::new(ClaudeClient::new("".to_owned(), config.ai_prompt)),
+            LLM::Claude => Box::new(ClaudeClient::new(config.ai_token, config.ai_prompt)),
             LLM::GPT => Box::new(ChatGTPClient::new(config.ai_token, config.ai_prompt)),
-            LLM::Perplexity => Box::new(PerplexityClient::new(config.ai_token, config.ai_prompt))
+            LLM::Perplexity => Box::new(PerplexityClient::new(config.ai_token, config.ai_prompt)),
         };
         *ai = Some(ai2);
 

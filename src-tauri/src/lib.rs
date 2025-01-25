@@ -14,7 +14,7 @@ use tauri::{async_runtime::Mutex, App};
 use tauri_plugin_cli::CliExt;
 #[cfg(not(debug_assertions))]
 use tauri_plugin_log::{Target, TargetKind};
-#[cfg(not(mobile))]
+#[cfg(not(any(mobile, debug_assertions)))]
 use tauri_plugin_updater::UpdaterExt;
 
 #[cfg(mobile)]
@@ -81,13 +81,13 @@ impl AppBuilder {
                         .set(".settings.dat".to_owned())
                         .expect("Failed to set settings file");
                 }
-                #[cfg(not(mobile))]
-                {            
+                #[cfg(not(any(mobile, debug_assertions)))]
+                {
                     let handle = app.handle().clone();
                     tauri::async_runtime::spawn(async move {
                         match update(handle).await {
                             Ok(_) => println!("Update check successfull"),
-                            Err(_) => println!("Update not found") 
+                            Err(_) => println!("Update not found"),
                         }
                     });
                 }
@@ -124,7 +124,7 @@ impl AppBuilder {
                     .build(),
             );
         }
-        #[cfg(not(mobile))] 
+        #[cfg(not(mobile))]
         {
             builder = builder.plugin(tauri_plugin_updater::Builder::new().build())
         }
@@ -135,7 +135,7 @@ impl AppBuilder {
     }
 }
 
-#[cfg(not(mobile))]
+#[cfg(not(any(mobile, debug_assertions)))]
 async fn update(app: tauri::AppHandle) -> tauri_plugin_updater::Result<()> {
     if let Some(update) = app.updater()?.check().await? {
         let mut downloaded = 0;

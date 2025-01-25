@@ -1,9 +1,7 @@
-use codee::string::FromToStringCodec;
 use leptos::prelude::*;
 use leptos_router::hooks::use_navigate;
-use leptos_use::storage::use_local_storage;
 use serde_wasm_bindgen::from_value;
-use thaw::{Spinner, Theme};
+use thaw::Spinner;
 use wasm_bindgen::prelude::*;
 
 use crate::error::CommandError;
@@ -18,11 +16,6 @@ extern "C" {
 pub fn Welcome() -> impl IntoView {
     let navigate = RwSignal::new(use_navigate());
 
-    let (dark, _, _) = use_local_storage::<bool, FromToStringCodec>("dark_mode");
-    let theme = Theme::use_rw_theme();
-    if dark() {
-        theme.set(Theme::dark())
-    }
     AsyncDerived::new_unsync(move || async move {
         match invoke("initialize", JsValue::NULL).await {
             Ok(success) => {

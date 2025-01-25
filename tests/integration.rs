@@ -92,7 +92,7 @@ async fn setup() -> (Child, WebDriver) {
     let mut caps = DesiredCapabilities::chrome();
     caps.insert_base_capability(
         "tauri:options".to_owned(),
-        json!({ "application": "./target/release/twili-recipes", "args": ["-c", "test.cfg"] }),
+        json!({ "application": "./target/x86_64-unknown-linux-gnu/release/twili-recipes", "args": ["-c", "test.cfg"] }),
     );
     caps.insert_base_capability("browserName".to_owned(), json!("wry"));
 

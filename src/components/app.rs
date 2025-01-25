@@ -35,6 +35,7 @@ impl ThemeSetter {
             (150, "#FBB4C2"),
             (160, "#FEC9D3"),
         ]));
+        leptos::logging::log!("here");
         if is_dark {
             self.theme.set(Theme::custom_dark(&brand_colors.get()));
             self.stored_value.set(true);
@@ -52,8 +53,11 @@ pub fn App() -> impl IntoView {
         stored_value: set_dark,
         theme: Theme::use_rw_theme(),
     };
-    theme_setter.set_theme(dark.get());
-    provide_context(theme_setter);
+    provide_context(theme_setter.clone());
+    let is_dark = RwSignal::new(dark.get());
+    Effect::new(move |_| {
+        theme_setter.set_theme(is_dark());
+    });
 
     view! {
         <main class="h-full min-h-screen bg-[url('/public/background.png')]">

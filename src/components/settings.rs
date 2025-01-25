@@ -2,7 +2,7 @@ use leptos::prelude::*;
 use leptos::task::spawn_local;
 
 use leptos_router::hooks::use_navigate;
-use recipes_common::{Config, RecipesSource};
+use recipes_common::{Config, RecipesSource, LLM};
 use serde::{Deserialize, Serialize};
 use serde_wasm_bindgen::{from_value, to_value};
 use thaw::*;
@@ -32,7 +32,7 @@ pub fn Settings(init: bool) -> impl IntoView {
     let command_error: RwSignal<Option<CommandError>> = RwSignal::new(None);
 
     let has_config = RwSignal::new(init);
-    let llm_service = RwSignal::new("Free".to_owned());
+    let llm_service = RwSignal::new("Perplexity".to_owned());
     let llm_token = RwSignal::new("".to_owned());
 
     let cloud_storage = RwSignal::new(false);
@@ -53,7 +53,9 @@ pub fn Settings(init: bool) -> impl IntoView {
             match invoke("get_config", JsValue::NULL).await {
                 Ok(config) => {
                     let config: Config = from_value(config).unwrap();
-                    llm_service.set(format!("{}", config.llm));
+                    if config.llm != LLM::Free {
+                        llm_service.set(format!("{}", config.llm));
+                    }
                     cloud_storage.set(matches![config.recipes_source, RecipesSource::Cloud]);
                     llm_token.set(config.ai_token);
                     cloud_uri.set(config.cloud_uri);
@@ -110,25 +112,35 @@ pub fn Settings(init: bool) -> impl IntoView {
                                             ></Button>
                                         </div>
                                         <RadioGroup value=llm_service class="p-2">
-                                            <Radio value="Free" label="Free" />
-                                            <Radio value="GPT" label="OpenAI" />
                                             <Radio value="Perplexity" label="Perplexity" />
+                                            <Radio value="Claude" label="Anthropic" />
+                                            <Radio value="GPT" label="OpenAI" />
                                         </RadioGroup>
                                         {move || match llm_service.get().as_str() {
-                                            "Free" => {
-                                                view! {
-                                                    <div>
-                                                        Use shared, rate limited LLM service. Click
-                                                        <Icon icon=icondata_bi::BiInfoCircleRegular /> for more info.
-                                                    </div>
-                                                }
-                                                    .into_any()
-                                            }
                                             "GPT" => {
                                                 view! {
                                                     <Field label="ChatGPT API Token" required=true>
                                                         <Input
                                                             id="gpt_api_token"
+                                                            class="w-full"
+                                                            value=llm_token
+                                                            disabled=loading
+                                                            rules=vec![
+                                                                InputRule::required_with_message(
+                                                                    true.into(),
+                                                                    "Please provide token".to_owned().into(),
+                                                                ),
+                                                            ]
+                                                        />
+                                                    </Field>
+                                                }
+                                                    .into_any()
+                                            }
+                                            "Claude" => {
+                                                view! {
+                                                    <Field label="Anthropic API Token" required=true>
+                                                        <Input
+                                                            id="claude_api_token"
                                                             class="w-full"
                                                             value=llm_token
                                                             disabled=loading

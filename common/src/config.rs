@@ -6,6 +6,7 @@ use serde::{Deserialize, Serialize};
 pub enum LLM {
     Free,
     Perplexity,
+    Claude,
     GPT,
 }
 
@@ -14,6 +15,7 @@ impl Display for LLM {
         match self {
             LLM::Free => write!(f, "Free"),
             LLM::GPT => write!(f, "GPT"),
+            LLM::Claude => write!(f, "Claude"),
             LLM::Perplexity => write!(f, "Perplexity"),
         }
     }
@@ -24,6 +26,7 @@ impl From<String> for LLM {
         match value.as_str() {
             "Free" => LLM::Free,
             "Perplexity" => LLM::Perplexity,
+            "Claude" => LLM::Claude,
             _ => LLM::GPT,
         }
     }
@@ -49,12 +52,13 @@ impl Config {
     pub fn all_present(&self) -> bool {
         match self.recipes_source {
             RecipesSource::Cloud => {
-                !((self.ai_token.is_empty() && self.llm != LLM::Free)
+                !(self.ai_token.is_empty()
+                    || self.llm == LLM::Free
                     || self.cloud_uri.is_empty()
                     || self.cloud_username.is_empty()
                     || self.ai_prompt.is_empty())
             }
-            RecipesSource::Local => !self.ai_token.is_empty() || self.llm == LLM::Free,
+            RecipesSource::Local => !self.ai_token.is_empty() && self.llm != LLM::Free,
         }
     }
 }
