@@ -28,7 +28,7 @@ impl AIClient for PerplexityClient {
             .header("Authorization", format!("Bearer {}", self.token))
             .json(&json!(
             {
-                "model": "llama-3.1-70b-instruct",
+                "model": "sonar-pro",
                 "temperature": 0.0,
                 "messages": [
                 {

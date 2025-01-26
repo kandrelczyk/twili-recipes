@@ -12,8 +12,8 @@ pub fn LLMInfo() -> impl IntoView {
                     <h2 class="mt-3 text-lg">Perplexity (recommended)</h2>
                     <div class="mb-2">
                         "To create the API token sign up for "
-                        <a href="https://www.perplexity.ai/">Perplexity</a> " account and visit "
-                        <a href="https://www.perplexity.ai/settings/api">
+                        <a target="_blank" href="https://www.perplexity.ai/">Perplexity</a> " account and visit "
+                        <a target="_blank" href="https://www.perplexity.ai/settings/api">
                             "https://www.perplexity.ai/settings/api"
                         </a>
                     </div>
@@ -21,14 +21,14 @@ pub fn LLMInfo() -> impl IntoView {
                         "The minimum amount of money that can be added to the balance is $3.
                         Credits don't expire."
                     </div>
-                    <div class="mb-2">"Perplexity option uses llama-3.1-70b-instruct model."</div>
+                    <div class="mb-2">"Perplexity option uses sonar-pro model."</div>
 
 
                     <h2 class="mt-3 text-lg">Anthropic</h2>
                     <div class="mb-2">
                         "To create the API token sign up for "
-                        <a href="https://console.anthropic.com/">Claude console</a> " account and visit "
-                        <a href="https://console.anthropic.com/settings/keys">
+                        <a target="_blank" href="https://console.anthropic.com/">Claude console</a> " account and visit "
+                        <a target="_blank" href="https://console.anthropic.com/settings/keys">
                             "https://console.anthropic.com/settings/keys"
                         </a>
                     </div>
@@ -43,9 +43,9 @@ pub fn LLMInfo() -> impl IntoView {
 
                         <div class="mb-2">
                             "To create the API token sign up for "
-                            <a href="https://platform.openai.com/signup">OpenAI</a>
+                            <a target="_blank" href="https://platform.openai.com/signup">OpenAI</a>
                             " account and visit "
-                            <a href="https://platform.openai.com/api-keys">
+                            <a target="_blank" href="https://platform.openai.com/api-keys">
                                 "https://platform.openai.com/api-keys"
                             </a>
                         </div>
