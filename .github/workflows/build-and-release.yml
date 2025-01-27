@@ -135,7 +135,7 @@ jobs:
           cargo install --path .
           cargo install tauri-cli --version "^2.0.0" --locked
           cargo install trunk
-          npm install -g tailwindcss
+          npm install tailwindcss @tailwindcss/cli
           rustup target add wasm32-unknown-unknown
           
       - uses: tauri-apps/tauri-action@v0
