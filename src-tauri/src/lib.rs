@@ -81,16 +81,16 @@ impl AppBuilder {
                         .set(".settings.dat".to_owned())
                         .expect("Failed to set settings file");
                 }
-                #[cfg(not(any(mobile, debug_assertions)))]
-                {
-                    let handle = app.handle().clone();
-                    tauri::async_runtime::spawn(async move {
-                        match update(handle).await {
-                            Ok(_) => println!("Update check successfull"),
-                            Err(_) => println!("Update not found"),
-                        }
-                    });
-                }
+                //#[cfg(not(any(mobile, debug_assertions)))]
+                //{
+                //let handle = app.handle().clone();
+                //tauri::async_runtime::spawn(async move {
+                //match update(handle).await {
+                //Ok(_) => println!("Update check successfull"),
+                //Err(e) => println!("Updated not installed: {:?}", e),
+                //}
+                //});
+                //}
                 Ok(())
             })
             .invoke_handler(tauri::generate_handler![

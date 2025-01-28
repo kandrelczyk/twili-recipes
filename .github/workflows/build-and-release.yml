@@ -135,7 +135,7 @@ jobs:
           cargo install --path .
           cargo install tauri-cli --version "^2.0.0" --locked
           cargo install trunk
-          npm install tailwindcss @tailwindcss/cli
+          npm install -g tailwindcss@3.4.17
           rustup target add wasm32-unknown-unknown
           
       - uses: tauri-apps/tauri-action@v0
@@ -247,7 +247,7 @@ jobs:
           cargo install --path .
           cargo install tauri-cli --version "^2.0.0" --locked
           cargo install trunk
-          npm install -g tailwindcss
+          npm install -g tailwindcss@3.4.17 
           cargo tauri android init
           cargo tauri icon icon.png
           ./copy-android.sh
