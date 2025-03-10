@@ -29,7 +29,6 @@ impl AIClient for PerplexityClient {
             .json(&json!(
             {
                 "model": "sonar-pro",
-                "temperature": 0.0,
                 "messages": [
                 {
                     "role": "system",
@@ -50,19 +49,19 @@ impl AIClient for PerplexityClient {
             let recipe = result["choices"]
                 .as_array()
                 .ok_or(AIError {
-                    reason: "Invalid response from openai API".to_owned(),
+                    reason: "Invalid response from Perplexity API".to_owned(),
                 })?
                 .first()
                 .ok_or(AIError {
-                    reason: "Invalid response from openai API".to_owned(),
+                    reason: "Invalid response from Perplexity API".to_owned(),
                 })?["message"]
                 .as_object()
                 .ok_or(AIError {
-                    reason: "Invalid response from openai API".to_owned(),
+                    reason: "Invalid response from Perplexity API".to_owned(),
                 })?["content"]
                 .as_str()
                 .ok_or(AIError {
-                    reason: "Invalid response from openai API".to_owned(),
+                    reason: "Invalid response from Perplexity API".to_owned(),
                 })?
                 .to_owned();
 
