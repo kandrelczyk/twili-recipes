@@ -122,14 +122,6 @@ jobs:
         # You can remove the one that doesn't apply to your app to speed up the workflow a bit.
 
           
-      - name: Install OpenSSL
-        if: matrix.platform == 'windows-latest'
-        shell: bash
-        run: |
-          set -e
-          choco install openssl -y --no-progress
-          echo 'OPENSSL_DIR=C:\Program Files\OpenSSL' >> $GITHUB_ENV
-
       - name: install frontend dependencies
         run: |
           cargo install --path .
