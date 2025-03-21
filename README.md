@@ -101,7 +101,7 @@ Credits expire after 1 year so in practice using it will cost $5/year.
 
 Follow the typical Tauri setup process for your platform. Install all dependencies listed in prerequisites.
 
-Install trunk (`cargo install trunk`) and tailwindcss (`npm install -g tailwindcss`).
+Install trunk (`cargo install trunk`) and tailwindcss (`npm install -D tailwindcss@3`).
 
 Add wasm target (`rustup target add wasm32-unknown-unknown`)
 

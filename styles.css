@@ -22,3 +22,13 @@ html {
 .thaw-spinner__spinner {
     animation-duration: 1s !important;
 }
+
+.recipe-list::-webkit-scrollbar {
+  display: block;
+  width: 3px;
+  overflow: auto;
+}
+.recipe-list::-webkit-scrollbar-thumb {
+    background: #aaa;
+    border-radius: 25px;
+}

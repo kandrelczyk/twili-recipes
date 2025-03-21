@@ -4,3 +4,6 @@ style/
 src-tauri/.cargo
 src-tauri/gen/android/
 
+node_modules/
+package.json
+package-lock.json
