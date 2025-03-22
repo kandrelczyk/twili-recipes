@@ -37,7 +37,7 @@ pub fn RecipePanels(recipe: Recipe) -> impl IntoView {
         step
     });
     view! {
-        <div class="flex flex-col h-[90%] w-full]">
+        <div class="flex flex-col h-[90%] w-full">
             <div class="w-full flex flex-col overflow-auto items-center">
                 {move || {
                     if page.get() == 0.0 {
