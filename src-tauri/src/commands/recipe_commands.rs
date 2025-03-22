@@ -51,7 +51,7 @@ pub async fn list_recipes(
     let m = manager.lock().await;
 
     let mut recipes = m.as_ref().unwrap().list_recipes().await?;
-    recipes.sort_by_key(|r| r.name.clone());
+    recipes.sort_by_key(|r| r.name.to_lowercase().clone());
 
     Ok(recipes)
 }

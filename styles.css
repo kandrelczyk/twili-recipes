@@ -23,12 +23,12 @@ html {
     animation-duration: 1s !important;
 }
 
-.recipe-list::-webkit-scrollbar {
+.custom-scroll::-webkit-scrollbar {
   display: block;
   width: 3px;
   overflow: auto;
 }
-.recipe-list::-webkit-scrollbar-thumb {
+.custom-scroll::-webkit-scrollbar-thumb {
     background: #aaa;
     border-radius: 25px;
 }

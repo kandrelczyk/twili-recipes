@@ -13,6 +13,7 @@ pub struct Ingredient {
     pub name: String,
     pub quantity: f32,
     pub scale: String,
+    pub group: Option<String>,
 }
 
 #[derive(Debug, Clone, PartialEq, Serialize, Deserialize)]
