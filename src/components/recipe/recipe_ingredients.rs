@@ -14,7 +14,7 @@ pub fn RecipeIngredients(recipe: StoredValue<Recipe>, multiplier: RwSignal<f32>)
             .or_insert(vec![ingredient.clone()]);
     }
 
-    let gropped_ingredients = groups
+    let grouped_ingredients = groups
                     .into_iter()
                     .map(|(k, v)| {
                         view! {
@@ -62,7 +62,7 @@ pub fn RecipeIngredients(recipe: StoredValue<Recipe>, multiplier: RwSignal<f32>)
             ></Button>
         </div>
         <Card class="text-md max-w-md w-[80%] m-2 sm:text-lg overflow-y-auto flex flex-col gap-4 custom-scroll">
-            {gropped_ingredients}
+            {grouped_ingredients}
         </Card>
     }
 }

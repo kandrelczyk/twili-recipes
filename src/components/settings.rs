@@ -2,7 +2,7 @@ use leptos::prelude::*;
 use leptos::task::spawn_local;
 
 use leptos_router::hooks::use_navigate;
-use recipes_common::{Config, RecipesSource, LLM};
+use recipes_common::{Config, RecipesSource};
 use serde::{Deserialize, Serialize};
 use serde_wasm_bindgen::{from_value, to_value};
 use thaw::*;
@@ -53,9 +53,7 @@ pub fn Settings(init: bool) -> impl IntoView {
             match invoke("get_config", JsValue::NULL).await {
                 Ok(config) => {
                     let config: Config = from_value(config).unwrap();
-                    if config.llm != LLM::Free {
-                        llm_service.set(format!("{}", config.llm));
-                    }
+                    llm_service.set(format!("{}", config.llm));
                     cloud_storage.set(matches![config.recipes_source, RecipesSource::Cloud]);
                     llm_token.set(config.ai_token);
                     cloud_uri.set(config.cloud_uri);
@@ -112,11 +110,20 @@ pub fn Settings(init: bool) -> impl IntoView {
                                             ></Button>
                                         </div>
                                         <RadioGroup value=llm_service class="p-2">
+                                            <Radio value="Free" label="Free" />
                                             <Radio value="Perplexity" label="Perplexity" />
                                             <Radio value="Claude" label="Anthropic" />
                                             <Radio value="GPT" label="OpenAI" />
                                         </RadioGroup>
                                         {move || match llm_service.get().as_str() {
+                                            "Free" => {
+                                                view! {
+                                                    <Text>
+                                                        "Free, rate limited LLM service"
+                                                    </Text>
+                                                }
+                                                    .into_any()
+                                            }
                                             "GPT" => {
                                                 view! {
                                                     <Field label="ChatGPT API Token" required=true>

@@ -128,9 +128,19 @@ pub fn AddRecipe() -> impl IntoView {
                 <div class="flex flex-col items-center h-full w-full">
                     <div class="p-2 w-full max-w-xl h-full">
                         <div class="p-1 text-sm w-full h-[95%]">
-                            Recipe
-                            <Textarea class="h-full block" value=recipe_str disabled=loading />
-                        // TODO                                invalid=recipe_invalid
+                            <Field label="Recipe" required=true class="h-full block">
+                                <Textarea
+                                    class="h-full block"
+                                    value=recipe_str
+                                    disabled=loading
+                                    rules=vec![
+                                        TextareaRule::required_with_message(
+                                            true.into(),
+                                            "Please provide recipe".to_owned().into(),
+                                        ),
+                                    ]
+                                />
+                            </Field>
                         </div>
                     </div>
                     <div class="grow"></div>

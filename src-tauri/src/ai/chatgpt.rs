@@ -1,11 +1,10 @@
-use ::serde_json::Value;
 use async_trait::async_trait;
 use reqwest_dav::re_exports::serde_json;
 use serde_json::json;
 
 use crate::ai::AIClient;
 
-use super::AIError;
+use super::{parse_response, AIError};
 
 pub struct ChatGTPClient {
     pub token: String,
@@ -46,26 +45,7 @@ impl AIClient for ChatGTPClient {
 
         if res.status().is_success() {
             let json_str = res.text().await?;
-            let result: Value = serde_json::from_str(&json_str)?;
-            let recipe = result["choices"]
-                .as_array()
-                .ok_or(AIError {
-                    reason: "Invalid response from openai API".to_owned(),
-                })?
-                .first()
-                .ok_or(AIError {
-                    reason: "Invalid response from openai API".to_owned(),
-                })?["message"]
-                .as_object()
-                .ok_or(AIError {
-                    reason: "Invalid response from openai API".to_owned(),
-                })?["content"]
-                .as_str()
-                .ok_or(AIError {
-                    reason: "Invalid response from openai API".to_owned(),
-                })?
-                .to_owned();
-
+            let recipe = parse_response(json_str)?;
             Ok(recipe)
         } else {
             Err(AIError {

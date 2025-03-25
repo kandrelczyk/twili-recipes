@@ -9,6 +9,11 @@ pub fn LLMInfo() -> impl IntoView {
             <DialogBody class="pb-4">
                 <DialogTitle>"Supported LLM Services"</DialogTitle>
                 <DialogContent>
+                    <h2 class="mt-3 text-lg">Free</h2>
+                    <div class="mb-2">
+                        "This LLM is free but rate limited ans shared with other users."
+                    </div>
+
                     <h2 class="mt-3 text-lg">Perplexity (recommended)</h2>
                     <div class="mb-2">
                         "To create the API token sign up for "
