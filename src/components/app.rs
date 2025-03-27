@@ -35,7 +35,6 @@ impl ThemeSetter {
             (150, "#FBB4C2"),
             (160, "#FEC9D3"),
         ]));
-        leptos::logging::log!("here");
         if is_dark {
             self.theme.set(Theme::custom_dark(&brand_colors.get()));
             self.stored_value.set(true);

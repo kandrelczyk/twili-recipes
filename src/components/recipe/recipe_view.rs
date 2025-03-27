@@ -211,8 +211,10 @@ pub fn RecipeView() -> impl IntoView {
                                 appearance=ButtonAppearance::Subtle
                                 shape=ButtonShape::Circular
                                 icon=icondata_bi::BiChevronLeftSolid
-                                on:click=move |_| navigate
-                                    .get_untracked()("/list", Default::default())
+                                on:click=move |_| {
+                                    navigate.get_untracked()("/list", Default::default());
+                                    toaster.dismiss_all();
+                                }
                             />
                         }
                             .into_view()
@@ -274,8 +276,12 @@ pub fn RecipeView() -> impl IntoView {
                                                         appearance=ButtonAppearance::Primary
                                                         disabled=rename_recipe.pending()
                                                         on:click=move |_| {
-                                                            rename_recipe.dispatch((filename.get_untracked().unwrap(), name.get_untracked()));
-        }
+                                                            rename_recipe
+                                                                .dispatch((
+                                                                    filename.get_untracked().unwrap(),
+                                                                    name.get_untracked(),
+                                                                ));
+                                                        }
                                                     >
                                                         Rename
                                                     </Button>
@@ -302,6 +308,7 @@ pub fn RecipeView() -> impl IntoView {
                                                         appearance=ButtonAppearance::Primary
                                                         disabled=delete_recipe.pending()
                                                         on:click=move |_| {
+                                                            toaster.dismiss_all();
                                                             delete_recipe.dispatch(filename.get_untracked().unwrap());
                                                         }
                                                     >
