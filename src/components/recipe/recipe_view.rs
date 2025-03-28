@@ -176,11 +176,14 @@ pub fn RecipeView() -> impl IntoView {
             }
         });
 
-    let on_select = move |key: String| match key.as_str() {
-        "edit" => show_editor.set(true),
-        "delete" => show_modal.set(true),
-        "rename" => show_rename_modal.set(true),
-        _ => (),
+    let on_select = move |key: String| {
+        toaster.dismiss_all();
+        match key.as_str() {
+            "edit" => show_editor.set(true),
+            "delete" => show_modal.set(true),
+            "rename" => show_rename_modal.set(true),
+            _ => (),
+        }
     };
 
     view! {
@@ -213,7 +216,6 @@ pub fn RecipeView() -> impl IntoView {
                                 icon=icondata_bi::BiChevronLeftSolid
                                 on:click=move |_| {
                                     navigate.get_untracked()("/list", Default::default());
-                                    toaster.dismiss_all();
                                 }
                             />
                         }

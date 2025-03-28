@@ -14,7 +14,10 @@ fn format_time(time: i32) -> String {
 fn timer_tick(timer_secs: RwSignal<i32>, showing_toast: RwSignal<bool>) {
     timer_secs.update(|t| *t -= 1);
     if showing_toast.get() {
-        set_timeout(move || timer_tick(timer_secs, showing_toast), std::time::Duration::from_secs(1));
+        set_timeout(
+            move || timer_tick(timer_secs, showing_toast),
+            std::time::Duration::from_secs(1),
+        );
     }
 }
 
@@ -68,7 +71,10 @@ pub fn RecipePanels(recipe: Recipe) -> impl IntoView {
                 .with_id(toast_id)
                 .with_on_status_change(on_status_change),
         );
-        set_timeout(move || timer_tick(timer_secs, showing_toats), std::time::Duration::from_secs(1));
+        set_timeout(
+            move || timer_tick(timer_secs, showing_toats),
+            std::time::Duration::from_secs(1),
+        );
     };
 
     let stop_timer = move |_| {
@@ -105,11 +111,11 @@ pub fn RecipePanels(recipe: Recipe) -> impl IntoView {
                     } else {
                         view! {
                             <div class="w-full text-xl text-center p-4">
-                                Step {page}/ {page_count - 1.0} 
+                                Step {page}/ {page_count - 1.0}
                             </div>
                             <RecipeStep step=step.get() />
                             <Show when=move || {
-                                time.get() > 0
+                                time.get() > 0 || showing_toats.get()
                             }>
                                 {move || {
                                     if !showing_toats.get() {
