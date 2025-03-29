@@ -4,7 +4,7 @@ use serde_json::json;
 
 use crate::ai::AIClient;
 
-use super::{parse_response, AIError};
+use super::{parse_claude_response, AIError};
 
 pub struct FreeClient {
     pub prompt: String,
@@ -33,11 +33,11 @@ impl AIClient for FreeClient {
 
         if res.status().is_success() {
             let json_str = res.text().await?;
-            let recipe = parse_response(json_str)?;
+            let recipe = parse_claude_response(json_str)?;
             Ok(recipe)
         } else {
             Err(AIError {
-                reason: res.text().await?
+                reason: res.text().await?,
             })
         }
     }

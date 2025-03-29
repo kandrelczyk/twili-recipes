@@ -4,7 +4,7 @@ use serde_json::json;
 
 use crate::ai::AIClient;
 
-use super::{parse_response, AIError};
+use super::{parse_claude_response, AIError};
 
 pub struct ClaudeClient {
     pub token: String,
@@ -24,11 +24,11 @@ impl AIClient for ClaudeClient {
 
         let res = client
             .post("https://api.anthropic.com/v1/messages")
-            .header("x-api-key", format!("{}", self.token))
+            .header("x-api-key", self.token.clone())
             .header("anthropic-version", "2023-06-01")
             .json(&json!(
             {
-                "model": "claude-3-5-sonnet-20240620",
+                "model": "claude-3-7-sonnet-20250219",
                 "max_tokens": 3000,
                 "temperature": 0.0,
                 "messages": [
@@ -47,7 +47,7 @@ impl AIClient for ClaudeClient {
 
         if res.status().is_success() {
             let json_str = res.text().await?;
-            let recipe = parse_response(json_str)?;
+            let recipe = parse_claude_response(json_str)?;
             Ok(recipe)
         } else {
             Err(AIError {

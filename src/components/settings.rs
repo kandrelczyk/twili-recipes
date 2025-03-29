@@ -32,7 +32,7 @@ pub fn Settings(init: bool) -> impl IntoView {
     let command_error: RwSignal<Option<CommandError>> = RwSignal::new(None);
 
     let has_config = RwSignal::new(init);
-    let llm_service = RwSignal::new("Perplexity".to_owned());
+    let llm_service = RwSignal::new("Free".to_owned());
     let llm_token = RwSignal::new("".to_owned());
 
     let cloud_storage = RwSignal::new(false);
