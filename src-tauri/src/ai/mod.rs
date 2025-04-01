@@ -18,7 +18,6 @@ pub trait AIClient: Send + Sync {
 }
 
 pub fn parse_claude_response(json_str: String) -> Result<String, AIError> {
-    println!("RSP: {}", json_str);
     let result: Value = serde_json::from_str(&json_str)?;
     let recipe = result["content"]
         .as_array()
