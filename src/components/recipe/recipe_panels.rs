@@ -38,20 +38,20 @@ pub fn RecipePanels(recipe: Recipe) -> impl IntoView {
 
     let time = Memo::new(move |_| {
         if page.get() == 0.0 {
-            0
+            0.0
         } else {
             recipe.get_value().steps[page.get() as usize - 1].time
         }
     });
 
-    let timer_secs = RwSignal::new(time.get() * 60);
+    let timer_secs = RwSignal::new(time.get() as i32 * 60);
 
     let on_status_change = move |status| {
         showing_toats.set(status == ToastStatus::Mounted);
     };
 
     let start_timer = move |_| {
-        timer_secs.set(time.get() * 60);
+        timer_secs.set(time.get() as i32 * 60);
         toaster.dispatch_toast(
             move || {
                 view! {
@@ -115,7 +115,7 @@ pub fn RecipePanels(recipe: Recipe) -> impl IntoView {
                             </div>
                             <RecipeStep step=step.get() />
                             <Show when=move || {
-                                time.get() > 0 || showing_toats.get()
+                                time.get() > 0.0 || showing_toats.get()
                             }>
                                 {move || {
                                     if !showing_toats.get() {

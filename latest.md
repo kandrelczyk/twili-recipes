@@ -1,4 +1,4 @@
-Version 0.2.3
+Version 0.2.4
 
-Disable free option
-Bufixes
+Add timer featre
+Split ingriedients into categories

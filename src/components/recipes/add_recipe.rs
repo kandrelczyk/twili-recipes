@@ -81,7 +81,7 @@ pub fn AddRecipe() -> impl IntoView {
         >
 
             <Dialog open=show_error.get()>
-                <DialogSurface class="mx-2">
+                <DialogSurface>
                     <DialogBody>
                         <DialogContent>
                             <MessageBar

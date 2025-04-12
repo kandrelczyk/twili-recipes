@@ -2,7 +2,7 @@ use std::collections::HashMap;
 
 use leptos::prelude::*;
 use recipes_common::Recipe;
-use thaw::{Button, Card};
+use thaw::{Button, Card, Divider};
 
 #[component]
 pub fn RecipeIngredients(recipe: StoredValue<Recipe>, multiplier: RwSignal<f32>) -> impl IntoView {
@@ -19,28 +19,29 @@ pub fn RecipeIngredients(recipe: StoredValue<Recipe>, multiplier: RwSignal<f32>)
                     .map(|(k, v)| {
                         view! {
                             <div>
-                                <div class="text-lg font-medium">{k.clone()}</div>
+                                <div class="text-lg sm:text-md">{k.clone().to_uppercase()}</div>
                                 {v
                                     .into_iter()
                                     .map(|i| {
                                         view! {
-                                            <li>
-                                                {i.name.clone()}
+                                            <p class="ml-2">
+                                                {i.name()}
                                                 <i>
                                                     {move || {
                                                         format!("...{} {}", i.quantity * multiplier.get(), i.scale)
                                                     }}
                                                 </i>
-                                            </li>
+                                            </p>
                                         }
                                             .into_view()
                                     })
                                     .collect::<Vec<_>>()}
 
                             </div>
-                        }
+                        }.into_any()
                     })
-                    .collect::<Vec<_>>();
+                    .intersperse_with(move || view!{<Divider/>}.into_any())
+                    .collect::<Vec<AnyView>>();
 
     view! {
         <div class="text-xl p-4">Ingredients</div>

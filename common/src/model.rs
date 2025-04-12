@@ -16,10 +16,17 @@ pub struct Ingredient {
     pub group: Option<String>,
 }
 
+impl Ingredient {
+    pub fn name(&self) -> String {
+        let trimmed = self.name.trim();
+        trimmed.to_owned()
+    }
+}
+
 #[derive(Debug, Clone, PartialEq, Serialize, Deserialize)]
 pub struct Step {
     pub desc: String,
-    pub time: i32,
+    pub time: f32,
 }
 
 #[derive(Debug, Clone, PartialEq, Serialize, Deserialize)]
