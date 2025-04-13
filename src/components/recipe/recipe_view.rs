@@ -105,76 +105,72 @@ pub fn RecipeView() -> impl IntoView {
         listener.remove();
     });
 
-    let delete_recipe: Action<String, (), SyncStorage> =
-        Action::new_unsync(move |file: &String| {
-            let filename = file.clone();
-            async move {
-                let args = to_value(&RecipeArgs { filename }).expect("Failed to create args");
+    let delete_recipe = Action::new_unsync(move |file: &String| {
+        let filename = file.clone();
+        async move {
+            let args = to_value(&RecipeArgs { filename }).expect("Failed to create args");
 
-                match invoke("delete_recipe", args).await {
-                    Ok(_) => {
-                        toaster.dispatch_toast(
-                            move || {
-                                view! {
-                                    <Toast>
-                                        <ToastTitle>"Recipe deleted"</ToastTitle>
-                                    </Toast>
-                                }
-                            },
-                            ToastOptions::default()
-                                .with_position(ToastPosition::Top)
-                                .with_intent(ToastIntent::Success),
-                        );
-                        navigate.get_untracked()("/list", Default::default());
-                    }
-                    Err(error) => {
-                        show_error_modal.set(true);
-                        command_error.set(Some(format!(
-                            "{:?}",
-                            from_value::<CommandError>(error)
-                                .expect("Failed to parse CommandError")
-                        )));
-                    }
-                };
-                show_modal.set(false);
-            }
-        });
+            match invoke("delete_recipe", args).await {
+                Ok(_) => {
+                    toaster.dispatch_toast(
+                        move || {
+                            view! {
+                                <Toast>
+                                    <ToastTitle>"Recipe deleted"</ToastTitle>
+                                </Toast>
+                            }
+                        },
+                        ToastOptions::default()
+                            .with_position(ToastPosition::Top)
+                            .with_intent(ToastIntent::Success),
+                    );
+                    navigate.get_untracked()("/list", Default::default());
+                }
+                Err(error) => {
+                    show_error_modal.set(true);
+                    command_error.set(Some(format!(
+                        "{:?}",
+                        from_value::<CommandError>(error).expect("Failed to parse CommandError")
+                    )));
+                }
+            };
+            show_modal.set(false);
+        }
+    });
 
-    let rename_recipe: Action<(String, String), (), SyncStorage> =
-        Action::new_unsync(move |args: &(String, String)| {
-            let filename = args.0.clone();
-            let name = args.1.clone();
-            async move {
-                let args = to_value(&RenameArgs { filename, name }).expect("Failed to create args");
+    let rename_recipe = Action::new_unsync(move |args: &(String, String)| {
+        let filename = args.0.clone();
+        let name = args.1.clone();
+        async move {
+            let args = to_value(&RenameArgs { filename, name }).expect("Failed to create args");
 
-                match invoke("rename_recipe", args).await {
-                    Ok(_) => {
-                        toaster.dispatch_toast(
-                            move || {
-                                view! {
-                                    <Toast>
-                                        <ToastTitle>"Recipe renamed"</ToastTitle>
-                                    </Toast>
-                                }
-                            },
-                            ToastOptions::default()
-                                .with_position(ToastPosition::Top)
-                                .with_intent(ToastIntent::Success),
-                        );
-                        reload_count.update(|count: &mut i32| *count += 1);
-                    }
-                    Err(error) => {
-                        show_error_modal.set(true);
-                        command_error.set(Some(format!(
-                            "{:?}",
-                            from_value::<CommandError>(error)
-                                .expect("Failed to parse CommandError")
-                        )));
-                    }
-                };
-                show_rename_modal.set(false);
-            }
-        });
+            match invoke("rename_recipe", args).await {
+                Ok(_) => {
+                    toaster.dispatch_toast(
+                        move || {
+                            view! {
+                                <Toast>
+                                    <ToastTitle>"Recipe renamed"</ToastTitle>
+                                </Toast>
+                            }
+                        },
+                        ToastOptions::default()
+                            .with_position(ToastPosition::Top)
+                            .with_intent(ToastIntent::Success),
+                    );
+                    reload_count.update(|count: &mut i32| *count += 1);
+                }
+                Err(error) => {
+                    show_error_modal.set(true);
+                    command_error.set(Some(format!(
+                        "{:?}",
+                        from_value::<CommandError>(error).expect("Failed to parse CommandError")
+                    )));
+                }
+            };
+            show_rename_modal.set(false);
+        }
+    });
 
     let on_select = move |key: String| {
         toaster.dismiss_all();

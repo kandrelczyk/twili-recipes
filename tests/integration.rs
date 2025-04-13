@@ -14,7 +14,7 @@ async fn cleanup(driver: &WebDriver, tauri_driver: Child) -> Result<(), WebDrive
     kill.wait()?;
 
     // our app wil not be cloused automatically by WebKitWeDriver for some reason
-    std::process::Command::new("rm")
+    let mut child = std::process::Command::new("rm")
         .arg(
             format!(
                 "{}/{}",
@@ -25,6 +25,7 @@ async fn cleanup(driver: &WebDriver, tauri_driver: Child) -> Result<(), WebDrive
         )
         .spawn()
         .expect("Failed to remove settings");
+    child.wait().expect("Failed to wait for child");
     let mut system = sysinfo::System::new();
     system.refresh_all();
     for p in system.processes_by_name("twili") {

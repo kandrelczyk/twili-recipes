@@ -1,5 +1,5 @@
-use codee::string::FromToStringCodec;
 use leptos::prelude::*;
+use leptos::server::codee::string::FromToStringCodec;
 use leptos_use::storage::use_local_storage;
 use std::collections::HashMap;
 
