@@ -4,18 +4,11 @@ use leptos_router::hooks::use_navigate;
 use serde::{Deserialize, Serialize};
 use serde_wasm_bindgen::{from_value, to_value};
 use thaw::*;
-use wasm_bindgen::prelude::*;
 
 use crate::{
-    components::{recipes::EditRecipe, Header},
+    components::{invoke, recipes::EditRecipe, Header},
     error::CommandError,
 };
-
-#[wasm_bindgen]
-extern "C" {
-    #[wasm_bindgen(catch, js_namespace = ["window", "__TAURI__", "core"])]
-    async fn invoke(cmd: &str, args: JsValue) -> Result<JsValue, JsValue>;
-}
 
 #[derive(Serialize, Deserialize)]
 struct Args {

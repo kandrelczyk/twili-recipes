@@ -4,13 +4,7 @@ use serde_wasm_bindgen::from_value;
 use thaw::Spinner;
 use wasm_bindgen::prelude::*;
 
-use crate::error::CommandError;
-
-#[wasm_bindgen]
-extern "C" {
-    #[wasm_bindgen(catch, js_namespace = ["window", "__TAURI__", "core"])]
-    async fn invoke(cmd: &str, args: JsValue) -> Result<JsValue, JsValue>;
-}
+use crate::{components::invoke, error::CommandError};
 
 #[component]
 pub fn Welcome() -> impl IntoView {

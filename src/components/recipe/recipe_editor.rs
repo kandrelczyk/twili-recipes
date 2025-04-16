@@ -1,3 +1,4 @@
+use crate::components::invoke;
 use crate::{components::Header, error::CommandError};
 use leptos::prelude::*;
 use leptos::{task::spawn_local, web_sys};
@@ -6,17 +7,10 @@ use serde::Serialize;
 use serde_json::{from_str, to_string_pretty};
 use serde_wasm_bindgen::{from_value, to_value};
 use thaw::*;
-use wasm_bindgen::prelude::*;
 
 #[derive(Serialize)]
 struct Args {
     recipe: Recipe,
-}
-
-#[wasm_bindgen]
-extern "C" {
-    #[wasm_bindgen(catch, js_namespace = ["window", "__TAURI__", "core"])]
-    async fn invoke(cmd: &str, args: JsValue) -> Result<JsValue, JsValue>;
 }
 
 #[component]

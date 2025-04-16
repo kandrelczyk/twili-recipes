@@ -9,15 +9,9 @@ use thaw::*;
 use wasm_bindgen::prelude::*;
 
 use crate::{
-    components::{Header, LLMInfo},
+    components::{invoke, Header, LLMInfo},
     error::CommandError,
 };
-
-#[wasm_bindgen]
-extern "C" {
-    #[wasm_bindgen(catch, js_namespace = ["window", "__TAURI__", "core"])]
-    async fn invoke(cmd: &str, args: JsValue) -> Result<JsValue, JsValue>;
-}
 
 #[derive(Serialize, Deserialize)]
 struct Args {

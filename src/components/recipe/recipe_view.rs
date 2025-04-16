@@ -6,8 +6,8 @@ use recipes_common::Recipe;
 use serde::Serialize;
 use serde_wasm_bindgen::{from_value, to_value};
 use thaw::*;
-use wasm_bindgen::prelude::*;
 
+use crate::components::invoke;
 use crate::{
     components::{ActionsSlot, Header, RecipeEditor, RecipePanels},
     error::CommandError,
@@ -32,12 +32,6 @@ struct RenameArgs {
 #[derive(Serialize)]
 struct KeepScreenOnArgs {
     enable: bool,
-}
-
-#[wasm_bindgen]
-extern "C" {
-    #[wasm_bindgen(catch, js_namespace = ["window", "__TAURI__", "core"])]
-    async fn invoke(cmd: &str, args: JsValue) -> Result<JsValue, JsValue>;
 }
 
 #[component]

@@ -5,22 +5,15 @@ use recipes_common::Recipe;
 use serde::Serialize;
 use serde_wasm_bindgen::{from_value, to_value};
 use thaw::*;
-use wasm_bindgen::prelude::*;
 
 use crate::{
-    components::{recipes::PreviewRecipe, ActionsSlot, Header},
+    components::{invoke, recipes::PreviewRecipe, ActionsSlot, Header},
     error::CommandError,
 };
 
 #[derive(Serialize)]
 struct Args {
     recipe: Recipe,
-}
-
-#[wasm_bindgen]
-extern "C" {
-    #[wasm_bindgen(catch, js_namespace = ["window", "__TAURI__", "core"])]
-    async fn invoke(cmd: &str, args: JsValue) -> Result<JsValue, JsValue>;
 }
 
 #[component]
