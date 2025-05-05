@@ -7,7 +7,7 @@ use recipes_common::{Config, RecipesSource, LLM};
 use tauri::async_runtime::Mutex;
 
 use crate::{
-    ai::{AIClient, ChatGTPClient, ClaudeClient, FreeClient, PerplexityClient},
+    ai::{AIClient, ChatGPTClient, ClaudeClient, FreeClient, PerplexityClient},
     commands::error::CommandError,
     recipes::{local::LocalClient, ncclient::NCClient, RecipesProvider},
 };
@@ -44,7 +44,7 @@ pub async fn initialize(
         let ai2: Box<dyn AIClient> = match config.llm {
             LLM::Free => Box::new(FreeClient::new(config.ai_prompt)),
             LLM::Claude => Box::new(ClaudeClient::new(config.ai_token, config.ai_prompt)),
-            LLM::GPT => Box::new(ChatGTPClient::new(config.ai_token, config.ai_prompt)),
+            LLM::GPT => Box::new(ChatGPTClient::new(config.ai_token, config.ai_prompt)),
             LLM::Perplexity => Box::new(PerplexityClient::new(config.ai_token, config.ai_prompt)),
         };
         *ai = Some(ai2);

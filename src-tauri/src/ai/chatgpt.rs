@@ -6,19 +6,19 @@ use crate::ai::AIClient;
 
 use super::AIError;
 
-pub struct ChatGTPClient {
+pub struct ChatGPTClient {
     pub token: String,
     pub prompt: String,
 }
 
-impl ChatGTPClient {
-    pub fn new(token: String, prompt: String) -> ChatGTPClient {
-        ChatGTPClient { token, prompt }
+impl ChatGPTClient {
+    pub fn new(token: String, prompt: String) -> ChatGPTClient {
+        ChatGPTClient { token, prompt }
     }
 }
 
 #[async_trait]
-impl AIClient for ChatGTPClient {
+impl AIClient for ChatGPTClient {
     async fn parse_recipe(&self, recipe: String) -> Result<String, AIError> {
         let client = reqwest::Client::new();
 
