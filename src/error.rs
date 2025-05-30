@@ -16,7 +16,7 @@ impl fmt::Display for CommandError {
 impl From<serde_json::Error> for CommandError {
     fn from(value: serde_json::Error) -> Self {
         CommandError {
-            reason: format!("{:?}", value),
+            reason: format!("{value:?}"),
         }
     }
 }
