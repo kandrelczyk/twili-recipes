@@ -18,7 +18,7 @@ struct Args {
 #[component]
 pub fn AddRecipe() -> impl IntoView {
     let recipe_str = RwSignal::new("".to_owned());
-
+    let min_recipe_len = 50;
     let error: RwSignal<Option<CommandError>> = RwSignal::new(None);
     let show_error = Signal::derive(move || error.get().is_some());
     let recipe: RwSignal<Option<String>> = RwSignal::new(None);
@@ -29,7 +29,7 @@ pub fn AddRecipe() -> impl IntoView {
     let navigate = RwSignal::new(use_navigate());
 
     let submit = move |_| {
-        recipe_invalid.set(recipe_str.get().is_empty());
+        recipe_invalid.set(recipe_str.get().len() < min_recipe_len);
 
         if !recipe_invalid.get() {
             loading.set(true);
@@ -127,10 +127,13 @@ pub fn AddRecipe() -> impl IntoView {
                                     value=recipe_str
                                     disabled=loading
                                     rules=vec![
-                                        TextareaRule::required_with_message(
-                                            true.into(),
-                                            "Please provide recipe".to_owned().into(),
-                                        ),
+                                        TextareaRule::validator(move |value, _|
+                                            if value.len() < min_recipe_len {
+                                                Err(FieldValidationState::Error("Please provide entire recipe including ingredients and steps.".to_owned()))
+                                            } else {
+                                                Ok(())
+                                            }
+                                        )
                                     ]
                                 />
                             </Field>

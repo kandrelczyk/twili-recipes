@@ -1,5 +1,4 @@
 use async_trait::async_trait;
-use reqwest_dav::re_exports::serde_json;
 use serde_json::json;
 
 use crate::ai::AIClient;
@@ -21,7 +20,6 @@ impl ClaudeClient {
 impl AIClient for ClaudeClient {
     async fn parse_recipe(&self, recipe: String) -> Result<String, AIError> {
         let client = reqwest::Client::new();
-
         let res = client
             .post("https://api.anthropic.com/v1/messages")
             .header("x-api-key", self.token.clone())

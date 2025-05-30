@@ -81,6 +81,7 @@ impl AppBuilder {
                         .set(".settings.dat".to_owned())
                         .expect("Failed to set settings file");
                 }
+
                 //#[cfg(not(any(mobile, debug_assertions)))]
                 //{
                 //let handle = app.handle().clone();
