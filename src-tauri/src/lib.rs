@@ -10,7 +10,7 @@ use commands::{
     rename_recipe, save_config, save_recipe,
 };
 use recipes::RecipesProvider;
-use tauri::{async_runtime::Mutex, App};
+use tauri::{async_runtime::Mutex, window::Color, App, Manager};
 use tauri_plugin_cli::CliExt;
 #[cfg(not(debug_assertions))]
 use tauri_plugin_log::{Target, TargetKind};
@@ -59,6 +59,10 @@ impl AppBuilder {
             .manage(config_file.clone())
             .plugin(tauri_plugin_cli::init())
             .setup(move |app| {
+                app.get_window("main")
+                    .unwrap()
+                    .set_background_color(Some(Color::from((100, 100, 100))))
+                    .expect("failed to set bg color");
                 if let Some(setup) = setup {
                     (setup)(app)?;
                 }
