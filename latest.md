@@ -1,4 +1,6 @@
-Version 0.2.4
+Version 0.2.5
 
-Add timer featre
-Split ingriedients into categories
+
+Fix white flash on start.
+Improve recipe validation
+Update leptos to 0.8

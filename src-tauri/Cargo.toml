@@ -1,6 +1,6 @@
 [package]
 name = "twili-recipes"
-version = "0.2.4"
+version = "0.2.5"
 description = "Twili Recipes"
 authors = ["kandrelczyk"]
 license = ""
