@@ -51,6 +51,7 @@
                 "fullscreen": false,
                 "height": 800,
                 "resizable": true,
+                "visible": false,
                 "title": "TwiliRecipes",
                 "width": 600
             }

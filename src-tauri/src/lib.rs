@@ -61,7 +61,7 @@ impl AppBuilder {
             .setup(move |app| {
                 app.get_window("main")
                     .unwrap()
-                    .set_background_color(Some(Color::from((100, 100, 100))))
+                    .set_background_color(Some(Color::from((100, 100, 100, 255))))
                     .expect("failed to set bg color");
                 if let Some(setup) = setup {
                     (setup)(app)?;

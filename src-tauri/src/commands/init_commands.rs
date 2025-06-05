@@ -4,7 +4,7 @@ use std::{
 };
 
 use recipes_common::{Config, RecipesSource, LLM};
-use tauri::async_runtime::Mutex;
+use tauri::{async_runtime::Mutex, Manager};
 
 use crate::{
     ai::{AIClient, ChatGPTClient, ClaudeClient, FreeClient, PerplexityClient},
@@ -21,6 +21,11 @@ pub async fn initialize(
     ai_client: tauri::State<'_, Mutex<Option<Box<dyn AIClient>>>>,
     config_file: tauri::State<'_, Arc<OnceLock<String>>>,
 ) -> Result<bool, CommandError> {
+    app_handle
+        .get_webview_window("main")
+        .unwrap()
+        .show()
+        .expect("Failed to show window");
     let config: Config = get_stored_or_default_config(app_handle.clone(), config_file).await;
 
     if config.all_present() {
