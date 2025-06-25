@@ -3,6 +3,7 @@ dist/
 style/
 src-tauri/.cargo
 src-tauri/gen/android/
+.aider*
 
 node_modules/
 package.json

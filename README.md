@@ -8,7 +8,7 @@ Twili is not just a recipe manager. It's a cooking assistant app focusing
 mainly on ease of use. It's main features include:
 
 - Use LLM to automatically parse recipes - simply copy and paste recipes from any website (or write them yourself)
-- NextCloud integration to to easily share recipes between devices
+- NextCloud integration to easily share recipes between devices
 - Multiplatform support (desktop and mobile)
 - Unique recipe presentation to save you a lot of scrolling 
 
@@ -39,9 +39,9 @@ When using other models fixing those issues may require manual editing.
 
 gpt-4-turbo is the best performing LLM but it's significantly slower and more expensive than other models.
 gpt-3.5-turbo doesn't handle all the cases but is faster and less expensive. 
-Perplexity is the least expensive LLM with very good performance.
+Perplexity is the least expensive LLM with excellent performance.
 
-Translation of a single recipe costs fractions  of a cent so in practice, cost of services is as follows:
+Translation of a single recipe costs fractions of a cent so in practice, cost of services is as follows:
 
 - Perplexity: $3 indefinitely 
 - ChatGPT: $5 per year
