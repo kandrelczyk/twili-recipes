@@ -21,6 +21,7 @@ pub async fn initialize(
     ai_client: tauri::State<'_, Mutex<Option<Box<dyn AIClient>>>>,
     config_file: tauri::State<'_, Arc<OnceLock<String>>>,
 ) -> Result<bool, CommandError> {
+    #[cfg(not(mobile))]
     app_handle
         .get_webview_window("main")
         .unwrap()

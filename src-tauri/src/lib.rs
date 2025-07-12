@@ -59,6 +59,7 @@ impl AppBuilder {
             .manage(config_file.clone())
             .plugin(tauri_plugin_cli::init())
             .setup(move |app| {
+                #[cfg(not(mobile))]
                 app.get_window("main")
                     .unwrap()
                     .set_background_color(Some(Color::from((100, 100, 100, 255))))
