@@ -166,9 +166,9 @@ pub fn RecipeView() -> impl IntoView {
         }
     });
 
-    let on_select = move |key: String| {
+    let on_select = move |key: &str| {
         toaster.dismiss_all();
-        match key.as_str() {
+        match key {
             "edit" => show_editor.set(true),
             "delete" => show_modal.set(true),
             "rename" => show_rename_modal.set(true),

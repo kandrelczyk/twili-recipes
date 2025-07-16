@@ -44,7 +44,7 @@ pub fn RecipePanels(recipe: Recipe) -> impl IntoView {
         }
     });
 
-    let timer_secs = RwSignal::new(time.get() as i32 * 60);
+    let timer_secs = RwSignal::new(time.get_untracked() as i32 * 60);
 
     let on_status_change = move |status| {
         showing_toats.set(status == ToastStatus::Mounted);
