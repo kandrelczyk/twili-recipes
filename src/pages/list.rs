@@ -5,18 +5,29 @@ use serde_wasm_bindgen::from_value;
 use thaw::*;
 use wasm_bindgen::prelude::*;
 
-use crate::components::recipes::{AppMenu, ListItem};
 use crate::components::{invoke, Header};
+use crate::components::{AppMenu, ListItem};
 use crate::error::CommandError;
 
 #[component]
 pub fn List() -> impl IntoView {
     let search = RwSignal::new(String::from(""));
     let show_menu = RwSignal::new(false);
+    let add_menu = RwSignal::new(false);
     let reload_count = RwSignal::new(0);
-    let navigate = use_navigate();
+    let navigate = RwSignal::new(use_navigate());
 
-    let add_recipe = move |_| navigate("/add", Default::default());
+    let add_llm = move |_| navigate()("/add", Default::default());
+    let add_manual = move |_| navigate()("/add_manual", Default::default());
+    let toggle_add_menu = move |_| add_menu.set(!add_menu.get());
+    let add_button_class = Signal::derive(move || match add_menu() {
+        true => "fab rotated".to_owned(),
+        false => "fab".to_owned(),
+    });
+    let add_buttons_class = Signal::derive(move || match add_menu() {
+        true => "add-buttons visible".to_owned(),
+        false => "add-buttons".to_owned(),
+    });
 
     let recipes = AsyncDerived::new_unsync(move || async move {
         reload_count.get();
@@ -127,14 +138,29 @@ pub fn List() -> impl IntoView {
                     </div>
                 </ErrorBoundary>
             </Suspense>
-            <Button
-                on:click=add_recipe
-                shape=ButtonShape::Circular
-                icon=icondata_bi::BiPlusRegular
-                appearance=ButtonAppearance::Primary
-                size=ButtonSize::Large
-                class="fixed bottom-8 right-8"
-            />
+            <div class="fixed bottom-8 right-8 flex flex-col gap-2 justify-center items-center">
+                <Button class=add_buttons_class
+                    on:click=add_manual
+                    shape=ButtonShape::Circular
+                    icon=icondata_bi::BiEditRegular
+                    appearance=ButtonAppearance::Primary
+                    size=ButtonSize::Large
+                >Add manually</Button>
+                <Button class=add_buttons_class
+                    on:click=add_llm
+                    shape=ButtonShape::Circular
+                    icon=icondata_bi::BiChatRegular
+                    appearance=ButtonAppearance::Primary
+                    size=ButtonSize::Large
+                >Add with AI</Button>
+                <Button class=add_button_class
+                    on:click=toggle_add_menu
+                    shape=ButtonShape::Circular
+                    icon=icondata_bi::BiPlusRegular
+                    appearance=ButtonAppearance::Primary
+                    size=ButtonSize::Large
+                />
+            </div>
         </div>
     }
 }

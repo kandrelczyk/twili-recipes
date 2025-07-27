@@ -1,8 +1,10 @@
 #![feature(iter_intersperse)]
+mod app;
 mod components;
 mod error;
+mod pages;
 
-use components::App;
+use app::App;
 use leptos::prelude::*;
 use thaw::{ConfigDirection, ConfigProvider};
 

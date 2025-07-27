@@ -17,7 +17,7 @@ struct Args {
 }
 
 #[component]
-pub fn EditRecipe(
+pub fn EditRecipeJson(
     recipe_json: String,
     #[prop(into)] go_back: Callback<web_sys::MouseEvent>,
 ) -> impl IntoView {

@@ -1,4 +1,4 @@
-use crate::components::ThemeSetter;
+use crate::app::ThemeSetter;
 use codee::string::FromToStringCodec;
 use leptos::prelude::*;
 use leptos_router::hooks::use_navigate;

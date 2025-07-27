@@ -7,7 +7,7 @@ use leptos_router::components::{Route, Router, Routes};
 use leptos_router::path;
 use thaw::{Theme, ToastPosition, ToasterProvider};
 
-use crate::components::{About, AddRecipe, List, RecipeView, Settings, Welcome};
+use crate::pages::{About, AddRecipe, AddRecipeManual, List, RecipeView, Settings, Welcome};
 
 #[derive(Clone)]
 pub struct ThemeSetter {
@@ -75,7 +75,8 @@ pub fn App() -> impl IntoView {
                         <Route path=path!("/list") view=List />
                         <Route path=path!("/item/:filename") view=RecipeView />
                         <Route path=path!("/add") view=AddRecipe />
-                        <Route path=path!("/about") view=move || view! { <About /> } />
+                        <Route path=path!("/add_manual") view=AddRecipeManual/>
+                        <Route path=path!("/about") view=About />
                     </Routes>
                 </Router>
             </ToasterProvider>

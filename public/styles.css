@@ -32,3 +32,22 @@ html {
     background: #aaa;
     border-radius: 25px;
 }
+
+.fab {
+    transition: all 0.4s ease;
+}
+
+.fab.rotated {
+    transform: rotate(135deg);
+}
+
+.add-buttons {
+    transition: all 0.4s ease;
+    transform: translateY(30%);
+    opacity: 0;
+}
+
+.add-buttons.visible {
+    opacity: 1;
+    transform: translateY(-30%);
+}

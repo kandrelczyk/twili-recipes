@@ -6,7 +6,7 @@ use serde_wasm_bindgen::{from_value, to_value};
 use thaw::*;
 
 use crate::{
-    components::{invoke, recipes::EditRecipe, Header},
+    components::{invoke, recipes::EditRecipeJson, Header},
     error::CommandError,
 };
 
@@ -65,7 +65,7 @@ pub fn AddRecipe() -> impl IntoView {
             when=move || recipe.get().is_none()
             fallback=move || {
                 view! {
-                    <EditRecipe
+                    <EditRecipeJson
                         recipe_json=recipe.get().unwrap()
                         go_back=Callback::new(move |_| recipe.set(None))
                     />

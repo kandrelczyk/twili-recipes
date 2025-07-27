@@ -9,7 +9,7 @@ use thaw::*;
 
 use crate::components::invoke;
 use crate::{
-    components::{ActionsSlot, Header, RecipeEditor, RecipePanels},
+    components::{ActionsSlot, Header, RecipeForm, RecipePanels},
     error::CommandError,
 };
 
@@ -181,7 +181,7 @@ pub fn RecipeView() -> impl IntoView {
             <Show
                 fallback=move || {
                     view! {
-                        <RecipeEditor
+                        <RecipeForm
                             on_back=Callback::new(move |_| show_editor.set(false))
                             on_save=Callback::new(move |_| {
                                 show_editor.set(false);
