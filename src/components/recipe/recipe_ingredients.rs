@@ -1,19 +1,12 @@
-use std::collections::HashMap;
-
 use leptos::prelude::*;
 use recipes_common::Recipe;
 use thaw::{Button, Card, Divider};
 
+use crate::components::utils::group_ingredients;
+
 #[component]
 pub fn RecipeIngredients(recipe: StoredValue<Recipe>, multiplier: RwSignal<f32>) -> impl IntoView {
-    let mut groups = HashMap::<String, Vec<recipes_common::Ingredient>>::new();
-    for ingredient in recipe.get_value().ingredients.iter() {
-        let group = groups.entry(ingredient.group.clone().unwrap_or_default());
-        group
-            .and_modify(|g| g.push(ingredient.clone()))
-            .or_insert(vec![ingredient.clone()]);
-    }
-
+    let groups = group_ingredients(&recipe.get_value());
     let grouped_ingredients = groups
                     .into_iter()
                     .map(|(k, v)| {

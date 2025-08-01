@@ -5,12 +5,26 @@ use serde::Serialize;
 use serde_wasm_bindgen::{from_value, to_value};
 use thaw::*;
 
-use crate::components::{invoke, Header};
+use crate::components::utils::group_ingredients;
+use crate::components::{invoke, GroupForm, Header};
 use crate::error::CommandError;
 
 #[derive(Serialize)]
 struct Args {
     recipe: Recipe,
+}
+
+#[derive(Clone)]
+pub struct Group {
+    pub name: RwSignal<String>,
+    pub ingredients: Vec<IngredientForm>,
+}
+
+#[derive(Clone)]
+pub struct IngredientForm {
+    pub name: RwSignal<String>,
+    pub scale: RwSignal<String>,
+    pub quantity: RwSignal<String>,
 }
 
 #[component]
@@ -27,10 +41,50 @@ pub fn RecipeForm(
 
     let title = recipe.name.clone();
 
+    let groups = RwSignal::new(
+        group_ingredients(&recipe)
+            .into_iter()
+            .map(|(k, _)| Group {
+                name: RwSignal::new(k),
+                ingredients: vec![],
+            })
+            .collect::<Vec<Group>>(),
+    );
+
+    let delete_group = move |index| {
+        groups.update(|g| {
+            g.remove(index);
+        });
+    };
+
+    let add_group = move |_| {
+        groups.update(|g| {
+            g.push(Group {
+                name: RwSignal::new("".to_owned()),
+                ingredients: vec![],
+            });
+        });
+    };
+
+    let groups_form = move || {
+        groups
+            .get()
+            .into_iter()
+            .enumerate()
+            .map(|(i, g)| {
+                view! {
+                    <GroupForm group=g on_delete=move || delete_group(i)/>
+                }
+                .into_any()
+            })
+            .collect::<Vec<AnyView>>()
+    };
+
     let save_callback = move |_| {
         saving.set(true);
         let original_id = recipe.id.clone();
         let original_name = recipe.name.clone();
+
         spawn_local(async move {
             let args = to_value(&Args {
                 recipe: Recipe {
@@ -42,7 +96,12 @@ pub fn RecipeForm(
             })
             .unwrap();
 
-            match invoke("save_recipe", args).await {
+            groups
+                .get_untracked()
+                .into_iter()
+                .for_each(|g| log::info!("name: {}", g.name.get_untracked()));
+
+            match invoke("save_recipe_break", args).await {
                 Ok(_) => on_save.run(()),
                 Err(error) => {
                     save_error.set(Some(
@@ -54,7 +113,7 @@ pub fn RecipeForm(
         });
     };
     view! {
-        <main class="flex flex-col h-full w-full items-center justify-start">
+        <main class="h-full w-full overflow-y-auto custom-scroll">
             <Header
                 button=move || {
                     view! {
@@ -90,8 +149,9 @@ pub fn RecipeForm(
                     </DialogBody>
                 </DialogSurface>
             </Dialog>
-            <div class="flex flex-col items-center w-full h-full p-4">
-                <Textarea class="w-full h-full" attr:style="resize:none" value="culo".to_owned()/>
+            <div class="flex flex-col items-center w-full gap-2 p-4">
+                { groups_form }
+                <Button on:click=add_group icon=icondata_bi::BiPlusRegular>Add group</Button>
                 // invalid=invalid_json
                 <Button
                     on:click=save_callback

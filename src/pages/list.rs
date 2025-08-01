@@ -26,7 +26,7 @@ pub fn List() -> impl IntoView {
     });
     let add_buttons_class = Signal::derive(move || match add_menu() {
         true => "add-buttons visible".to_owned(),
-        false => "add-buttons".to_owned(),
+        false => "add-buttons pointer-events-none".to_owned(),
     });
 
     let recipes = AsyncDerived::new_unsync(move || async move {
@@ -86,7 +86,7 @@ pub fn List() -> impl IntoView {
                                     <MessageBarTitle>
                                         <p class="text-lg">"Failed to load recipes"</p>
                                     </MessageBarTitle>
-                                    <p>
+                                    <p class="wrap-auto">
                                         {move || {
                                             errors
                                                 .get()
@@ -138,7 +138,8 @@ pub fn List() -> impl IntoView {
                     </div>
                 </ErrorBoundary>
             </Suspense>
-            <div class="fixed bottom-8 right-8 flex flex-col gap-2 justify-center items-center">
+
+            <div class="fixed bottom-8 right-8 flex flex-col gap-2 justify-end items-end">
                 <Button class=add_buttons_class
                     on:click=add_manual
                     shape=ButtonShape::Circular

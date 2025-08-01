@@ -3,6 +3,7 @@ mod editor;
 mod llm_info;
 mod recipe;
 pub(crate) mod recipes;
+mod utils;
 
 pub use common::*;
 pub use editor::*;
