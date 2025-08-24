@@ -18,7 +18,7 @@ fn main() {
         view! {
             <ConfigProvider dir=dir>
                 <App />
-                </ConfigProvider>
+            </ConfigProvider>
         }
     })
 }

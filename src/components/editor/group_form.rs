@@ -1,36 +1,42 @@
 use super::Group;
 
+use crate::components::{Ingredient, IngredientForm};
 use leptos::prelude::*;
-use leptos_use::use_media_query;
 use thaw::*;
 
 #[component]
 pub fn GroupForm(group: Group, #[prop(into)] on_delete: Callback<()>) -> impl IntoView {
-    let is_large_screen = use_media_query("(min-width: 600px)");
-    let is_medium_screen = use_media_query("(min-width: 400px)");
+    let on_delete_ing = move |i| {
+        log::info!("delete {i}");
+        group.ingredients.update(|ing| {
+            ing.remove(i);
+        });
+    };
 
-    let input_size = Signal::derive(move || {
-        is_large_screen.with(|large| {
-            if *large {
-                InputSize::Medium
-            } else {
-                InputSize::Small
-            }
-        })
-    });
-    let spin_size = Signal::derive(move || {
-        is_large_screen.with(|large| {
-            if *large {
-                SpinButtonSize::Medium
-            } else {
-                SpinButtonSize::Small
-            }
-        })
-    });
+    let ingredients_form = move || {
+        group
+            .ingredients
+            .get()
+            .into_iter()
+            .enumerate()
+            .map(|(i, ing)| {
+                view! {
+                    <IngredientForm ingredient=ing on_delete=move || on_delete_ing(i)/>
+                }
+                .into_any()
+            })
+            .collect::<Vec<AnyView>>()
+    };
+    let add_ingredient = move |_| {
+        group.ingredients.update(|ing| {
+            ing.push(Ingredient {
+                name: RwSignal::new("".to_owned()),
+                scale: RwSignal::new("".to_owned()),
+                quantity: RwSignal::new(1.0),
+            });
+        });
+    };
 
-    let input_len = Signal::derive(move || {
-        is_medium_screen.with(|medium| if *medium { None } else { Some(6) })
-    });
     view! {
         <Card>
             <CardHeader>
@@ -45,20 +51,8 @@ pub fn GroupForm(group: Group, #[prop(into)] on_delete: Callback<()>) -> impl In
                     <tr>
                         <td>Name</td><td>Qty.</td><td>Scale</td>
                     </tr>
-                    <tr>
-                        <td class="w-[60%]">
-                            <Input size=input_size input_size=8 class="w-full" value=group.name/>
-                        </td>
-                        <td class="w-[5%]">
-                            <SpinButton<f64> class="w-16" size=spin_size input_size=4 value=0.0 step_page=1.0/>
-                        </td>
-                        <td class="w-[30%]">
-                           <Input size=input_size input_size=8 class="w-full" value=group.name/>
-                        </td>
-                        <td class="w-[5%]">
-                            <Button appearance=ButtonAppearance::Transparent size=ButtonSize::Small icon=icondata_bi::BiTrashRegular />
-                        </td>
-                    </tr>
+                    { ingredients_form }
+                    <Button class="mt-2" on:click=add_ingredient size=ButtonSize::Small icon=icondata_bi::BiPlusRegular>Add ingredient</Button>
                 </table>
             </CardPreview>
         </Card>

@@ -189,7 +189,7 @@ pub fn Settings(init: bool) -> impl IntoView {
                                                     class="w-full"
                                                     rules=vec![
                                                         InputRule::required_with_message(
-                                                            cloud_storage.get().into(),
+                                                            cloud_storage.get_untracked().into(),
                                                             "Please provide URI".to_owned().into(),
                                                         ),
                                                     ]
@@ -205,7 +205,7 @@ pub fn Settings(init: bool) -> impl IntoView {
                                                     class="w-full"
                                                     rules=vec![
                                                         InputRule::required_with_message(
-                                                            cloud_storage.get().into(),
+                                                            cloud_storage.get_untracked().into(),
                                                             "Please provide username".to_owned().into(),
                                                         ),
                                                     ]
@@ -223,7 +223,7 @@ pub fn Settings(init: bool) -> impl IntoView {
                                                     input_type=InputType::Password
                                                     rules=vec![
                                                         InputRule::required_with_message(
-                                                            cloud_storage.get().into(),
+                                                            cloud_storage.get_untracked().into(),
                                                             "Please provide password".to_owned().into(),
                                                         ),
                                                     ]

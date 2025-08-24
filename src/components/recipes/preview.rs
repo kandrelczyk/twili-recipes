@@ -33,7 +33,7 @@ pub fn PreviewRecipe(recipe: Recipe) -> impl IntoView {
                             view! {
                                 <Card class="w-full h-full min-h-[10vh] snap-center">
                                     {s.desc}
-                                    {if s.time > 0.0 {
+                                    {if s.time > 0 {
                                         view! { <p>time: {s.time.to_owned()}</p> }.into_any()
                                     } else {
                                         view! { <p></p> }.into_any()

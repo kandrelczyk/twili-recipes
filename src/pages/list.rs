@@ -21,8 +21,8 @@ pub fn List() -> impl IntoView {
     let add_manual = move |_| navigate()("/add_manual", Default::default());
     let toggle_add_menu = move |_| add_menu.set(!add_menu.get());
     let add_button_class = Signal::derive(move || match add_menu() {
-        true => "fab rotated".to_owned(),
-        false => "fab".to_owned(),
+        true => "fab rotated pointer-events-auto".to_owned(),
+        false => "fab pointer-events-auto".to_owned(),
     });
     let add_buttons_class = Signal::derive(move || match add_menu() {
         true => "add-buttons visible".to_owned(),
@@ -139,22 +139,29 @@ pub fn List() -> impl IntoView {
                 </ErrorBoundary>
             </Suspense>
 
-            <div class="fixed bottom-8 right-8 flex flex-col gap-2 justify-end items-end">
-                <Button class=add_buttons_class
+            <div class="fixed bottom-8 right-8 flex flex-col gap-2 justify-end items-end pointer-events-none">
+                <Button
+                    class=add_buttons_class
                     on:click=add_manual
                     shape=ButtonShape::Circular
                     icon=icondata_bi::BiEditRegular
                     appearance=ButtonAppearance::Primary
                     size=ButtonSize::Large
-                >Add manually</Button>
-                <Button class=add_buttons_class
+                >
+                    Add manually
+                </Button>
+                <Button
+                    class=add_buttons_class
                     on:click=add_llm
                     shape=ButtonShape::Circular
                     icon=icondata_bi::BiChatRegular
                     appearance=ButtonAppearance::Primary
                     size=ButtonSize::Large
-                >Add with AI</Button>
-                <Button class=add_button_class
+                >
+                    Add with AI
+                </Button>
+                <Button
+                    class=add_button_class
                     on:click=toggle_add_menu
                     shape=ButtonShape::Circular
                     icon=icondata_bi::BiPlusRegular

@@ -15,19 +15,19 @@ pub fn AppMenu(reload_signal: RwSignal<i32>, show_menu: RwSignal<bool>) -> impl 
 
     let go_to_settings = move |_| {
         show_menu.set(false);
-        navigate.get()("/settings", Default::default());
+        navigate.get_untracked()("/settings", Default::default());
     };
 
     let go_to_about = move |_| {
         show_menu.set(false);
-        navigate.get()("/about", Default::default());
+        navigate.get_untracked()("/about", Default::default());
     };
 
     let theme_setter: ThemeSetter = use_context().unwrap();
 
     let (dark, _, _) = use_local_storage::<bool, FromToStringCodec>("dark_mode");
 
-    let is_dark = RwSignal::new(dark.get());
+    let is_dark = RwSignal::new(dark.get_untracked());
 
     Effect::new(move |_| {
         theme_setter.set_theme(is_dark());
