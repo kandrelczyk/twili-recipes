@@ -210,7 +210,7 @@ pub fn RecipeForm(
                                                                     .get()
                                                                     .into_iter()
                                                                     .map(|i| Ingredient {
-                                                                        group: Some(g.name.get()).filter(|name| name.is_empty()),
+                                                                        group: Some(g.name.get()),
                                                                         name: i.name.get(),
                                                                         quantity: i.quantity.get(),
                                                                         scale: i.scale.get(),
@@ -238,7 +238,7 @@ pub fn RecipeForm(
                                             .for_each(|g| {
                                                 log::info!("name: {}", g.name.get_untracked())
                                             });
-                                        match invoke("save_recipe_break", args).await {
+                                        match invoke("save_recipe", args).await {
                                             Ok(_) => on_save.run(()),
                                             Err(error) => {
                                                 save_error
@@ -257,6 +257,7 @@ pub fn RecipeForm(
                                 }
                             }
                         }
+                        disabled=saving
                         shape=ButtonShape::Circular
                         appearance=ButtonAppearance::Primary
                         class="fixed bottom-4 right-4"
