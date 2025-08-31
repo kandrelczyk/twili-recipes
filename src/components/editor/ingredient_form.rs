@@ -2,11 +2,11 @@ use leptos::prelude::*;
 use leptos_use::use_media_query;
 use thaw::*;
 
-use crate::components::Ingredient;
+use crate::components::IngredientValue;
 
 #[component]
 pub fn IngredientForm(
-    ingredient: Ingredient,
+    ingredient: IngredientValue,
     #[prop(into)] on_delete: Callback<()>,
 ) -> impl IntoView {
     let is_large_screen = use_media_query("(min-width: 600px)");

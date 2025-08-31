@@ -1,7 +1,7 @@
 use leptos::prelude::*;
 use leptos::reactive::spawn_local;
 use leptos_use::use_media_query;
-use recipes_common::Recipe;
+use recipes_common::{Ingredient, Recipe, Step};
 use serde::Serialize;
 use serde_wasm_bindgen::{from_value, to_value};
 use thaw::*;
@@ -18,17 +18,17 @@ struct Args {
 #[derive(Clone)]
 pub struct Group {
     pub name: RwSignal<String>,
-    pub ingredients: RwSignal<Vec<Ingredient>>,
+    pub ingredients: RwSignal<Vec<IngredientValue>>,
 }
 
 #[derive(Clone)]
-pub struct Step {
+pub struct StepValue {
     pub desc: RwSignal<String>,
     pub time: RwSignal<u32>,
 }
 
 #[derive(Clone)]
-pub struct Ingredient {
+pub struct IngredientValue {
     pub name: RwSignal<String>,
     pub scale: RwSignal<String>,
     pub quantity: RwSignal<f32>,
@@ -43,8 +43,6 @@ pub fn RecipeForm(
     let saving = RwSignal::new(false);
     let save_error = RwSignal::<Option<CommandError>>::new(None);
     let show_error = RwSignal::new(false);
-
-    let save_disabled = Signal::derive(saving);
 
     let title = recipe.name.clone();
 
@@ -67,7 +65,7 @@ pub fn RecipeForm(
                 name: RwSignal::new(k),
                 ingredients: RwSignal::new(
                     v.into_iter()
-                        .map(|i| Ingredient {
+                        .map(|i| IngredientValue {
                             name: RwSignal::new(i.name),
                             quantity: RwSignal::new(i.quantity),
                             scale: RwSignal::new(i.scale),
@@ -81,11 +79,11 @@ pub fn RecipeForm(
         recipe
             .steps
             .into_iter()
-            .map(|s| Step {
+            .map(|s| StepValue {
                 desc: RwSignal::new(s.desc),
                 time: RwSignal::new(s.time),
             })
-            .collect::<Vec<Step>>(),
+            .collect::<Vec<StepValue>>(),
     );
 
     let delete_group = move |index| {
@@ -111,7 +109,7 @@ pub fn RecipeForm(
 
     let add_step = move |_| {
         steps.update(|s| {
-            s.push(Step {
+            s.push(StepValue {
                 desc: RwSignal::new("".to_owned()),
                 time: RwSignal::new(0),
             });
@@ -204,8 +202,32 @@ pub fn RecipeForm(
                                                     recipe: Recipe {
                                                         id: original_id.clone(),
                                                         name: original_name.clone(),
-                                                        ingredients: vec![],
-                                                        steps: vec![],
+                                                        ingredients: groups
+                                                            .get()
+                                                            .iter()
+                                                            .flat_map(|g| {
+                                                                g.ingredients
+                                                                    .get()
+                                                                    .into_iter()
+                                                                    .map(|i| Ingredient {
+                                                                        group: Some(g.name.get()).filter(|name| name.is_empty()),
+                                                                        name: i.name.get(),
+                                                                        quantity: i.quantity.get(),
+                                                                        scale: i.scale.get(),
+                                                                    })
+                                                                    .collect::<Vec<Ingredient>>()
+                                                            })
+                                                            .collect(),
+                                                        steps: steps
+                                                            .get()
+                                                            .iter()
+                                                            .map(|s| {
+                                                                Step {
+                                                                    desc: s.desc.get(),
+                                                                    time: s.time.get(),
+                                                                }
+                                                            })
+                                                            .collect::<Vec<Step>>(),
                                                     },
                                                 },
                                             )
@@ -235,7 +257,6 @@ pub fn RecipeForm(
                                 }
                             }
                         }
-                        disabled=save_disabled
                         shape=ButtonShape::Circular
                         appearance=ButtonAppearance::Primary
                         class="fixed bottom-4 right-4"

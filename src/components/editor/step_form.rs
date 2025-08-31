@@ -1,10 +1,14 @@
-use super::Step;
+use super::StepValue;
 
 use leptos::prelude::*;
 use thaw::*;
 
 #[component]
-pub fn StepForm(step: Step, index: usize, #[prop(into)] on_delete: Callback<()>) -> impl IntoView {
+pub fn StepForm(
+    step: StepValue,
+    index: usize,
+    #[prop(into)] on_delete: Callback<()>,
+) -> impl IntoView {
     view! {
         <Card>
             <CardPreview class="p-2">

@@ -7,7 +7,7 @@ use serde::Serialize;
 use serde_wasm_bindgen::{from_value, to_value};
 use thaw::*;
 
-use crate::components::invoke;
+use crate::components::{invoke, RecipeEditor};
 use crate::{
     components::{ActionsSlot, Header, RecipeForm, RecipePanels},
     error::CommandError,
@@ -46,6 +46,7 @@ pub fn RecipeView() -> impl IntoView {
     let show_error_modal = RwSignal::new(false);
     let command_error = RwSignal::new(None::<String>);
     let show_editor = RwSignal::new(false);
+    let show_json_editor = RwSignal::new(false);
     let toaster = ToasterInjection::expect_context();
 
     let filename = RwSignal::new(
@@ -81,6 +82,7 @@ pub fn RecipeView() -> impl IntoView {
     let listener = window_event_listener_untyped("popstate", move |_| {
         if show_editor.get() {
             show_editor.set(false);
+            show_json_editor.set(false);
         } else {
             navigate.get_untracked()("/list", Default::default())
         }
@@ -170,6 +172,7 @@ pub fn RecipeView() -> impl IntoView {
         toaster.dismiss_all();
         match key {
             "edit" => show_editor.set(true),
+            "edit_json" => show_json_editor.set(true),
             "delete" => show_modal.set(true),
             "rename" => show_rename_modal.set(true),
             _ => (),
@@ -180,21 +183,41 @@ pub fn RecipeView() -> impl IntoView {
         <div class="flex flex-col h-screen w-full items-center justify-start">
             <Show
                 fallback=move || {
-                    view! {
-                        <RecipeForm
-                            on_back=Callback::new(move |_| show_editor.set(false))
-                            on_save=Callback::new(move |_| {
-                                show_editor.set(false);
-                                reload_count.update(|count: &mut i32| *count += 1);
-                            })
-                            recipe=recipe
-                                .get()
-                                .expect("Recipe is None")
-                                .expect("Failed to get recipe")
-                        />
+                    if show_editor.get() || recipe.get().is_none() {
+                        view! {
+                            <RecipeForm
+                                on_back=Callback::new(move |_| show_editor.set(false))
+                                on_save=Callback::new(move |_| {
+                                    show_editor.set(false);
+                                    reload_count.update(|count: &mut i32| *count += 1);
+                                })
+                                recipe=recipe
+                                    .get()
+                                    .expect("Recipe is None")
+                                    .expect("Failed to get recipe")
+                            />
+                        }
+                            .into_any()
+                    } else {
+                        view! {
+                            <RecipeEditor
+                                on_back=Callback::new(move |_| show_json_editor.set(false))
+                                on_save=Callback::new(move |_| {
+                                    show_json_editor.set(false);
+                                    reload_count.update(|count: &mut i32| *count += 1);
+                                })
+                                recipe=recipe
+                                    .get()
+                                    .expect("Recipe is None")
+                                    .expect("Failed to get recipe")
+                            />
+                        }
+                            .into_any()
                     }
                 }
-                when=move || !show_editor.get() || recipe.get().is_none()
+                when=move || {
+                    (!show_editor.get() && !show_json_editor.get()) || recipe.get().is_none()
+                }
             >
                 <Header
                     button=move || {
@@ -226,6 +249,9 @@ pub fn RecipeView() -> impl IntoView {
                                     />
                                 </MenuTrigger>
                                 <MenuItem value="edit" icon=icondata_bi::BiEditAltSolid>
+                                    "Edit"
+                                </MenuItem>
+                                <MenuItem value="edit_json" icon=icondata_bi::BiFileJsonSolid>
                                     "Edit JSON"
                                 </MenuItem>
                                 <MenuItem value="rename" icon=icondata_bi::BiRenameSolid>
