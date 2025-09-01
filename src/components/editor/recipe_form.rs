@@ -43,7 +43,8 @@ pub fn RecipeForm(
     let saving = RwSignal::new(false);
     let save_error = RwSignal::<Option<CommandError>>::new(None);
     let show_error = RwSignal::new(false);
-
+    let show_name = RwSignal::new(recipe.id.is_none());
+    let recipe_name = RwSignal::new(recipe.name.clone().unwrap_or("".to_owned()));
     let title = recipe.name.clone();
 
     let is_large_screen = use_media_query("(min-width: 600px)");
@@ -176,16 +177,36 @@ pub fn RecipeForm(
             </Dialog>
             <FieldContextProvider>
                 <div class=add_button_class>
-                    {groups_form} <Button on:click=add_group icon=icondata_bi::BiPlusRegular>
+                    <Show when=show_name>
+                        <Field label="Name" required=true>
+                            <Input
+                                rules=vec![
+                                    InputRule::required_with_message(
+                                        true.into(),
+                                        "Provide name".to_owned().into(),
+                                    ),
+                                ]
+                                class="w-full"
+                                value=recipe_name
+                            />
+                        </Field>
+
+                    </Show>
+                    <Divider />
+                    {groups_form}
+                    <Button on:click=add_group icon=icondata_bi::BiPlusRegular>
                         Add group
-                    </Button> <div class="flex items-center mt-4 gap-1">
+                    </Button>
+                    <div class="flex items-center mt-4 gap-1">
                         <Icon class="min-w-[16px]" icon=icondata_bi::BiInfoCircleRegular />
                         <Text>
                             <i>
                                 "Write '[ingredient]' in step body to show correct quantity when viewing the recipe"
                             </i>
                         </Text>
-                    </div> {steps_form} <Button on:click=add_step icon=icondata_bi::BiPlusRegular>
+                    </div>
+                    {steps_form}
+                    <Button on:click=add_step icon=icondata_bi::BiPlusRegular>
                         Add step
                     </Button>
                     <Button
@@ -195,13 +216,12 @@ pub fn RecipeForm(
                                 saving.set(true);
                                 if field_context.validate() {
                                     let original_id = recipe.id.clone();
-                                    let original_name = recipe.name.clone();
                                     spawn_local(async move {
                                         let args = to_value(
                                                 &Args {
                                                     recipe: Recipe {
                                                         id: original_id.clone(),
-                                                        name: original_name.clone(),
+                                                        name: Some(recipe_name.get_untracked()),
                                                         ingredients: groups
                                                             .get()
                                                             .iter()
