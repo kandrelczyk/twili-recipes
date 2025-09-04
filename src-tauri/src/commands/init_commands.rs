@@ -9,7 +9,7 @@ use tauri::{async_runtime::Mutex, Manager};
 use crate::{
     ai::{AIClient, ChatGPTClient, ClaudeClient, FreeClient, PerplexityClient},
     commands::error::CommandError,
-    recipes::{local::LocalClient, ncclient::NCClient, RecipesProvider},
+    recipes::{local::LocalClient, ncclient::NCClient, RecipeFile, RecipesProvider},
 };
 
 use super::get_stored_or_default_config;
@@ -20,6 +20,7 @@ pub async fn initialize(
     manager: tauri::State<'_, Mutex<Option<Box<dyn RecipesProvider>>>>,
     ai_client: tauri::State<'_, Mutex<Option<Box<dyn AIClient>>>>,
     config_file: tauri::State<'_, Arc<OnceLock<String>>>,
+    recipes_file: tauri::State<'_, Arc<OnceLock<RecipeFile>>>,
 ) -> Result<bool, CommandError> {
     #[cfg(not(mobile))]
     app_handle
@@ -40,7 +41,7 @@ pub async fn initialize(
             )),
             RecipesSource::Local => Box::new(LocalClient {
                 app_handle: app_handle.clone(),
-                path: PathBuf::from("recipes"),
+                path: PathBuf::from(recipes_file.get().unwrap().0.as_str()),
             }),
         };
 

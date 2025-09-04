@@ -15,3 +15,6 @@ pub trait RecipesProvider: Send + Sync {
     async fn delete_recipe(&mut self, filename: String) -> Result<(), RecipesError>;
     async fn rename_recipe(&mut self, filename: String, name: String) -> Result<(), RecipesError>;
 }
+
+#[derive(Debug)]
+pub struct RecipeFile(pub String);

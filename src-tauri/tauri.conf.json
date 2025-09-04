@@ -19,6 +19,12 @@
                     "name": "config",
                     "description": "Config file name",
                     "takesValue": true
+                },
+                {
+                    "short": "r",
+                    "name": "recipes",
+                    "description": "Recipes file name",
+                    "takesValue": true
                 }
             ]
         },

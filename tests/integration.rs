@@ -26,6 +26,18 @@ async fn cleanup(driver: &WebDriver, tauri_driver: Child) -> Result<(), WebDrive
         .spawn()
         .expect("Failed to remove settings");
     child.wait().expect("Failed to wait for child");
+    let mut child = std::process::Command::new("rm")
+        .arg(
+            format!(
+                "{}/{}",
+                std::env::var("HOME").unwrap(),
+                ".local/share/net.curiana.recipes/test.recipes"
+            )
+            .as_str(),
+        )
+        .spawn()
+        .expect("Failed to remove recipes");
+    child.wait().expect("Failed to wait for child");
     let mut system = sysinfo::System::new();
     system.refresh_all();
     for p in system.processes_by_name("twili") {
@@ -93,7 +105,7 @@ async fn setup() -> (Child, WebDriver) {
     let mut caps = DesiredCapabilities::chrome();
     caps.insert_base_capability(
         "tauri:options".to_owned(),
-        json!({ "application": "./target/x86_64-unknown-linux-gnu/release/twili-recipes", "args": ["-c", "test.cfg"] }),
+        json!({ "application": "./target/x86_64-unknown-linux-gnu/release/twili-recipes", "args": ["-c", "test.cfg", "-r", "test.recipes"] }),
     );
     caps.insert_base_capability("browserName".to_owned(), json!("wry"));
 
@@ -286,6 +298,168 @@ async fn test_error_when_initializing_recipes() -> WebDriverResult<()> {
     elem.wait_until().displayed().await?;
     get_list.assert_async().await;
     init_dir.assert_async().await;
+
+    cleanup(&driver, tauri_driver).await?;
+    Ok(())
+}
+
+#[tokio::test(flavor = "current_thread")]
+#[serial]
+async fn test_local_recipe_storage() -> WebDriverResult<()> {
+    let (tauri_driver, driver) = setup().await;
+
+    driver.goto("tauri://localhost/").await?;
+
+    let elem = driver
+        .query(By::XPath("//div[text()[contains(., 'Initial setup')]]"))
+        .first()
+        .await?;
+    elem.wait_until().displayed().await?;
+
+    driver
+        .query(By::XPath("//button[text()[contains(., 'Save')]]"))
+        .first()
+        .await?
+        .click()
+        .await?;
+
+    let elem = driver
+        .query(By::XPath("//p[text()[contains(., 'any recipes yet')]]"))
+        .first()
+        .await?;
+    elem.wait_until().displayed().await?;
+
+    driver
+        .query(By::ClassName("fab"))
+        .first()
+        .await?
+        .click()
+        .await?;
+
+    let elem = driver
+        .query(By::XPath("//button[text()[contains(., 'Add manually')]]"))
+        .first()
+        .await?;
+    elem.wait_until().displayed().await?;
+    elem.click().await?;
+
+    let elem = driver
+        .query(By::XPath("//button[text()[contains(., 'Add group')]]"))
+        .first()
+        .await?;
+    elem.wait_until().displayed().await?;
+    driver
+        .query(By::XPath("//button[text()[contains(., 'Add group')]]"))
+        .first()
+        .await?
+        .click()
+        .await?;
+    driver
+        .query(By::XPath("//button[text()[contains(., 'Add step')]]"))
+        .first()
+        .await?
+        .click()
+        .await?;
+    driver
+        .query(By::XPath("//button[text()[contains(., 'Add ingredient')]]"))
+        .first()
+        .await?
+        .click()
+        .await?;
+    let inputs = driver.query(By::Tag("input")).all_from_selector().await?;
+    inputs.first().unwrap().send_keys("Recipe").await?;
+    inputs.get(1).unwrap().send_keys("Group1").await?;
+    inputs.get(2).unwrap().send_keys("Ingredient").await?;
+    inputs.get(3).unwrap().send_keys("10").await?;
+    inputs.get(4).unwrap().send_keys("kg").await?;
+    inputs.get(5).unwrap().send_keys("5").await?;
+    driver
+        .query(By::Tag("textarea"))
+        .first()
+        .await?
+        .send_keys("step text")
+        .await?;
+    driver
+        .query(By::XPath("//button[text()[contains(., 'Save')]]"))
+        .first()
+        .await?
+        .click()
+        .await?;
+    driver
+        .query(By::ClassName("thaw-card"))
+        .first()
+        .await?
+        .click()
+        .await?;
+    let texts = vec!["Size", "Recipe", "GROUP1"];
+    for t in texts {
+        driver
+            .query(By::XPath(format!("//div[text()[contains(., '{t}')]]")))
+            .first()
+            .await?
+            .wait_until()
+            .displayed()
+            .await?;
+    }
+    driver
+        .query(By::ClassName("thaw-menu-trigger"))
+        .first()
+        .await?
+        .click()
+        .await?;
+    driver
+        .query(By::XPath("//span[text()[contains(., 'Edit JSON')]]"))
+        .first()
+        .await?
+        .click()
+        .await?;
+    let texarea = driver.query(By::Tag("textarea")).first().await?;
+    texarea.send_keys(",").await?;
+    let save_buttom = driver
+        .query(By::XPath("//button[text()[contains(., 'Save')]]"))
+        .first()
+        .await?;
+    save_buttom.click().await?;
+    driver
+        .query(By::XPath("//div[text()[contains(., 'Enter valid JSON')]]"))
+        .first()
+        .await?
+        .wait_until()
+        .displayed()
+        .await?;
+    texarea.send_keys(Key::Backspace).await?;
+    save_buttom.click().await?;
+    driver
+        .query(By::ClassName("thaw-card"))
+        .first()
+        .await?
+        .click()
+        .await?;
+    driver
+        .query(By::ClassName("thaw-menu-trigger"))
+        .first()
+        .await?
+        .click()
+        .await?;
+    driver
+        .query(By::XPath("//span[text()[contains(., 'Delete')]]"))
+        .first()
+        .await?
+        .click()
+        .await?;
+    driver
+        .query(By::XPath("//Button[text()[contains(., 'Delete')]]"))
+        .first()
+        .await?
+        .click()
+        .await?;
+    driver
+        .query(By::XPath("//p[text()[contains(., 'any recipes yet')]]"))
+        .first()
+        .await?
+        .wait_until()
+        .displayed()
+        .await?;
 
     cleanup(&driver, tauri_driver).await?;
     Ok(())

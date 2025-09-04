@@ -98,8 +98,22 @@ pub fn RecipeEditor(
                 </DialogSurface>
             </Dialog>
             <div class="flex flex-col items-center w-full h-full p-4">
-                <Textarea class="w-full h-full" attr:style="resize:none" value=recipe_json />
-                // invalid=invalid_json
+                <Field class="w-full h-full block">
+                    <Textarea
+                        class="w-full h-full"
+                        attr:style="resize:none"
+                        value=recipe_json
+                        rules=vec![
+                            TextareaRule::validator(move |_, _| {
+                                if invalid_json.get_untracked() {
+                                    Err(FieldValidationState::Error("Enter valid JSON".to_owned()))
+                                } else {
+                                    Ok(())
+                                }
+                            }),
+                        ]
+                    />
+                </Field>
                 <Button
                     on:click=save_callback
                     disabled=save_disabled

@@ -22,6 +22,8 @@ mod mobile;
 #[cfg(mobile)]
 pub use mobile::*;
 
+use crate::recipes::RecipeFile;
+
 pub type SetupHook = Box<dyn FnOnce(&mut App) -> Result<(), Box<dyn std::error::Error>> + Send>;
 
 #[derive(Default)]
@@ -49,6 +51,7 @@ impl AppBuilder {
         let provider: Mutex<Option<Box<dyn RecipesProvider>>> = Mutex::new(None);
         let ai_parser: Mutex<Option<Box<dyn AIClient>>> = Mutex::new(None);
         let config_file: Arc<OnceLock<String>> = Arc::new(OnceLock::new());
+        let recipes_file: Arc<OnceLock<RecipeFile>> = Arc::new(OnceLock::new());
 
         let mut builder = tauri::Builder::default()
             .plugin(tauri_plugin_shell::init())
@@ -57,6 +60,7 @@ impl AppBuilder {
             .manage(ai_parser)
             .manage(provider)
             .manage(config_file.clone())
+            .manage(recipes_file.clone())
             .plugin(tauri_plugin_cli::init())
             .setup(move |app| {
                 #[cfg(not(mobile))]
@@ -76,6 +80,13 @@ impl AppBuilder {
                                     .expect("Failed to set settings file");
                             }
                         }
+                        if let Some(recipes_flag) = matches.args.get("recipes") {
+                            if let Some(value) = recipes_flag.value.as_str() {
+                                recipes_file
+                                    .set(RecipeFile(value.to_owned()))
+                                    .expect("Failed to set recipes file");
+                            }
+                        }
                     }
                     Err(err) => {
                         log::error!("failed to parse cli arguments: {}", err.to_string());
@@ -85,6 +96,11 @@ impl AppBuilder {
                     config_file
                         .set(".settings.dat".to_owned())
                         .expect("Failed to set settings file");
+                }
+                if recipes_file.get().is_none() {
+                    recipes_file
+                        .set(RecipeFile("recipes".to_owned()))
+                        .expect("Failed to set recipes file");
                 }
 
                 //#[cfg(not(any(mobile, debug_assertions)))]
