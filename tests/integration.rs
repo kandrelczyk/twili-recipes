@@ -70,29 +70,9 @@ async fn populate_config(driver: &WebDriver, host: String) -> Result<(), WebDriv
         .await?;
     elem.click().await?;
 
-    let elem = driver
-        .query(By::Id("cloud_uri"))
-        .first()
-        .await?
-        .find(By::Tag("input"))
-        .await?;
-    elem.send_keys(format!("{}{}", "http://", host)).await?;
-
-    let elem = driver
-        .query(By::Id("cloud_username"))
-        .first()
-        .await?
-        .find(By::Tag("input"))
-        .await?;
-    elem.send_keys("username").await?;
-
-    let elem = driver
-        .query(By::Id("cloud_pass"))
-        .first()
-        .await?
-        .find(By::Tag("input"))
-        .await?;
-    elem.send_keys("password").await?;
+    send_keys_by_id(driver, "cloud_uri", &format!("{}{}", "http://", host)).await?;
+    send_keys_by_id(driver, "cloud_username", "username").await?;
+    send_keys_by_id(driver, "cloud_pass", "password").await?;
 
     Ok(())
 }
@@ -151,12 +131,7 @@ async fn test_initial_setup() -> WebDriverResult<()> {
 
     populate_config(&driver, server.host_with_port()).await?;
 
-    driver
-        .query(By::XPath("//button[text()[contains(., 'Save')]]"))
-        .first()
-        .await?
-        .click()
-        .await?;
+    click_by_xpath(&driver, "//button[text()[contains(., 'Save')]]").await?;
 
     let elem = driver
         .query(By::XPath(
@@ -232,12 +207,7 @@ async fn test_init_recipes_list() -> WebDriverResult<()> {
     elem.wait_until().displayed().await?;
 
     populate_config(&driver, server.host_with_port()).await?;
-    driver
-        .query(By::XPath("//button[text()[contains(., 'Save')]]"))
-        .first()
-        .await?
-        .click()
-        .await?;
+    click_by_xpath(&driver, "//button[text()[contains(., 'Save')]]").await?;
 
     let elem = driver
         .query(By::XPath("//p[text()[contains(., 'any recipes')]]"))
@@ -284,12 +254,7 @@ async fn test_error_when_initializing_recipes() -> WebDriverResult<()> {
     elem.wait_until().displayed().await?;
 
     populate_config(&driver, server.host_with_port()).await?;
-    driver
-        .query(By::XPath("//button[text()[contains(., 'Save')]]"))
-        .first()
-        .await?
-        .click()
-        .await?;
+    click_by_xpath(&driver, "//button[text()[contains(., 'Save')]]").await?;
 
     let elem = driver
         .query(By::XPath("//p[text()[contains(., 'Failed to load')]]"))
@@ -316,12 +281,7 @@ async fn test_local_recipe_storage() -> WebDriverResult<()> {
         .await?;
     elem.wait_until().displayed().await?;
 
-    driver
-        .query(By::XPath("//button[text()[contains(., 'Save')]]"))
-        .first()
-        .await?
-        .click()
-        .await?;
+    click_by_xpath(&driver, "//button[text()[contains(., 'Save')]]").await?;
 
     let elem = driver
         .query(By::XPath("//p[text()[contains(., 'any recipes yet')]]"))
@@ -329,12 +289,7 @@ async fn test_local_recipe_storage() -> WebDriverResult<()> {
         .await?;
     elem.wait_until().displayed().await?;
 
-    driver
-        .query(By::ClassName("fab"))
-        .first()
-        .await?
-        .click()
-        .await?;
+    click_by_class(&driver, "fab").await?;
 
     let elem = driver
         .query(By::XPath("//button[text()[contains(., 'Add manually')]]"))
@@ -348,24 +303,9 @@ async fn test_local_recipe_storage() -> WebDriverResult<()> {
         .first()
         .await?;
     elem.wait_until().displayed().await?;
-    driver
-        .query(By::XPath("//button[text()[contains(., 'Add group')]]"))
-        .first()
-        .await?
-        .click()
-        .await?;
-    driver
-        .query(By::XPath("//button[text()[contains(., 'Add step')]]"))
-        .first()
-        .await?
-        .click()
-        .await?;
-    driver
-        .query(By::XPath("//button[text()[contains(., 'Add ingredient')]]"))
-        .first()
-        .await?
-        .click()
-        .await?;
+    click_by_xpath(&driver, "//button[text()[contains(., 'Add group')]]").await?;
+    click_by_xpath(&driver, "//button[text()[contains(., 'Add step')]]").await?;
+    click_by_xpath(&driver, "//button[text()[contains(., 'Add ingredient')]]").await?;
     let inputs = driver.query(By::Tag("input")).all_from_selector().await?;
     inputs.first().unwrap().send_keys("Recipe").await?;
     inputs.get(1).unwrap().send_keys("Group1").await?;
@@ -379,18 +319,8 @@ async fn test_local_recipe_storage() -> WebDriverResult<()> {
         .await?
         .send_keys("step text")
         .await?;
-    driver
-        .query(By::XPath("//button[text()[contains(., 'Save')]]"))
-        .first()
-        .await?
-        .click()
-        .await?;
-    driver
-        .query(By::ClassName("thaw-card"))
-        .first()
-        .await?
-        .click()
-        .await?;
+    click_by_xpath(&driver, "//button[text()[contains(., 'Save')]]").await?;
+    click_by_class(&driver, "thaw-card").await?;
     let texts = vec!["Size", "Recipe", "GROUP1"];
     for t in texts {
         driver
@@ -401,18 +331,8 @@ async fn test_local_recipe_storage() -> WebDriverResult<()> {
             .displayed()
             .await?;
     }
-    driver
-        .query(By::ClassName("thaw-menu-trigger"))
-        .first()
-        .await?
-        .click()
-        .await?;
-    driver
-        .query(By::XPath("//span[text()[contains(., 'Edit JSON')]]"))
-        .first()
-        .await?
-        .click()
-        .await?;
+    click_by_class(&driver, "thaw-menu-trigger").await?;
+    click_by_xpath(&driver, "//span[text()[contains(., 'Edit JSON')]]").await?;
     let texarea = driver.query(By::Tag("textarea")).first().await?;
     texarea.send_keys(",").await?;
     let save_buttom = driver
@@ -429,30 +349,10 @@ async fn test_local_recipe_storage() -> WebDriverResult<()> {
         .await?;
     texarea.send_keys(Key::Backspace).await?;
     save_buttom.click().await?;
-    driver
-        .query(By::ClassName("thaw-card"))
-        .first()
-        .await?
-        .click()
-        .await?;
-    driver
-        .query(By::ClassName("thaw-menu-trigger"))
-        .first()
-        .await?
-        .click()
-        .await?;
-    driver
-        .query(By::XPath("//span[text()[contains(., 'Delete')]]"))
-        .first()
-        .await?
-        .click()
-        .await?;
-    driver
-        .query(By::XPath("//Button[text()[contains(., 'Delete')]]"))
-        .first()
-        .await?
-        .click()
-        .await?;
+    click_by_class(&driver, "thaw-card").await?;
+    click_by_class(&driver, "thaw-menu-trigger").await?;
+    click_by_xpath(&driver, "//span[text()[contains(., 'Delete')]]").await?;
+    click_by_xpath(&driver, "//Button[text()[contains(., 'Delete')]]").await?;
     driver
         .query(By::XPath("//p[text()[contains(., 'any recipes yet')]]"))
         .first()
@@ -462,5 +362,31 @@ async fn test_local_recipe_storage() -> WebDriverResult<()> {
         .await?;
 
     cleanup(&driver, tauri_driver).await?;
+    Ok(())
+}
+
+async fn click_by_xpath(driver: &WebDriver, path: &str) -> Result<(), WebDriverError> {
+    driver.query(By::XPath(path)).first().await?.click().await?;
+    Ok(())
+}
+async fn click_by_class(driver: &WebDriver, path: &str) -> Result<(), WebDriverError> {
+    driver
+        .query(By::ClassName(path))
+        .first()
+        .await?
+        .click()
+        .await?;
+    Ok(())
+}
+
+async fn send_keys_by_id(driver: &WebDriver, path: &str, text: &str) -> Result<(), WebDriverError> {
+    driver
+        .query(By::Id(path))
+        .first()
+        .await?
+        .find(By::Tag("input"))
+        .await?
+        .send_keys(text)
+        .await?;
     Ok(())
 }
