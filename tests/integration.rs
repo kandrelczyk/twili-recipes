@@ -369,6 +369,7 @@ async fn click_by_xpath(driver: &WebDriver, path: &str) -> Result<(), WebDriverE
     driver.query(By::XPath(path)).first().await?.click().await?;
     Ok(())
 }
+
 async fn click_by_class(driver: &WebDriver, path: &str) -> Result<(), WebDriverError> {
     driver
         .query(By::ClassName(path))

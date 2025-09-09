@@ -17,7 +17,9 @@ pub fn LLMInfo() -> impl IntoView {
                     <h2 class="mt-3 text-lg">Perplexity (recommended)</h2>
                     <div class="mb-2">
                         "To create the API token sign up for "
-                        <a target="_blank" href="https://www.perplexity.ai/">Perplexity</a> " account and visit "
+                        <a target="_blank" href="https://www.perplexity.ai/">
+                            Perplexity
+                        </a> " account and visit "
                         <a target="_blank" href="https://www.perplexity.ai/settings/api">
                             "https://www.perplexity.ai/settings/api"
                         </a>
@@ -28,11 +30,12 @@ pub fn LLMInfo() -> impl IntoView {
                     </div>
                     <div class="mb-2">"Perplexity option uses sonar-pro model."</div>
 
-
                     <h2 class="mt-3 text-lg">Anthropic</h2>
                     <div class="mb-2">
                         "To create the API token sign up for "
-                        <a target="_blank" href="https://console.anthropic.com/">Claude console</a> " account and visit "
+                        <a target="_blank" href="https://console.anthropic.com/">
+                            Claude console
+                        </a> " account and visit "
                         <a target="_blank" href="https://console.anthropic.com/settings/keys">
                             "https://console.anthropic.com/settings/keys"
                         </a>
@@ -48,8 +51,9 @@ pub fn LLMInfo() -> impl IntoView {
 
                         <div class="mb-2">
                             "To create the API token sign up for "
-                            <a target="_blank" href="https://platform.openai.com/signup">OpenAI</a>
-                            " account and visit "
+                            <a target="_blank" href="https://platform.openai.com/signup">
+                                OpenAI
+                            </a> " account and visit "
                             <a target="_blank" href="https://platform.openai.com/api-keys">
                                 "https://platform.openai.com/api-keys"
                             </a>
@@ -60,7 +64,6 @@ pub fn LLMInfo() -> impl IntoView {
                         <div class="my-b">"OpenAI option uses gpt-4o model."</div>
 
                     </span>
-
 
                 </DialogContent>
             </DialogBody>
