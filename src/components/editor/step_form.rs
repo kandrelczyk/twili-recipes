@@ -31,7 +31,7 @@ pub fn StepForm(
                     </div>
                 </div>
                 <Field label="Time" class="mt-2">
-                    <SpinButton<u32> class="w-16" input_size=4 value=step.time step_page=5 />
+                    <SpinButton<f32> class="w-16" input_size=4 value=step.time step_page=5.0 />
                 </Field>
             </CardPreview>
         </Card>

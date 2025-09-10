@@ -33,7 +33,7 @@ pub fn RecipeIngredients(recipe: StoredValue<Recipe>, multiplier: RwSignal<f32>)
                             </div>
                         }.into_any()
                     })
-                    .intersperse_with(move || view!{<Divider/>}.into_any())
+                    .intersperse_with(move || view! { <Divider /> }.into_any())
                     .collect::<Vec<AnyView>>();
 
     view! {

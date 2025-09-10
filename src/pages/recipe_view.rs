@@ -366,9 +366,9 @@ pub fn RecipeView() -> impl IntoView {
                 }>
                     <ErrorBoundary fallback=move |errors| {
                         view! {
-                            <div class="flex max-w-4xl p-4 flex-col text-wrap break-all h-full justify-center">
+                            <div class="flex max-w-[80%] p-4 flex-col text-wrap break-all h-full justify-center">
                                 <MessageBar intent=MessageBarIntent::Error>
-                                    <MessageBarBody>
+                                    <MessageBarBody class="text-wrap">
                                         <MessageBarTitle>"Failed to load recipes"</MessageBarTitle>
                                         <p>
                                             {move || {

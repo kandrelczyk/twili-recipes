@@ -26,7 +26,7 @@ impl Ingredient {
 #[derive(Debug, Clone, PartialEq, Serialize, Deserialize)]
 pub struct Step {
     pub desc: String,
-    pub time: u32,
+    pub time: f32,
 }
 
 #[derive(Debug, Clone, PartialEq, Serialize, Deserialize)]

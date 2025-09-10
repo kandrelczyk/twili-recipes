@@ -24,7 +24,7 @@ pub struct Group {
 #[derive(Clone)]
 pub struct StepValue {
     pub desc: RwSignal<String>,
-    pub time: RwSignal<u32>,
+    pub time: RwSignal<f32>,
 }
 
 #[derive(Clone)]
@@ -112,7 +112,7 @@ pub fn RecipeForm(
         steps.update(|s| {
             s.push(StepValue {
                 desc: RwSignal::new("".to_owned()),
-                time: RwSignal::new(0),
+                time: RwSignal::new(0.0),
             });
         });
     };
