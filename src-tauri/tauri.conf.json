@@ -1,66 +1,66 @@
 {
-    "productName": "TwiliRecipes",
-    "identifier": "net.curiana.recipes",
-    "version": "0.2.6",
-    "build": {
-        "beforeBuildCommand": "trunk build",
-        "beforeDevCommand": "trunk serve",
-        "devUrl": "http://localhost:1420",
-        "frontendDist": "../dist"
+  "productName": "TwiliRecipes",
+  "identifier": "net.curiana.recipes",
+  "version": "0.2.7",
+  "build": {
+    "beforeBuildCommand": "trunk build",
+    "beforeDevCommand": "trunk serve",
+    "devUrl": "http://localhost:1420",
+    "frontendDist": "../dist"
+  },
+  "plugins": {
+    "shell": {
+      "open": true
     },
-    "plugins": {
-        "shell": {
-            "open": true
+    "cli": {
+      "args": [
+        {
+          "short": "c",
+          "name": "config",
+          "description": "Config file name",
+          "takesValue": true
         },
-        "cli": {
-            "args": [
-                {
-                    "short": "c",
-                    "name": "config",
-                    "description": "Config file name",
-                    "takesValue": true
-                },
-                {
-                    "short": "r",
-                    "name": "recipes",
-                    "description": "Recipes file name",
-                    "takesValue": true
-                }
-            ]
-        },
-        "updater": {
-            "pubkey": "dW50cnVzdGVkIGNvbW1lbnQ6IG1pbmlzaWduIHB1YmxpYyBrZXk6IDk1MDRENDIyMEYwNDlEMUEKUldRYW5RUVBJdFFFbGFSaE53SXU4eUZ2bHROM0pCejFzTlZtZFZ0a29sb3JvMFFtbGVFbFZyVlEK",
-            "endpoints": [
-                "https://github.com/kandrelczyk/twili-recipes/releases/latest/download/latest.json"
-            ]
+        {
+          "short": "r",
+          "name": "recipes",
+          "description": "Recipes file name",
+          "takesValue": true
         }
+      ]
     },
-    "bundle": {
-        "createUpdaterArtifacts": true,
-        "active": true,
-        "icon": [
-            "icons/32x32.png",
-            "icons/128x128.png",
-            "icons/128x128@2x.png",
-            "icons/icon.icns",
-            "icons/icon.ico"
-        ],
-        "targets": "all"
-    },
-    "app": {
-        "withGlobalTauri": true,
-        "security": {
-            "csp": null
-        },
-        "windows": [
-            {
-                "fullscreen": false,
-                "height": 800,
-                "resizable": true,
-                "visible": false,
-                "title": "TwiliRecipes",
-                "width": 600
-            }
-        ]
+    "updater": {
+      "pubkey": "dW50cnVzdGVkIGNvbW1lbnQ6IG1pbmlzaWduIHB1YmxpYyBrZXk6IDk1MDRENDIyMEYwNDlEMUEKUldRYW5RUVBJdFFFbGFSaE53SXU4eUZ2bHROM0pCejFzTlZtZFZ0a29sb3JvMFFtbGVFbFZyVlEK",
+      "endpoints": [
+        "https://github.com/kandrelczyk/twili-recipes/releases/latest/download/latest.json"
+      ]
     }
+  },
+  "bundle": {
+    "createUpdaterArtifacts": true,
+    "active": true,
+    "icon": [
+      "icons/32x32.png",
+      "icons/128x128.png",
+      "icons/128x128@2x.png",
+      "icons/icon.icns",
+      "icons/icon.ico"
+    ],
+    "targets": "all"
+  },
+  "app": {
+    "withGlobalTauri": true,
+    "security": {
+      "csp": null
+    },
+    "windows": [
+      {
+        "fullscreen": false,
+        "height": 800,
+        "resizable": true,
+        "visible": false,
+        "title": "TwiliRecipes",
+        "width": 600
+      }
+    ]
+  }
 }

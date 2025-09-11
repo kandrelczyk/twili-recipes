@@ -103,16 +103,16 @@ impl AppBuilder {
                         .expect("Failed to set recipes file");
                 }
 
-                //#[cfg(not(any(mobile, debug_assertions)))]
-                //{
-                //let handle = app.handle().clone();
-                //tauri::async_runtime::spawn(async move {
-                //match update(handle).await {
-                //Ok(_) => println!("Update check successfull"),
-                //Err(e) => println!("Updated not installed: {:?}", e),
-                //}
-                //});
-                //}
+                #[cfg(not(any(mobile, debug_assertions)))]
+                {
+                    let handle = app.handle().clone();
+                    tauri::async_runtime::spawn(async move {
+                        match update(handle).await {
+                            Ok(_) => println!("Update check successfull"),
+                            Err(e) => println!("Updated not installed: {:?}", e),
+                        }
+                    });
+                }
                 Ok(())
             })
             .invoke_handler(tauri::generate_handler![
