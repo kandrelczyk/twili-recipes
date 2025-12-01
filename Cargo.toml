@@ -5,9 +5,9 @@ edition = "2021"
 
 [dependencies]
 log = "0.4"
-leptos = { version = "0.8.5", features = ["csr", "nightly"] }
-leptos_router = "0.8.5"
-leptos_meta = "0.8.5"
+leptos = { version = "0.8", features = ["csr", "nightly"] }
+leptos_router = "0.8"
+leptos_meta = "0.8"
 leptos-use = { version = "0.16.2", features = ["use_media_query"] }
 serde = { version = "1.0", features = ["derive"] }
 serde_json = "1.0.113"
@@ -20,7 +20,7 @@ recipes_common = { path = "./common" }
 console_error_panic_hook = "0.1.7"
 icondata_bi = "0.0.10"
 icondata_ri = "0.0.10"
-thaw = { path = "/home/tohver/repo/thaw/thaw/", features = ["csr", "nightly"]}
+thaw = { git = "https://github.com/kandrelczyk/thaw", branch = "v0.5-beta",  features = ["csr", "nightly"]}
 web-sys = "0.3.70"
 uuid = "1.16.0"
 
