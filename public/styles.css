@@ -1,6 +1,5 @@
 body {
     margin: 0;
-    background-color: #504851;
     height: 100vh;
     overflow: hidden;
 }
@@ -11,7 +10,7 @@ html {
 
 .thaw-textarea__textarea {
     max-height: 1000px !important;
-    width: 100%
+    width: 100%;
 }
 
 .thaw-spinner__spinner-tail {
@@ -24,9 +23,9 @@ html {
 }
 
 .custom-scroll::-webkit-scrollbar {
-  display: block;
-  width: 3px;
-  overflow: auto;
+    display: block;
+    width: 3px;
+    overflow: auto;
 }
 .custom-scroll::-webkit-scrollbar-thumb {
     background: #aaa;

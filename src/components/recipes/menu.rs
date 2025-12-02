@@ -34,7 +34,7 @@ pub fn AppMenu(reload_signal: RwSignal<i32>, show_menu: RwSignal<bool>) -> impl 
     });
 
     view! {
-        <div class="flex flex-col gap-8 text-lg w-full">
+        <div class="mt-12 sm:mt-0 flex flex-col gap-8 text-lg w-full">
             <div>
                 <div class="flex flex-row justify-center w-full pt-1">Twili Recipes</div>
                 <Divider class="m-2" />

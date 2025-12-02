@@ -22,7 +22,7 @@ pub fn About() -> impl IntoView {
         version.set(from_value::<String>(invoke("get_version", JsValue::NULL).await).unwrap());
     });
     view! {
-        <div class="w-full h-full">
+        <main class="flex flex-col h-screen w-full items-center justify-start">
             <Header
                 button=move || {
                     view! {
@@ -66,6 +66,6 @@ pub fn About() -> impl IntoView {
                     </a>
                 </Text>
             </div>
-        </div>
+        </main>
     }
 }
