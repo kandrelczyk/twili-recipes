@@ -36,6 +36,9 @@
     }
   },
   "bundle": {
+    "android": {
+      "versionCode": 9
+    },
     "createUpdaterArtifacts": true,
     "active": true,
     "icon": [
