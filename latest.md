@@ -1,3 +1,3 @@
-Version 0.2.7
+Version 0.2.8
 
-Manually add new recipes and edit
+Small layout fixes to better handle edge-to-edge on Android.
