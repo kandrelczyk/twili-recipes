@@ -150,7 +150,7 @@ pub fn RecipePanels(recipe: Recipe) -> impl IntoView {
 
             </div>
             <div class="grow"></div>
-            <div class="flex max-w-4xl m-auto flex-row m-4 justify-center items-center">
+            <div class="flex max-w-4xl m-auto flex-row m-4 mb-8 justify-center items-center">
                 <div class="grow"></div>
                 <Button
                     icon=icondata_bi::BiChevronLeftSolid

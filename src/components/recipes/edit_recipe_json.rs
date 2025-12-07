@@ -201,7 +201,7 @@ pub fn EditRecipeJson(
                     on:click=save_recipe
                     appearance=ButtonAppearance::Primary
                     disabled=save_disabled
-                    class="m-4"
+                    class="m-4 mb-8"
                 >
                     Save
                 </Button>

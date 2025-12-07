@@ -63,7 +63,7 @@ pub fn Settings(init: bool) -> impl IntoView {
     view! {
         <main class="flex flex-col h-screen w-full items-center justify-start">
             <Dialog open=show_info>
-                <LLMInfo/>
+                <LLMInfo />
             </Dialog>
             <Header
                 button=move || {
@@ -111,11 +111,7 @@ pub fn Settings(init: bool) -> impl IntoView {
                                         </RadioGroup>
                                         {move || match llm_service.get().as_str() {
                                             "Free" => {
-                                                view! {
-                                                    <Text>
-                                                        "Free, rate limited LLM service"
-                                                    </Text>
-                                                }
+                                                view! { <Text>"Free, rate limited LLM service"</Text> }
                                                     .into_any()
                                             }
                                             "GPT" => {
@@ -291,7 +287,7 @@ pub fn Settings(init: bool) -> impl IntoView {
                                     }
                                     disabled=loading
                                     appearance=ButtonAppearance::Primary
-                                    class="m-4"
+                                    class="m-4 mb-8"
                                 >
                                     Save
                                 </Button>

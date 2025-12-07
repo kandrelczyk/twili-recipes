@@ -280,7 +280,7 @@ pub fn RecipeForm(
                         disabled=saving
                         shape=ButtonShape::Circular
                         appearance=ButtonAppearance::Primary
-                        class="fixed bottom-4 right-4"
+                        class="fixed bottom-8 right-8"
                     >
                         Save
                     </Button>

@@ -127,13 +127,18 @@ pub fn AddRecipe() -> impl IntoView {
                                     value=recipe_str
                                     disabled=loading
                                     rules=vec![
-                                        TextareaRule::validator(move |value, _|
+                                        TextareaRule::validator(move |value, _| {
                                             if value.len() < min_recipe_len {
-                                                Err(FieldValidationState::Error("Please provide entire recipe including ingredients and steps.".to_owned()))
+                                                Err(
+                                                    FieldValidationState::Error(
+                                                        "Please provide entire recipe including ingredients and steps."
+                                                            .to_owned(),
+                                                    ),
+                                                )
                                             } else {
                                                 Ok(())
                                             }
-                                        )
+                                        }),
                                     ]
                                 />
                             </Field>
@@ -144,7 +149,7 @@ pub fn AddRecipe() -> impl IntoView {
                         on:click=submit
                         appearance=ButtonAppearance::Primary
                         disabled=loading
-                        class="m-4"
+                        class="m-4 mb-8"
                     >
                         Process
                     </Button>

@@ -110,7 +110,7 @@ pub fn List() -> impl IntoView {
                 }>
                     <div class="h-screen w-full overflow-y-auto pb-12 custom-scroll">
                         <div class="w-full flex flex-row justify-center p-4">
-                            <div class="flex flex-row flex-wrap gap-4 pt-4 justify-around">
+                            <div class="flex flex-row flex-wrap gap-4 pt-4 pb-16 justify-around">
                                 {move || Suspend::new(async move {
                                     recipes
                                         .await
@@ -139,7 +139,7 @@ pub fn List() -> impl IntoView {
                 </ErrorBoundary>
             </Suspense>
 
-            <div class="fixed bottom-8 right-8 flex flex-col gap-2 justify-end items-end pointer-events-none">
+            <div class="fixed bottom-12 right-12 flex flex-col gap-2 justify-end items-end pointer-events-none">
                 <Button
                     class=add_buttons_class
                     on:click=add_manual
