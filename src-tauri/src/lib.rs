@@ -163,9 +163,8 @@ async fn update(app: tauri::AppHandle) -> tauri_plugin_updater::Result<()> {
         let mut downloaded = 0;
         update
             .download_and_install(
-                |chunk_length, content_length| {
-                    downloaded += chunk_length;
-                    println!("downloaded {downloaded} from {content_length:?}");
+                |_, _| {
+                    print!(".");
                 },
                 || {
                     println!("download finished");
