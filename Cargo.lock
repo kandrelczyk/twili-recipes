@@ -6029,8 +6029,7 @@ dependencies = [
 [[package]]
 name = "tauri-plugin-updater"
 version = "2.9.0"
-source = "registry+https://github.com/rust-lang/crates.io-index"
-checksum = "27cbc31740f4d507712550694749572ec0e43bdd66992db7599b89fbfd6b167b"
+source = "git+https://github.com/kandrelczyk/plugins-workspace/?branch=working_deb#e221a04ef4930fa7287d0f9b656f63474ea59489"
 dependencies = [
  "base64 0.22.1",
  "dirs",
@@ -6805,7 +6804,7 @@ checksum = "e421abadd41a4225275504ea4d6566923418b7f05506fbc9c0fe86ba7396114b"
 
 [[package]]
 name = "twili-recipes"
-version = "0.2.8"
+version = "0.2.7"
 dependencies = [
  "async-trait",
  "log",
