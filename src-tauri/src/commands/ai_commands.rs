@@ -10,5 +10,9 @@ pub async fn parse_recipe(
     ai_client: tauri::State<'_, Mutex<Option<Box<dyn AIClient>>>>,
 ) -> Result<String, CommandError> {
     let client = ai_client.lock().await;
-    Ok(client.as_ref().unwrap().parse_recipe(recipe).await?)
+    let mut response = client.as_ref().unwrap().parse_recipe(recipe).await?;
+
+    response = response.replace("```json", "");
+    response = response.replace("```", "");
+    Ok(response)
 }

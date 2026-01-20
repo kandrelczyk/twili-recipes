@@ -1,3 +1,3 @@
-Version 0.2.8
+Version 0.2.9
 
-Small layout fixes to better handle edge-to-edge on Android.
+Update claude model to sonnet 4.5

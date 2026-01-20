@@ -44,7 +44,7 @@ pub fn LLMInfo() -> impl IntoView {
                         "The minimum amount of money that can be added to the balance is $5.
                         Credits expire after a year."
                     </div>
-                    <div class="mb-2">"Anthropic option uses sonnet-3.7 model."</div>
+                    <div class="mb-2">"Anthropic option uses sonnet-4.5 model."</div>
 
                     <h2 class="mt-3 text-lg">OpenAI</h2>
                     <span>
