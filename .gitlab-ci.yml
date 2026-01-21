@@ -70,9 +70,9 @@ build-linux:
     - apt-get install -y curl build-essential pkg-config libssl-dev libwebkit2gtk-4.0-dev
         libwebkit2gtk-4.1-dev libappindicator3-dev librsvg2-dev patchelf nodejs npm jq
     - curl --proto '=https' --tlsv1.2 -sSf https://sh.rustup.rs | sh -s -- -y --default-toolchain nightly
-    - source "$HOME/.cargo/env"
+    - source "$CARGO_HOME/env"
   script:
-    - source "$HOME/.cargo/env"
+    - source "$CARGO_HOME/env"
     # Install build tools
     - cargo install --path .
     - cargo install tauri-cli --version "^2.0.0" --locked
@@ -120,7 +120,7 @@ build-android:
         openjdk-21-jdk nodejs npm jq
     # Install Rust nightly
     - curl --proto '=https' --tlsv1.2 -sSf https://sh.rustup.rs | sh -s -- -y --default-toolchain nightly
-    - source "$HOME/.cargo/env"
+    - source "$CARGO_HOME/env"
     # Setup Android SDK
     - mkdir -p $ANDROID_HOME/cmdline-tools
     - wget -q https://dl.google.com/android/repository/commandlinetools-linux-11076708_latest.zip -O cmdline-tools.zip
@@ -130,7 +130,7 @@ build-android:
     - yes | sdkmanager --licenses || true
     - sdkmanager "platform-tools" "platforms;android-34" "ndk;${NDK_VERSION}" "build-tools;35.0.0-rc4"
   script:
-    - source "$HOME/.cargo/env"
+    - source "$CARGO_HOME/env"
     - export PATH=$PATH:$ANDROID_HOME/cmdline-tools/latest/bin:$ANDROID_HOME/platform-tools
     - export NDK_HOME=$ANDROID_HOME/ndk/${NDK_VERSION}
     - export TOOLCHAIN=$NDK_HOME/toolchains/llvm/prebuilt/linux-x86_64
