@@ -68,7 +68,12 @@ build-linux:
   before_script:
     - apt-get update
     - apt-get install -y curl build-essential pkg-config libssl-dev libwebkit2gtk-4.0-dev
-        libwebkit2gtk-4.1-dev libappindicator3-dev librsvg2-dev patchelf nodejs npm jq
+        libwebkit2gtk-4.1-dev libappindicator3-dev librsvg2-dev patchelf jq ca-certificates gnupg
+    # Install Node.js 20 LTS from NodeSource
+    - mkdir -p /etc/apt/keyrings
+    - curl -fsSL https://deb.nodesource.com/gpgkey/nodesource-repo.gpg.key | gpg --dearmor -o /etc/apt/keyrings/nodesource.gpg
+    - echo "deb [signed-by=/etc/apt/keyrings/nodesource.gpg] https://deb.nodesource.com/node_20.x nodistro main" | tee /etc/apt/sources.list.d/nodesource.list
+    - apt-get update && apt-get install -y nodejs
     - curl --proto '=https' --tlsv1.2 -sSf https://sh.rustup.rs | sh -s -- -y --default-toolchain nightly
     - source "$CARGO_HOME/env"
   script:
@@ -117,7 +122,12 @@ build-android:
     - apt-get update
     - apt-get install -y curl build-essential pkg-config libssl-dev libwebkit2gtk-4.1-dev
         libxdo-dev libayatana-appindicator3-dev librsvg2-dev wget unzip file
-        openjdk-21-jdk nodejs npm jq
+        openjdk-21-jdk jq ca-certificates gnupg
+    # Install Node.js 20 LTS from NodeSource
+    - mkdir -p /etc/apt/keyrings
+    - curl -fsSL https://deb.nodesource.com/gpgkey/nodesource-repo.gpg.key | gpg --dearmor -o /etc/apt/keyrings/nodesource.gpg
+    - echo "deb [signed-by=/etc/apt/keyrings/nodesource.gpg] https://deb.nodesource.com/node_20.x nodistro main" | tee /etc/apt/sources.list.d/nodesource.list
+    - apt-get update && apt-get install -y nodejs
     # Install Rust nightly
     - curl --proto '=https' --tlsv1.2 -sSf https://sh.rustup.rs | sh -s -- -y --default-toolchain nightly
     - source "$CARGO_HOME/env"
