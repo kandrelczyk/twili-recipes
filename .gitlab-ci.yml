@@ -17,7 +17,6 @@ create-release:
   rules:
     - if: $CI_PIPELINE_SOURCE == "push"
     - if: $CI_PIPELINE_SOURCE == "web"
-    - if: $CI_PIPELINE_SOURCE == "merge_request_event"
   before_script:
     - apt-get update && apt-get install -y curl jq
   script:
@@ -179,20 +178,22 @@ build-android:
     # Collect artifacts using tauri-build script
     - chmod +x ./scripts/tauri-build.sh
     - ./scripts/tauri-build.sh collect
+    # Download secure files (keystore)
+    - curl --silent "https://gitlab.com/gitlab-org/incubation-engineering/mobile-devops/download-secure-files/-/raw/main/installer" | bash
     # Sign the APK
     - |
-      if [ -n "$ANDROID_KEYSTORE_BASE64" ]; then
-        echo "$ANDROID_KEYSTORE_BASE64" | base64 -d > keystore.jks
+      KEYSTORE_PATH="$CI_PROJECT_DIR/.secure_files/app-keystore.jks"
+      if [ -f "$KEYSTORE_PATH" ]; then
         APK_PATH=$(find src-tauri/gen/android/app/build/outputs/apk/universal/release -name "*.apk" | head -1)
         $ANDROID_HOME/build-tools/35.0.0-rc4/apksigner sign \
-          --ks keystore.jks \
+          --ks "$KEYSTORE_PATH" \
           --ks-key-alias app \
           --ks-pass pass:${ANDROID_KEYSTORE_PASSWORD} \
           --key-pass pass:${ANDROID_KEYSTORE_PASSWORD} \
           --out build-artifacts/TwiliRecipes-${APP_VERSION}.apk \
           "$APK_PATH"
       else
-        # Copy unsigned APK if no signing key
+        # Copy unsigned APK if no secure file available
         APK_PATH=$(find src-tauri/gen/android/app/build/outputs/apk/universal/release -name "*.apk" | head -1)
         cp "$APK_PATH" "build-artifacts/TwiliRecipes-${APP_VERSION}-unsigned.apk" || true
       fi
