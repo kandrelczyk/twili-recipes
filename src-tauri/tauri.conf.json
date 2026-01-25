@@ -37,7 +37,7 @@
     },
     "bundle": {
         "android": {
-            "versionCode": 10
+            "versionCode": 11
         },
         "createUpdaterArtifacts": true,
         "active": true,
