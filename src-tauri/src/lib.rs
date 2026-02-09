@@ -160,7 +160,6 @@ impl AppBuilder {
 #[cfg(not(any(mobile, debug_assertions)))]
 async fn update(app: tauri::AppHandle) -> tauri_plugin_updater::Result<()> {
     if let Some(update) = app.updater()?.check().await? {
-        let mut downloaded = 0;
         update
             .download_and_install(
                 |_, _| {

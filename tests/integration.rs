@@ -180,6 +180,7 @@ async fn test_init_recipes_list() -> WebDriverResult<()> {
             "/remote.php/dav/files/username/.TwiliRecipes/.list.json",
         )
         .with_status(404)
+        .expect(4)
         .create_async()
         .await;
 
@@ -236,6 +237,7 @@ async fn test_error_when_initializing_recipes() -> WebDriverResult<()> {
             "/remote.php/dav/files/username/.TwiliRecipes/.list.json",
         )
         .with_status(404)
+        .expect(4)
         .create_async()
         .await;
 

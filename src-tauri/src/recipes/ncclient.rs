@@ -1,8 +1,9 @@
-use async_trait::async_trait;
-use recipes_common::{ListEntry, Recipe};
-use reqwest_dav::{Auth, Client, ClientBuilder};
+use std::future::Future;
 
 use super::{error::RecipesError, RecipesProvider};
+use async_trait::async_trait;
+use recipes_common::{ListEntry, Recipe};
+use reqwest_dav::{Auth, Client, ClientBuilder, Error};
 
 pub struct NCClient {
     dav_client: Client,
@@ -44,8 +45,26 @@ impl From<reqwest_dav::re_exports::reqwest::Error> for RecipesError {
 }
 
 static LIST_FILE_NAME: &str = ".list.json";
+static MAX_RETRY: u8 = 3;
 
 impl NCClient {
+    async fn retry<T, R>(call: impl Fn() -> T) -> Result<R, Error>
+    where
+        T: Future<Output = Result<R, Error>>,
+        R: std::fmt::Debug,
+    {
+        let mut response: Result<R, Error> = call().await;
+        let mut count = 0;
+
+        while response.is_err() && count < MAX_RETRY {
+            response = call().await;
+            count += 1;
+            std::thread::sleep(std::time::Duration::from_millis(500));
+        }
+
+        response
+    }
+
     async fn initialize_list(&self) -> Result<(), RecipesError> {
         let response = self.dav_client.mkcol(self.path.as_str()).await;
 
@@ -57,12 +76,18 @@ impl NCClient {
 
         Ok(())
     }
+
     async fn save_list(&self, list: &Vec<ListEntry>) -> Result<(), RecipesError> {
         let recipe_json: String = serde_json::to_string(list)?;
-        let response = self
-            .dav_client
-            .put(&format!("{}/{}", self.path, LIST_FILE_NAME), recipe_json)
-            .await;
+        let response = NCClient::retry(async || {
+            self.dav_client
+                .put(
+                    &format!("{}/{}", self.path, LIST_FILE_NAME),
+                    recipe_json.clone(),
+                )
+                .await
+        })
+        .await;
 
         if response.is_err() {
             return Err(RecipesError {
@@ -106,10 +131,12 @@ impl NCClient {
 #[async_trait]
 impl RecipesProvider for NCClient {
     async fn list_recipes(&self) -> Result<Vec<ListEntry>, RecipesError> {
-        let response = self
-            .dav_client
-            .get(&format!("{}/{}", self.path, LIST_FILE_NAME))
-            .await;
+        let response = NCClient::retry(async || {
+            self.dav_client
+                .get(&format!("{}/{}", self.path, LIST_FILE_NAME))
+                .await
+        })
+        .await;
 
         if response.is_err() && format!("{:?}", response).contains("response_code: 404") {
             self.initialize_list().await?;
@@ -167,10 +194,12 @@ impl RecipesProvider for NCClient {
     }
 
     async fn get_recipe(&self, filename: String) -> Result<Recipe, RecipesError> {
-        let response = self
-            .dav_client
-            .get(&format!("{}/{}", self.path, filename))
-            .await;
+        let response = NCClient::retry(async || {
+            self.dav_client
+                .get(&format!("{}/{}", self.path, filename))
+                .await
+        })
+        .await;
 
         if response.is_err() && format!("{:?}", response).contains("response_code: 404") {
             return Err(RecipesError {

@@ -1,3 +1,4 @@
-Version 0.2.9
+Version 0.2.10
 
-Update claude model to sonnet 4.5
+Automated updated on desktop
+Retry failed webdav requests 

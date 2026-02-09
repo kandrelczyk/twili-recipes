@@ -1,7 +1,7 @@
 {
     "productName": "TwiliRecipes",
     "identifier": "net.curiana.recipes",
-    "version": "0.2.9",
+    "version": "0.2.10",
     "build": {
         "beforeBuildCommand": "trunk build",
         "beforeDevCommand": "trunk serve",
@@ -31,13 +31,13 @@
         "updater": {
             "pubkey": "dW50cnVzdGVkIGNvbW1lbnQ6IG1pbmlzaWduIHB1YmxpYyBrZXk6IDk1MDRENDIyMEYwNDlEMUEKUldRYW5RUVBJdFFFbGFSaE53SXU4eUZ2bHROM0pCejFzTlZtZFZ0a29sb3JvMFFtbGVFbFZyVlEK",
             "endpoints": [
-                "https://github.com/kandrelczyk/twili-recipes/releases/latest/download/latest.json"
+                "https://gitlab.com/cristofa/twili-recipes/-/releases/permalink/latest/downloads/latest.json"
             ]
         }
     },
     "bundle": {
         "android": {
-            "versionCode": 11
+            "versionCode": 12
         },
         "createUpdaterArtifacts": true,
         "active": true,

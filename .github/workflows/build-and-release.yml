@@ -237,7 +237,7 @@ jobs:
 
           sudo chmod 777 -R ./src-tauri
           cargo install --path .
-          cargo install tauri-cli --version "^2.0.0" --locked
+          cargo install tauri-cli --version "^2" --locked
           cargo install trunk
           npm install -g tailwindcss@3.4.17 
           cargo tauri android init
